@@ -20,7 +20,7 @@ export default function MinersHistoryModal({ onClose }) {
   ];
 
   return (
-    <div className="fixed inset-0 backdrop-blur-sm bg-white/30 flex justify-center items-center z-50">
+    <div className="fixed inset-0 backdrop-brightness-50 bg-white/30 flex justify-center items-center z-50">
       <div className="bg-white rounded-xl w-96 max-h-[400px] overflow-y-auto p-5">
         <div className="flex justify-between items-center mb-4">
           <h2 className="font-semibold text-lg">Miner History</h2>

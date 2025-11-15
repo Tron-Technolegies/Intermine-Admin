@@ -3,6 +3,10 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import HomeLayout from "./components/Layouts/HomeLayout";
 import Dashboard from "./pages/dashboard/Dashboard";
 import MinersPage from "./pages/myminers/MinersPage";
+import Clients from "./pages/clients/Clients";
+import ClientDetails from "./pages/clients/ClientDetails";
+import Issues from "./pages/issues/Issues";
+import OfflineMiners from "./pages/offlineminers/OfflineMiners";
 
 export default function App() {
   return (
@@ -11,6 +15,10 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="miners" element={<MinersPage />} />
+          <Route path="clients" element={<Clients />} />
+          <Route path="/clients/:id" element={<ClientDetails />} />
+          <Route path="issues" element={<Issues />} />
+          <Route path="offline-miners" element={<OfflineMiners />} />
         </Routes>
       </HomeLayout>
     </BrowserRouter>

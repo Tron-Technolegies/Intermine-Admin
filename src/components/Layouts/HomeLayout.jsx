@@ -8,7 +8,7 @@ export default function HomeLayout({ children }) {
       <Sidebar />
       <div className="flex flex-col flex-1 ml-20 md:ml-64">
         <Header />
-        <main className="p-6 bg-[#F9FAFB] min-h-screen mt-[60px]">{children}</main>
+        <main className="p-6 bg-[#ffffff] min-h-screen mt-[60px]">{children}</main>
       </div>
     </div>
   );
