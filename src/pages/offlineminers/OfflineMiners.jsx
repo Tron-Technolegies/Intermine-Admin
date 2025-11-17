@@ -39,7 +39,7 @@ export default function OfflineMiners() {
         }
       />
 
-      <div className="bg-white mt-4 rounded-xl p-4 shadow-sm border border-gray-200 overflow-x-auto">
+      <div className="bg-white mt-4 rounded-xl p-4 shadow-sm border border-gray-200 text-[#616161] overflow-x-auto">
         <table className="w-full border-collapse min-w-[900px]">
           <thead>
             <tr className="text-left text-gray-600 text-sm border-b">
@@ -66,7 +66,9 @@ export default function OfflineMiners() {
               <td className="py-3 px-2">PSU</td>
               <td className="py-3 px-2">Germany</td>
               <td className="py-3 px-2">Dahab Mining</td>
-              <td className="py-3 px-2 text-blue-500 cursor-pointer">Message 1</td>
+              <td className="py-3 px-2 ">
+                Message 1 <span className="text-[10px] pl-2">2 mins ago</span>{" "}
+              </td>{" "}
             </tr>
 
             <tr className="border-b text-sm">
@@ -81,7 +83,9 @@ export default function OfflineMiners() {
               <td className="py-3 px-2">Hashboard</td>
               <td className="py-3 px-2">Germany</td>
               <td className="py-3 px-2">Dahab Mining</td>
-              <td className="py-3 px-2 text-black cursor-pointer">Message 1 2 mins ago</td>
+              <td className="py-3 px-2 ">
+                Message 1 <span className="text-[10px] pl-2">2 mins ago</span>{" "}
+              </td>
             </tr>
 
             <tr className="text-sm">
@@ -96,11 +100,8 @@ export default function OfflineMiners() {
               <td className="py-3 px-2">Controlboard</td>
               <td className="py-3 px-2">Germany</td>
               <td className="py-3 px-2">Dahab Mining</td>
-              <td
-                className="py-3 px-2 text-black
-              "
-              >
-                Message 1
+              <td className="py-3 px-2 ">
+                Message 1 <span className="text-[10px] pl-2">2 mins ago</span>{" "}
               </td>
             </tr>
           </tbody>

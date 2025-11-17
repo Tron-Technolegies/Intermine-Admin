@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 
-export default function PageHeader({ title, subtitle, buttonText, ModalComponent }) {
+export default function PageHeader({
+  title,
+  subtitle,
+  buttonText,
+  buttonIcon: ButtonIcon,
+  ModalComponent,
+}) {
   const [showModal, setShowModal] = useState(false);
 
   return (
@@ -14,9 +20,10 @@ export default function PageHeader({ title, subtitle, buttonText, ModalComponent
         <>
           <button
             onClick={() => setShowModal(true)}
-            className="bg-[#3893D0] hover:bg-[#2c7cb5] text-white rounded-xl px-4 py-1 transition-all"
+            className="bg-[#3893D0] hover:bg-[#2c7cb5] text-white rounded-xl px-4 py-1 transition-all flex items-center gap-2"
           >
-            + {buttonText}
+            {ButtonIcon ? <ButtonIcon size={18} /> : <span className="text-lg font-bold">+</span>}
+            {buttonText}
           </button>
 
           {showModal && <ModalComponent onClose={() => setShowModal(false)} />}

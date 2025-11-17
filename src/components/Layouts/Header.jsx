@@ -1,40 +1,46 @@
-import React, { useState } from "react";
+import React from "react";
 import { IoNotificationsOutline } from "react-icons/io5";
 import { FaChevronDown } from "react-icons/fa";
+import { MdOutlineMenu } from "react-icons/md";
 
-export default function Header() {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+export default function Header({ setSidebarOpen }) {
+  const [dropdownOpen, setDropdownOpen] = React.useState(false);
 
   return (
-    <header className="bg-[#2B347A] text-white flex justify-between items-center px-6 py-3 shadow-sm fixed top-0 left-0 right-0 z-10">
-      {/* Left side: Logo */}
-      <img src="/logo.png" alt="Intermine logo" className="w-50 p-1" />
+    <header className="bg-[#2B347A] text-white flex justify-between items-center px-4 md:px-6 py-3 shadow-sm fixed top-0 left-0 right-0 z-20">
+      {/* Left: Menu & Logo */}
+      <div className="flex items-center gap-3">
+        {/* Mobile Menu Icon */}
+        <button className="md:hidden text-white" onClick={() => setSidebarOpen((prev) => !prev)}>
+          <MdOutlineMenu size={26} />
+        </button>
 
-      {/* Right side: Notification + Profile */}
+        <img src="/logo.png" alt="Intermine logo" className="h-8" />
+      </div>
+
+      {/* Right */}
       <div className="flex items-center gap-6 relative">
-        {/* Notification */}
         <div className="relative cursor-pointer">
           <IoNotificationsOutline size={22} />
-          <span className="absolute top-[-5px] right-[-5px] bg-red-500 text-[9px] rounded-full h-3 w-3 flex items-center justify-center"></span>
+          <span className="absolute -top-1 -right-1 bg-red-500 text-[9px] rounded-full h-3 w-3 flex items-center justify-center"></span>
         </div>
 
-        {/* Profile */}
+        {/* Profile Dropdown */}
         <div
-          className="flex items-center gap-2 cursor-pointer select-none"
           onClick={() => setDropdownOpen(!dropdownOpen)}
+          className="flex items-center gap-2 cursor-pointer"
         >
           <img
             src="https://i.pravatar.cc/40"
             alt="Profile"
             className="rounded-full h-8 w-8 border-2 border-white"
           />
-          <span className="text-sm font-medium">Jack Wilder</span>
+          <span className="hidden sm:block text-sm font-medium">Jack Wilder</span>
           <FaChevronDown size={12} />
         </div>
 
-        {/* Dropdown */}
         {dropdownOpen && (
-          <div className="absolute right-0 top-12 bg-white text-gray-700 shadow-lg rounded-md w-40 z-10">
+          <div className="absolute right-0 top-12 bg-white text-gray-700 shadow-lg rounded-md w-40 z-30">
             <button className="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">
               Profile
             </button>

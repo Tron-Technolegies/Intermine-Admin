@@ -7,6 +7,7 @@ import Clients from "./pages/clients/Clients";
 import ClientDetails from "./pages/clients/ClientDetails";
 import Issues from "./pages/issues/Issues";
 import OfflineMiners from "./pages/offlineminers/OfflineMiners";
+import Agreements from "./pages/agreements/Agreements";
 
 export default function App() {
   return (
@@ -19,6 +20,7 @@ export default function App() {
           <Route path="/clients/:id" element={<ClientDetails />} />
           <Route path="issues" element={<Issues />} />
           <Route path="offline-miners" element={<OfflineMiners />} />
+          <Route path="agreements" element={<Agreements />} />
         </Routes>
       </HomeLayout>
     </BrowserRouter>

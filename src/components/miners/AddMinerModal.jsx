@@ -27,10 +27,20 @@ export default function AddMinerModal({ onClose }) {
     onClose(); // Close modal after submitting
   };
 
+  const handleOverlayClick = (e) => {
+    if (e.target.id === "modal-overlay") {
+      onClose();
+    }
+  };
+
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50">
+    <div
+      id="modal-overlay"
+      onClick={handleOverlayClick}
+      className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50 p-4"
+    >
       <div className="relative bg-white p-6 rounded-2xl shadow-lg w-[420px] max-h-[90vh] overflow-y-auto">
-        {/* ❌ Close button */}
+        {/*  Close button */}
         <button
           onClick={onClose}
           className="absolute top-3 right-3 text-gray-500 hover:text-black transition-all"
