@@ -109,20 +109,6 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
           </NavLink>
 
           <NavLink
-            to="/farms"
-            className={({ isActive }) =>
-              `flex items-center gap-3 px-3 py-2 rounded-md font-medium transition ${
-                isActive
-                  ? "bg-[#2B347A] text-white"
-                  : "text-black hover:bg-[#2B347A] hover:text-white"
-              }`
-            }
-          >
-            <GiMining className="w-5 h-5" />
-            <span className="inline">Mining Farms</span>
-          </NavLink>
-
-          <NavLink
             to="/warranties"
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2 rounded-md font-medium transition ${
@@ -134,6 +120,19 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
           >
             <IoShieldOutline className="w-5 h-5" />
             <span className="inline">Warranties</span>
+          </NavLink>
+          <NavLink
+            to="/farms"
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-3 py-2 rounded-md font-medium transition ${
+                isActive
+                  ? "bg-[#2B347A] text-white"
+                  : "text-black hover:bg-[#2B347A] hover:text-white"
+              }`
+            }
+          >
+            <GiMining className="w-5 h-5" />
+            <span className="inline">Mining Farms</span>
           </NavLink>
 
           <NavLink
