@@ -10,6 +10,8 @@ import OfflineMiners from "./pages/offlineminers/OfflineMiners";
 import Agreements from "./pages/agreements/Agreements";
 import Warranty from "./pages/WarrantyPage/Warranty";
 import MiningFarm from "./pages/miningfarm/MiningFarm";
+import Notifications from "./pages/notification/Notifications";
+import PendingMessages from "./pages/pendingmessages/PendingMessages";
 
 export default function App() {
   return (
@@ -25,6 +27,8 @@ export default function App() {
           <Route path="agreements" element={<Agreements />} />
           <Route path="warranties" element={<Warranty />} />
           <Route path="farms" element={<MiningFarm />} />
+          <Route path="notifications" element={<Notifications />} />
+          <Route path="messages" element={<PendingMessages />} />
         </Routes>
       </HomeLayout>
     </BrowserRouter>

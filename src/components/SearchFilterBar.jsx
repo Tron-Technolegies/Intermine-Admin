@@ -7,7 +7,7 @@ export default function SearchFilterBar({
   statusFilter,
   setStatusFilter,
   placeholder = "Search by name, email, or ID...",
-  customDropdown, // 👈 added
+  customDropdown,
 }) {
   return (
     <div className="rounded-lg p-4 bg-[#F5F5F5] mt-6">

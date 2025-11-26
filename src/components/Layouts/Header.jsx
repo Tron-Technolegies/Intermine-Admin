@@ -2,6 +2,7 @@ import React from "react";
 import { IoNotificationsOutline } from "react-icons/io5";
 import { FaChevronDown } from "react-icons/fa";
 import { MdOutlineMenu } from "react-icons/md";
+import { Link } from "react-router-dom";
 
 export default function Header({ setSidebarOpen }) {
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
@@ -21,7 +22,9 @@ export default function Header({ setSidebarOpen }) {
       {/* Right */}
       <div className="flex items-center gap-6 relative">
         <div className="relative cursor-pointer">
-          <IoNotificationsOutline size={22} />
+          <Link to="/notifications">
+            <IoNotificationsOutline size={22} />
+          </Link>
           <span className="absolute -top-1 -right-1 bg-red-500 text-[9px] rounded-full h-3 w-3 flex items-center justify-center"></span>
         </div>
 
