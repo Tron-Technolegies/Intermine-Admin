@@ -12,7 +12,7 @@ export default function EditMessageModal({ record, onClose }) {
 
   return (
     <div className="fixed inset-0 bg-black/40 flex justify-center items-center p-4 z-50">
-      <div className="bg-white rounded-2xl max-w-lg w-full p-6 relative shadow-xl">
+      <div className="bg-[#F7F8F9] rounded-2xl max-w-lg w-full p-6 relative shadow-xl">
         <IoMdClose
           className="absolute top-4 right-4 text-gray-500 cursor-pointer text-xl"
           onClick={onClose}
@@ -25,21 +25,29 @@ export default function EditMessageModal({ record, onClose }) {
         </p>
 
         <label className="text-sm font-medium">Client</label>
-        <input className="w-full bg-gray-100 p-2 rounded mb-4" value={form.client} readOnly />
+        <input
+          className="w-full bg-white border border-[#787878] p-2 rounded mb-4"
+          value={form.client}
+          readOnly
+        />
 
         <label className="text-sm font-medium">Miner</label>
-        <input className="w-full bg-gray-100 p-2 rounded mb-4" value={form.miner} readOnly />
+        <input
+          className="w-full bg-white border border-[#787878] p-2 rounded mb-4"
+          value={form.miner}
+          readOnly
+        />
 
         <label className="text-sm font-medium">Subject</label>
         <input
-          className="w-full border p-2 rounded mb-4"
+          className="w-full bg-white border border-[#787878] p-2 rounded mb-4"
           value={form.subject}
           onChange={(e) => setForm({ ...form, subject: e.target.value })}
         />
 
         <label className="text-sm font-medium">Message Content</label>
         <textarea
-          className="w-full border rounded p-3 h-28 resize-none"
+          className="w-full bg-white border border-[#787878] rounded p-3 h-28 resize-none"
           value={form.message}
           onChange={(e) => setForm({ ...form, message: e.target.value })}
         />

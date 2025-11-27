@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import { FiSearch } from "react-icons/fi";
-import { FiEdit2 } from "react-icons/fi";
-import { MdDone, MdClose } from "react-icons/md";
+import { MdClose } from "react-icons/md";
 import EditMessageModal from "../../components/pending/EditMessageModal";
+import { CiCircleCheck, CiClock2 } from "react-icons/ci";
+import { RiInformationLine } from "react-icons/ri";
+import { TbEdit } from "react-icons/tb";
+import { IoSendOutline } from "react-icons/io5";
+import PageHeader from "../../components/PageHeader";
 
 export default function PendingMessages() {
   const [messages, setMessages] = useState(sampleMessages);
@@ -18,28 +22,33 @@ export default function PendingMessages() {
   );
 
   return (
-    <div className="p-6">
-      {/* PAGE HEADER */}
-      <h1 className="text-3xl font-bold mb-1">Pending Messages</h1>
-      <p className="text-gray-500 mb-8">Real-time issues across clients and machines</p>
+    <div className="">
+      <PageHeader
+        title="Pending Messages"
+        subtitle="Real-time issues across clients and machines"
+      />
 
-      {/* SUMMARY CARDS */}
-      <div className="grid grid-cols-3 gap-4 bg-[#F5F5F5] p-6 rounded-xl">
+      <div className="grid grid-cols-3 gap-4 bg-[#F5F5F5] p-6 mt-4 rounded-xl">
         <SummaryCard
           number={countStatus(messages, "Pending")}
           title="Pending Review"
           desc="Awaiting approval"
-          icon="⏳"
+          icon={<CiClock2 />}
         />
 
         <SummaryCard
           number={countStatus(messages, "Released")}
           title="Released"
           desc="Sent to clients"
-          icon="✔"
+          icon={<CiCircleCheck />}
         />
 
-        <SummaryCard number={messages.length} title="Total Messages" desc="All messages" icon="🛈" />
+        <SummaryCard
+          number={messages.length}
+          title="Total Messages"
+          desc="All messages"
+          icon={<RiInformationLine />}
+        />
       </div>
 
       <p className="font-semibold text-lg mt-6 mb-2">All Messages</p>
@@ -61,14 +70,14 @@ export default function PendingMessages() {
 
       {/* MESSAGES TABLE */}
       <div className="border rounded-lg overflow-hidden">
-        <div className="grid grid-cols-6 font-semibold bg-white text-gray-700 border-b px-4 py-3">
+        <div className="grid grid-cols-7 font-semibold bg-white text-gray-700 border-b px-4 py-3">
           <span>Message ID</span>
           <span>Subject</span>
           <span>Client</span>
           <span>Miner</span>
           <span>Status</span>
           <span>Created</span>
-          <span className="pl-7">Actions</span>
+          <span>Actions</span>
         </div>
 
         {filtered.map((m, i) => (
@@ -99,18 +108,16 @@ export default function PendingMessages() {
 
             <span>{m.created}</span>
 
-            <div className="flex gap-3 text-lg">
+            <div className="flex gap-3 text-lg items-center">
               {/* EDIT BUTTON */}
-              <FiEdit2
-                className="cursor-pointer text-gray-700 hover:text-black"
+              <TbEdit
+                className="cursor-pointer text-gray-600 hover:text-black h-6 w-6"
                 onClick={() => setEditData(m)}
               />
-
               {/* RELEASE BUTTON */}
-              <MdDone className="cursor-pointer text-green-600 hover:text-green-800" />
-
+              <IoSendOutline className="cursor-pointer text-green-600 hover:text-green-800 h-6 w-6" />
               {/* REJECT BUTTON */}
-              <MdClose className="cursor-pointer text-red-600 hover:text-red-800" />
+              <MdClose className="cursor-pointer text-red-600 hover:text-red-800 h-6 w-6" />
             </div>
           </div>
         ))}
