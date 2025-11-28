@@ -1,46 +1,56 @@
-import React, { useState } from "react";
-import { FaUser, FaLock } from "react-icons/fa";
+import React, { useState, useEffect } from "react";
+import { FaLock } from "react-icons/fa";
 import { useMutation } from "@tanstack/react-query";
 import api from "../../api/api";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
-export default function Login() {
+export default function ResetPasswordPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const email = location.state?.email;
+  const code = location.state?.code;
 
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const loginMutation = useMutation({
-    mutationFn: async () => api.post("/api/v1/auth/login", { email, password }),
+  useEffect(() => {
+    if (!email || !code) {
+      toast.error("Session expired. Please start again.");
+      navigate("/forgot-password");
+    }
+  }, [email, code, navigate]);
 
-    onSuccess: () => {
-      toast.success("Login Successful", { autoClose: 800 });
-
-      // Delay redirect slightly so cookie sets properly
-      setTimeout(() => {
-        window.location.href = "/"; // direct force navigation
-      }, 900);
+  const resetMutation = useMutation({
+    mutationFn: async () => {
+      return await api.post("/api/v1/auth/reset-password", {
+        email,
+        code,
+        password,
+      });
     },
-
+    onSuccess: () => {
+      toast.success("Password has been reset");
+      setTimeout(() => navigate("/login"), 800);
+    },
     onError: (err) => {
-      toast.error(err.response?.data?.error || "Invalid credentials");
+      toast.error(err.response?.data?.error || "Reset failed");
     },
   });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    loginMutation.mutate();
+    if (!password || !confirm) return toast.error("Please fill all fields");
+    if (password !== confirm) return toast.error("Passwords do not match");
+    resetMutation.mutate();
   };
 
   return (
     <div className="flex flex-col md:flex-row h-screen overflow-hidden">
       <div
         className="hidden md:flex w-full md:w-2/3 relative items-center justify-center bg-cover bg-center bg-no-repeat"
-        style={{
-          backgroundImage: "url('/Login-img.png')",
-        }}
+        style={{ backgroundImage: "url('/Login-img.png')" }}
       >
         <div className="z-10 text-center px-8">
           <img
@@ -58,33 +68,37 @@ export default function Login() {
 
         <div className="w-full max-w-sm sm:max-w-md">
           <div className="text-center md:text-left mb-6">
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-1">Hello Again!</h1>
-            <p className="text-gray-500 text-sm sm:text-base">Welcome Back</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-1">Reset Password</h1>
+            <p className="text-gray-500 text-sm sm:text-base">
+              Set a new password for <span className="font-semibold">{email}</span>
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <FaUser className="text-gray-400 text-sm" />
-              </div>
-              <input
-                type="email"
-                placeholder="Email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 rounded-3xl border border-gray-300 focus:ring-blue-500"
-              />
-            </div>
-
+            {/* New Password */}
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <FaLock className="text-gray-400 text-sm" />
               </div>
               <input
                 type={showPassword ? "text" : "password"}
-                placeholder="Password"
+                placeholder="New password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                className="w-full pl-10 pr-10 py-2.5 rounded-3xl border border-gray-300 focus:ring-blue-500"
+              />
+            </div>
+
+            {/* Confirm Password */}
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <FaLock className="text-gray-400 text-sm" />
+              </div>
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Confirm password"
+                value={confirm}
+                onChange={(e) => setConfirm(e.target.value)}
                 className="w-full pl-10 pr-10 py-2.5 rounded-3xl border border-gray-300 focus:ring-blue-500"
               />
               <button
@@ -95,22 +109,23 @@ export default function Login() {
                 {showPassword ? "Hide" : "Show"}
               </button>
             </div>
+
             <button
               type="submit"
-              disabled={loginMutation.isPending}
+              disabled={resetMutation.isPending}
               className="w-full bg-blue-600 text-white py-2.5 rounded-full font-semibold hover:bg-blue-700"
             >
-              {loginMutation.isPending ? "Logging in..." : "Login"}
+              {resetMutation.isPending ? "Resetting..." : "Reset Password"}
             </button>
           </form>
 
           <div className="text-center mt-4">
             <button
               type="button"
-              onClick={() => navigate("/forgot-password")}
+              onClick={() => navigate("/login")}
               className="text-gray-400 text-xs hover:text-blue-600"
             >
-              Forgot Password?
+              Back to Login
             </button>
           </div>
         </div>

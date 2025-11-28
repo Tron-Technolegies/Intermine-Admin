@@ -4,62 +4,78 @@ import PageHeader from "../../components/PageHeader";
 import SearchFilterBar from "../../components/SearchFilterBar";
 import ClientCard from "../../components/clients/ClientCard";
 import AddClientModal from "../../components/clients/AddClientModal";
+import useClients from "../../hooks/useClients";
 
 export default function Clients() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("All Status");
-  const navigate = useNavigate();
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const [status, setStatus] = useState("ALL");
 
-  const clients = [
-    {
-      id: "Client-005",
-      name: "Mike Chen",
-      email: "mikechen@email.com",
-      location: "Texas Data Centre A",
-      joined: "2024-01-15",
-      miners: "2/3",
-      consumption: "60W",
-      agreement: false,
-      status: "Active",
-    },
-    {
-      id: "Client-001",
-      name: "John Smith",
-      email: "johnsmith@email.com",
-      location: "California Farm B",
-      joined: "2024-03-12",
-      miners: "3/3",
-      consumption: "75W",
-      agreement: true,
-      status: "Pending",
-    },
-  ];
+  const navigate = useNavigate();
+  const { data, error, isLoading } = useClients(page, search, status);
+
+  if (isLoading) return <div className="p-6 text-center text-gray-500">Loading clients...</div>;
+  if (error) return <div className="p-6 text-center text-red-500">{error.message}</div>;
 
   return (
     <div className="min-h-screen">
       <PageHeader
         title="Clients"
-        subtitle="Manage all mining equipment and monitor performance"
+        subtitle="Manage all mining clients and agreements"
         buttonText="Add Client"
         ModalComponent={AddClientModal}
       />
 
       <SearchFilterBar
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        statusFilter={statusFilter}
-        setStatusFilter={setStatusFilter}
-        placeholder="Search by name, email, or ID..."
+        searchTerm={search}
+        setSearchTerm={setSearch}
+        statusFilter={status}
+        setStatusFilter={setStatus}
+        placeholder="Search by name, email or ID..."
       />
 
+      {/* Client Cards Grid */}
       <div className="p-6 grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {clients.map((client) => (
+        {data?.clients?.map((client) => (
           <ClientCard
-            key={client.id}
-            client={client}
-            onViewDetails={(c) => navigate(`/clients/${c.id}`)}
+            key={client._id}
+            client={{
+              id: client.clientId,
+              name: client.clientName,
+              email: client.email,
+              location: client.address?.street || "N/A",
+              joined: new Date(client.createdAt).toLocaleDateString(),
+              miners: `${client.owned?.length || 0}`,
+              consumption: client.owned?.power || "0W",
+              agreement: client.miningAgreement ? true : false,
+              status: client.status || "Active",
+            }}
+            onViewDetails={() => navigate(`/clients/${client._id}`)}
           />
         ))}
+      </div>
+
+      {/* Pagination */}
+      <div className="flex justify-center gap-4 pb-8">
+        <button
+          disabled={page <= 1}
+          className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-40"
+          onClick={() => setPage((prev) => prev - 1)}
+        >
+          Prev
+        </button>
+
+        <span className="text-gray-600">
+          Page {page} / {data?.totalPages}
+        </span>
+
+        <button
+          disabled={page >= data?.totalPages}
+          className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-40"
+          onClick={() => setPage((prev) => prev + 1)}
+        >
+          Next
+        </button>
       </div>
     </div>
   );

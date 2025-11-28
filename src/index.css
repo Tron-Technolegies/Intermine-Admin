@@ -3,3 +3,7 @@
 body {
   font-family: "Sora", sans-serif;
 }
+
+.Toastify__toast-container {
+  z-index: 999999 !important;
+}

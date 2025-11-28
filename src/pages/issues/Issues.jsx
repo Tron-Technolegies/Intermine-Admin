@@ -77,7 +77,7 @@ export default function Issues() {
       <div className="flex justify-between items-center px-6 mt-2 mb-4">
         <div>
           <h3 className="text-lg font-semibold text-gray-800">Current Issue types</h3>
-          <p className="text-gray-500 text-sm">Available options in user report dropdown</p>
+          <p className="text-gray-500 text-sm ">Available options in user report dropdown</p>
         </div>
 
         {/* Dropdown */}
