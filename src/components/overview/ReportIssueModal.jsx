@@ -2,17 +2,25 @@ import React, { useState } from "react";
 
 export default function ReportIssueModal({ onClose }) {
   const [isOnline, setIsOnline] = useState(true);
+  const handleOutsideClick = (e) => {
+    if (e.target.id === "overlay") onClose();
+  };
 
   return (
-    <div className="fixed inset-0 backdrop-blur-sm bg-white/30 flex justify-center items-center z-50">
-      <div className="bg-white rounded-xl w-[400px] p-5 shadow-xl">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="font-semibold text-lg">Report an Issue</h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-black">
-            ✕
-          </button>
-        </div>
+    <div
+      id="overlay"
+      onClick={handleOutsideClick}
+      className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50"
+    >
+      <div className="bg-white rounded-xl w-[92%] sm:w-96 max-h-[70vh] overflow-y-auto p-5 shadow-xl relative">
+        {/* Close Button */}
+        <button
+          onClick={onClose}
+          className="absolute top-3 right-3 text-gray-500 hover:text-black text-xl"
+          aria-label="Close history"
+        >
+          ✕
+        </button>
 
         {/* Inputs */}
         <div className="space-y-3">

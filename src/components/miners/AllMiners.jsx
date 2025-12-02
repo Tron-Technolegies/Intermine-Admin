@@ -1,207 +1,260 @@
 import React, { useState } from "react";
-import { FiSearch, FiSliders } from "react-icons/fi";
+import { FiSearch } from "react-icons/fi";
 import { FaUser, FaMapMarkerAlt, FaBolt, FaTools } from "react-icons/fa";
 import { MdHistory } from "react-icons/md";
 import { BiChip } from "react-icons/bi";
+import { CiCalendar } from "react-icons/ci";
+
 import MinersHistoryModal from "./MinersHistoryModal";
 import ReportIssueModal from "../overview/ReportIssueModal";
-import { CiCalendar } from "react-icons/ci";
 import EditMinerModal from "./EditMinerModal";
+
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
+import api from "../../api/api";
+
+const fetchMiners = async ({ queryKey }) => {
+  const [_key, { page, query, status }] = queryKey;
+
+  const res = await api.get("/api/v1/admin/miner", {
+    params: {
+      currentPage: page,
+      query: query || "",
+      status: status || "ALL",
+    },
+  });
+
+  return res.data;
+};
 
 export default function AllMiners() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("All Status");
+  const [statusFilter, setStatusFilter] = useState("ALL");
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const [selectedMinerId, setSelectedMinerId] = useState(null);
   const [showHistory, setShowHistory] = useState(false);
   const [showReport, setShowReport] = useState(false);
   const [editForm, setEditForm] = useState(false);
   const [selectedMiner, setSelectedMiner] = useState(null);
 
-  const miners = [
-    {
-      id: "ASIC-S19-847",
-      model: "Antminer S19 Pro",
-      status: "Online",
-      user: "John Smith",
-      userId: "USR-001",
-      location: "Texas Data Centre A",
-      provider: "Genesis Mining",
-      hashRate: "95.2 TH/s",
-      power: "60W",
-      warranty: "15/01/2025",
-    },
-    {
-      id: "ASIC-S19-623",
-      model: "Antminer S19 Pro",
-      status: "Warning",
-      user: "Sarah Johnson",
-      userId: "USR-002",
-      location: "Texas Data Centre A",
-      provider: "Genesis Mining",
-      hashRate: "89.1 TH/s",
-      power: "60W",
-      warranty: "15/01/2025",
-    },
-  ];
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["miners", { page: currentPage, query: searchTerm, status: statusFilter }],
+    queryFn: fetchMiners,
+    keepPreviousData: true,
+    refetchOnWindowFocus: false,
+  });
+
+  const miners = data?.miners ?? [];
+  const totalPages = data?.totalPages ?? 1;
 
   const getStatusColor = (status) => {
     switch (status) {
-      case "Online":
+      case "online":
         return "bg-green-500 text-white";
       case "Warning":
         return "bg-yellow-500 text-white";
-      case "Offline":
+      case "offline":
         return "bg-red-500 text-white";
       default:
         return "bg-gray-500 text-white";
     }
   };
 
-  // 🧩 Handle Edit button click
   const handleEditClick = (miner) => {
-    setSelectedMiner(miner); // store selected miner data
-    setEditForm(true); // open edit modal
+    setSelectedMiner(miner);
+    setEditForm(true);
   };
 
   return (
-    <div className="min-h-screen  p-6">
-      {/* Header */}
+    <div className="min-h-screen p-6">
       <div className="rounded-lg p-4 bg-[#F5F5F5]">
-        <div className="mb-6 ">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">All Miners</h1>
-          <p className="text-gray-600">
-            View and filter miners by status, hosting provider, and farm location.
-          </p>
-        </div>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">All Miners</h1>
+        <p className="text-gray-600">Search, filter and manage miners.</p>
 
-        {/* Search and Filter Section */}
-        <div className=" p-4 mb-6 flex gap-4 items-center">
+        <div className="p-4 mb-6 flex gap-4 items-center">
           <div className="flex-1 relative">
             <FiSearch
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
               size={20}
             />
             <input
               type="text"
-              placeholder="Search by miner ID, user, or model..."
+              placeholder="Search miner ID, user, model..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full bg-white pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              onChange={(e) => {
+                setCurrentPage(1);
+                setSearchTerm(e.target.value);
+              }}
+              className="w-full bg-white pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg 
+              focus:ring-2 focus:ring-blue-500"
             />
           </div>
-          <div className="flex items-center gap-2">
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-4 py-2.5 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
-            >
-              <option>All Status</option>
-              <option>Online</option>
-              <option>Warning</option>
-              <option>Offline</option>
-            </select>
-          </div>
+
+          {/* Status Filter */}
+          <select
+            value={statusFilter}
+            onChange={(e) => {
+              setCurrentPage(1);
+              setStatusFilter(e.target.value);
+            }}
+            className="px-4 py-2.5 bg-white border border-gray-200 rounded-lg 
+            focus:ring-2 focus:ring-blue-500 text-gray-700"
+          >
+            <option value="ALL">All Status</option>
+            <option value="online">Online</option>
+            <option value="Warning">Warning</option>
+            <option value="offline">Offline</option>
+          </select>
         </div>
       </div>
 
-      {/* Miner Cards Grid */}
-      <div className="mt-4">
-        <div className="grid md:grid-cols-2 gap-6">
-          {miners.map((miner, index) => (
-            <div key={index} className="bg-[#F5F5F5] rounded-xl  p-6">
-              {/* Card Header */}
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div className=" p-2 rounded-lg">
-                    <BiChip className="text-[#3893D0]" size={24} />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-900">{miner.id}</h3>
-                    <p className="text-sm text-gray-500">{miner.model}</p>
-                  </div>
+      {isLoading && <p className="text-center mt-10 font-semibold">Loading miners...</p>}
+      {isError && <p className="text-center text-red-500 mt-10">Failed to load miners</p>}
+
+      <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
+        {miners.map((miner, index) => (
+          <div className="bg-white shadow-sm rounded-xl p-6 border border-gray-100">
+            <div className="flex justify-between items-start mb-4">
+              {/* Chip + titles */}
+              <div className="flex items-center gap-3">
+                <BiChip className="text-[#3893D0]" size={24} />
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900 break-all">
+                    {miner.serialNumber}
+                  </h3>
+                  <p className="text-sm text-gray-500">{miner.model}</p>
                 </div>
-                <span
-                  className={`${getStatusColor(
-                    miner.status
-                  )} px-3 py-1 rounded-full text-sm font-medium`}
-                >
-                  {miner.status}
-                </span>
               </div>
 
-              {/* Miner Details */}
-              <div className="space-y-2.5 mb-4">
-                <div className="flex items-center gap-2 text-gray-700">
-                  <FaUser className="text-gray-400" size={14} />
-                  <span className="text-sm">{miner.user}</span>
-                  <span className="text-xs bg-white text-gray-600 px-2 py-0.5 border border-[#DCDCDC] rounded-2xl">
-                    {miner.userId}
+              <span
+                className={`${getStatusColor(
+                  miner.status
+                )} px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap`}
+              >
+                {miner.status === "online"
+                  ? "Online"
+                  : miner.status === "offline"
+                  ? "Offline"
+                  : "Warning"}
+              </span>
+            </div>
+
+            <div className="space-y-2 text-[#777] mb-4">
+              {/* Client */}
+              <div className="flex items-center gap-2">
+                <FaUser size={14} />
+                <span>{miner.client?.clientName}</span>
+
+                {miner.client?.clientId && (
+                  <span className="text-xs bg-white px-2 py-1 border border-gray-400 rounded-full">
+                    {miner.client.clientId}
                   </span>
-                </div>
-                <div className="flex items-center gap-2 text-gray-700">
-                  <FaMapMarkerAlt className="text-gray-400" size={14} />
-                  <span className="text-sm">{miner.location}</span>
-                </div>
-                <div className="flex items-center gap-2 text-gray-700">
-                  <FaTools className="text-gray-400" size={14} />
-                  <span className="text-sm">{miner.provider}</span>
-                </div>
+                )}
               </div>
 
-              {/* Hash Rate and Power */}
-              <div className="flex gap-6 mb-4 pb-4 border-b border-gray-100 mt-8 ">
-                <div className="flex items-center gap-2">
-                  <BiChip className="text-gray-700" size={20} />
-                  <div>
-                    <div className="text-lg font-bold text-gray-900">{miner.hashRate}</div>
-                    <div className="text-xs text-gray-500">Hash Rate</div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <FaBolt className="text-gray-700" size={20} />
-                  <div>
-                    <div className="text-lg font-bold text-gray-900">{miner.power}</div>
-                    <div className="text-xs text-gray-500">Power</div>
-                  </div>
-                </div>
+              {/* Farm */}
+              <div className="flex items-center gap-2">
+                <FaMapMarkerAlt size={14} />
+                <span>{miner.location}</span>
               </div>
 
-              {/* Warranty and Actions */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-gray-600">
-                  <CiCalendar className="text-[#787878]" size={18} />
-                  <span className="text-sm">Warranty: {miner.warranty}</span>
-                </div>
-                <button
-                  onClick={() => setShowHistory(true)}
-                  className="flex items-center gap-1.5 text-white hover:text-white bg-[#3893D0] rounded-lg px-4 py-2 text-sm font-medium"
-                >
-                  <MdHistory size={18} />
-                  History
-                </button>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex gap-3 mt-4">
-                <button
-                  onClick={() => handleEditClick(miner)}
-                  className="flex-1 bg-[#787878] text-white rounded-2xl font-medium transition-colors"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => setShowReport(true)}
-                  className="px-4 border border-[#B1B1B1] text-gray-700 py-2.5 rounded-lg font-medium transition-colors whitespace-nowrap"
-                >
-                  Report an Issue
-                </button>
+              {/* Service Provider */}
+              <div className="flex items-center gap-2">
+                <FaTools size={14} />
+                <span>{miner.serviceProvider}</span>
               </div>
             </div>
-          ))}
-        </div>
+
+            {/* ---------- METRICS BLOCK ---------- */}
+            <div className="flex justify-between sm:justify-start sm:gap-16 py-4 border-t border-b border-gray-100 mb-4">
+              {/* Hashrate */}
+              <div className="flex items-center gap-2">
+                <BiChip size={20} />
+                <div>
+                  <div className="text-lg font-semibold">{miner.hashRate}</div>
+                  <div className="text-xs text-gray-500">Hash Rate</div>
+                </div>
+              </div>
+
+              {/* Power */}
+              <div className="flex items-center gap-2">
+                <FaBolt size={20} />
+                <div>
+                  <div className="text-lg font-semibold">{miner.power}W</div>
+                  <div className="text-xs text-gray-500">Power</div>
+                </div>
+              </div>
+            </div>
+
+            {/* ---------- WARRANTY & HISTORY ---------- */}
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-2 text-gray-600">
+                <CiCalendar size={18} />
+                <span>Warranty: {miner.warranty} Years</span>
+              </div>
+
+              <button
+                onClick={() => {
+                  setSelectedMinerId(miner._id);
+                  setShowHistory(true);
+                }}
+                className="bg-[#3893D0] text-white px-4 py-2 rounded-lg flex items-center gap-1"
+              >
+                <MdHistory size={18} /> History
+              </button>
+            </div>
+
+            {/* ---------- ACTION BUTTONS ---------- */}
+            <div className="flex gap-3 mt-4">
+              <button
+                onClick={() => handleEditClick(miner)}
+                className="flex-1 bg-[#787878] text-white rounded-xl py-2 font-medium"
+              >
+                Edit
+              </button>
+
+              <button
+                onClick={() => setShowReport(true)}
+                className="border border-gray-400 text-gray-700 py-2 px-4 rounded-lg"
+              >
+                Report Issue
+              </button>
+            </div>
+          </div>
+        ))}
       </div>
 
-      {/* Modals */}
-      {showHistory && <MinersHistoryModal onClose={() => setShowHistory(false)} />}
+      <div className="flex justify-center gap-4 mt-8">
+        <button
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage((p) => p - 1)}
+          className="px-4 py-2 border rounded disabled:opacity-40"
+        >
+          Prev
+        </button>
+
+        <span className="px-2 py-2 font-medium">
+          Page {currentPage} / {totalPages}
+        </span>
+
+        <button
+          disabled={currentPage === totalPages}
+          onClick={() => setCurrentPage((p) => p + 1)}
+          className="px-4 py-2 border rounded disabled:opacity-40"
+        >
+          Next
+        </button>
+      </div>
+      {showHistory && selectedMinerId && (
+        <MinersHistoryModal
+          minerId={selectedMinerId}
+          onClose={() => {
+            setSelectedMinerId(null);
+            setShowHistory(false);
+          }}
+        />
+      )}
       {showReport && <ReportIssueModal onClose={() => setShowReport(false)} />}
       {editForm && selectedMiner && (
         <EditMinerModal minerData={selectedMiner} onClose={() => setEditForm(false)} />

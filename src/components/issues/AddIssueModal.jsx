@@ -2,11 +2,24 @@ import React from "react";
 import { IoClose } from "react-icons/io5";
 
 export default function AddIssueModal({ onClose }) {
+  const handleOutsideClick = (e) => {
+    if (e.target.id === "overlay") onClose();
+  };
+
   return (
-    <div className="fixed inset-0 bg-black/30 flex justify-center items-center z-50">
-      <div className="relative bg-white rounded-2xl p-6 w-[420px] shadow-lg">
-        <button onClick={onClose} className="absolute top-3 right-3 text-gray-500 hover:text-black">
-          <IoClose size={22} />
+    <div
+      id="overlay"
+      onClick={handleOutsideClick}
+      className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50"
+    >
+      <div className="bg-white rounded-xl w-[92%] sm:w-96 max-h-[70vh] overflow-y-auto p-5 shadow-xl relative">
+        {/* Close Button */}
+        <button
+          onClick={onClose}
+          className="absolute top-3 right-3 text-gray-500 hover:text-black text-xl"
+          aria-label="Close history"
+        >
+          <IoClose size={18} />
         </button>
 
         <h2 className="text-xl font-semibold text-gray-900 mb-1">Add New Issue type</h2>
