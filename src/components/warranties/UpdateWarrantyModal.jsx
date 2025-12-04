@@ -1,62 +1,81 @@
-import React from "react";
+import React, { useState } from "react";
 import { IoClose } from "react-icons/io5";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import api from "../../api/api";
 
-export default function UpdateWarrantyModal({ onClose }) {
+export default function UpdateWarrantyModal({ item, onClose }) {
+  const queryClient = useQueryClient();
+
+  const [type, setType] = useState(item.warrantyType);
+  const [start, setStart] = useState(item.startDate?.substring(0, 10));
+  const [end, setEnd] = useState(item.endDate?.substring(0, 10));
+
+  const updateMutation = useMutation({
+    mutationFn: async () => {
+      return api.patch("/api/v1/warranty", {
+        warrantyId: item._id,
+        type,
+        startDate: start,
+        endDate: end,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["warranty"]);
+      onClose();
+    },
+  });
+
   return (
-    <div className="fixed inset-0 backdrop-blur-sm bg-black/30 flex justify-center items-center z-50">
+    <div className="fixed inset-0 bg-black/30 flex justify-center items-center backdrop-blur-sm z-50">
       <div className="bg-white rounded-xl w-[420px] p-6 shadow-xl">
-        {/* Title + Close Button */}
-        <div className="flex justify-between items-start">
+        <div className="flex justify-between items-start mb-4">
           <div>
             <h2 className="font-semibold text-lg">Update Warranty</h2>
-            <p className="text-gray-500 text-sm">
-              Update the warranty start date for Antminer S19 Pro (MNR-001)
-            </p>
+            <p className="text-gray-500 text-sm">Update warranty for {item.miner?.model}</p>
           </div>
-
-          <button onClick={onClose} className="text-gray-500 hover:text-black">
+          <button onClick={onClose}>
             <IoClose size={22} />
           </button>
         </div>
 
-        {/* Inputs */}
-        <div className="space-y-4 mt-5">
-          {/* Type */}
+        <div className="space-y-4">
           <div>
-            <label className="block text-gray-600 text-sm mb-1">Type</label>
-            <select className="border rounded-lg w-full px-3 py-2 text-sm outline-none focus:ring focus:ring-gray-200">
+            <label className="text-sm">Type</label>
+            <select
+              value={type}
+              onChange={(e) => setType(e.target.value)}
+              className="border w-full px-3 py-2 rounded"
+            >
+              <option>Manufacturer</option>
               <option>Intermine</option>
             </select>
           </div>
 
-          {/* Start Date */}
           <div>
-            <label className="block text-gray-600 text-sm mb-1">Start Date</label>
+            <label className="text-sm">Start Date</label>
             <input
               type="date"
-              defaultValue="2025-01-15"
-              className="border rounded-lg w-full px-3 py-2 text-sm outline-none focus:ring focus:ring-gray-200"
+              value={start}
+              onChange={(e) => setStart(e.target.value)}
+              className="border w-full px-3 py-2 rounded"
             />
           </div>
 
-          {/* End Date */}
           <div>
-            <label className="block text-gray-600 text-sm mb-1">End Date</label>
+            <label className="text-sm">End Date</label>
             <input
               type="date"
-              defaultValue="2025-01-15"
-              className="border rounded-lg w-full px-3 py-2 text-sm outline-none focus:ring focus:ring-gray-200"
+              value={end}
+              onChange={(e) => setEnd(e.target.value)}
+              className="border w-full px-3 py-2 rounded"
             />
           </div>
 
-          {/* Preview Text */}
-          <p className="text-gray-600 text-sm">
-            Warranty will end on: <span className="font-medium">January 15th, 2025</span>
-          </p>
-
-          {/* Button */}
-          <button className="bg-[#1d1f7c] text-white w-full py-2 rounded-lg font-medium hover:opacity-90">
-            Update Warranty
+          <button
+            onClick={() => updateMutation.mutate()}
+            className="bg-[#1d1f7c] text-white w-full py-2 rounded-lg font-medium mt-4"
+          >
+            {updateMutation.isPending ? "Updating..." : "Update Warranty"}
           </button>
         </div>
       </div>

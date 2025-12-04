@@ -27,11 +27,11 @@ export default function Clients() {
       />
 
       <SearchFilterBar
-        searchTerm={search}
-        setSearchTerm={setSearch}
-        statusFilter={status}
-        setStatusFilter={setStatus}
-        placeholder="Search by name, email or ID..."
+        search={search}
+        onSearch={setSearch}
+        filterValue={status}
+        onFilterChange={setStatus}
+        filterOptions={["ALL", "online", "offline"]}
       />
 
       {/* Client Cards Grid */}

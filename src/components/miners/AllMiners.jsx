@@ -110,7 +110,7 @@ export default function AllMiners() {
       </div>
 
       {isLoading && <p className="text-center mt-10 font-semibold">Loading miners...</p>}
-      {isError && <p className="text-center text-red-500 mt-10">Failed to load miners</p>}
+      {isError && <p className="text-center text-red-500 mt-10">No miners found</p>}
 
       <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
         {miners.map((miner, index) => (

@@ -21,7 +21,7 @@ export default function FarmCard({ farm }) {
       </div>
 
       {/* Expandable Miner Table */}
-      {open && <FarmTable miners={farm.miners} />}
+      {open && <FarmTable farm={farm} />}
     </div>
   );
 }

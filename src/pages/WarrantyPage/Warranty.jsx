@@ -1,85 +1,76 @@
 import React, { useState } from "react";
 import WarrantyStatsCard from "../../components/warranties/WarrantyStatsCard";
 import WarrantyTable from "../../components/warranties/WarrantyTable";
+import useWarranty from "../../hooks/useWarranty";
+import useWarrantyStats from "../../hooks/useWarrantyStats";
 
 export default function Warranty() {
-  const [activeTab, setActiveTab] = useState("manufacturer");
+  // Backend requires: "Manufacturer" and "Intermine"
+  const [activeTab, setActiveTab] = useState("Manufacturer");
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
 
-  const manufacturerStats = [
-    { title: "Active Warranties", value: "3", subtitle: "Currently covered" },
-    { title: "Expiring Soon", value: "1", subtitle: "Within 30 days" },
-    { title: "Expired", value: "1", subtitle: "Need renewal" },
-    { title: "Total Warranties", value: "4", subtitle: "All miners" },
-  ];
+  // Warranty list API
+  const { data, isLoading } = useWarranty(page, activeTab, search);
 
-  const intermineStats = [
-    { title: "Active Warranties", value: "2", subtitle: "Currently covered" },
-    { title: "Expiring Soon", value: "0", subtitle: "Within 30 days" },
-    { title: "Expired", value: "1", subtitle: "Need renewal" },
-    { title: "Total Warranties", value: "3", subtitle: "All miners" },
-  ];
+  // NEW: Warranty stats API
+  const { data: statsData } = useWarrantyStats();
 
-  const manufacturerData = [
-    {
-      miner: "Antminer S19 Pro",
-      client: "John Doe",
-      type: "Manufacturer",
-      start: "2024-01-15",
-      end: "2025-01-15",
-      daysRemaining: "120 days",
-      status: "Active",
-    },
-    {
-      miner: "Whatsminer M30S++",
-      client: "John Doe",
-      type: "Manufacturer",
-      start: "2024-01-15",
-      end: "2025-01-15",
-      daysRemaining: "15 days",
-      status: "Expiring Soon",
-    },
-  ];
+  const warranties = data?.warranties || [];
+  const totalPages = data?.totalPages || 1;
 
-  const intermineData = [
-    {
-      miner: "Whatsminer M30S",
-      client: "Client A",
-      type: "Intermine",
-      start: "2024-02-01",
-      end: "2025-02-01",
-      daysRemaining: "100 days",
-      status: "Active",
-    },
-  ];
+  // Build stats box safely
+  const stats = statsData
+    ? [
+        { title: "Active Warranties", value: statsData.active, subtitle: "Currently covered" },
+        { title: "Expiring Soon", value: statsData.expireSoon, subtitle: "Within 30 days" },
+        { title: "Expired", value: statsData.expired, subtitle: "Need renewal" },
+        { title: "Total Warranties", value: statsData.warranties, subtitle: "All miners" },
+      ]
+    : [];
 
   return (
     <div className="p-5">
       {/* TABS */}
       <div className="flex gap-4 border-b border-[#DCDCDC]">
         <button
-          onClick={() => setActiveTab("manufacturer")}
+          onClick={() => {
+            setActiveTab("Manufacturer");
+            setPage(1);
+          }}
           className={`px-4 py-2 rounded-t-lg font-medium ${
-            activeTab === "manufacturer" ? "bg-[#E9F2FF] text-black" : "text-gray-500"
+            activeTab === "Manufacturer" ? "bg-[#E9F2FF] text-black" : "text-gray-500"
           }`}
         >
           Manufacturer Warranty
         </button>
 
         <button
-          onClick={() => setActiveTab("intermine")}
+          onClick={() => {
+            setActiveTab("Intermine");
+            setPage(1);
+          }}
           className={`px-4 py-2 rounded-t-lg font-medium ${
-            activeTab === "intermine" ? "bg-[#E9F2FF] text-black" : "text-gray-500"
+            activeTab === "Intermine" ? "bg-[#E9F2FF] text-black" : "text-gray-500"
           }`}
         >
           Intermine Warranty
         </button>
       </div>
-      {/* CARDS */}
-      <WarrantyStatsCard
-        stats={activeTab === "manufacturer" ? manufacturerStats : intermineStats}
+
+      {/* WARRANTY STATS (Now working!) */}
+      <WarrantyStatsCard stats={stats} />
+
+      {/* WARRANTY TABLE */}
+      <WarrantyTable
+        data={warranties}
+        isLoading={isLoading}
+        search={search}
+        setSearch={setSearch}
+        page={page}
+        totalPages={totalPages}
+        setPage={setPage}
       />
-      {/* TABLE + SEARCH */}
-      <WarrantyTable data={activeTab === "manufacturer" ? manufacturerData : intermineData} />
     </div>
   );
 }

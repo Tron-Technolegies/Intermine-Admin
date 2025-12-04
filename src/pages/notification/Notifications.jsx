@@ -48,7 +48,7 @@ export default function Notifications() {
               onClick={() => setShowUnseen(!showUnseen)}
             >
               <div
-                className={`w-5 h-5 bg-white rounded-full shadow transform transition mx-[2px]
+                className={`w-5 h-5 bg-white rounded-full shadow transform transition mx-0.5
                 ${showUnseen ? "translate-x-6" : ""}`}
               ></div>
             </div>

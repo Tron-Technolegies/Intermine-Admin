@@ -5,135 +5,95 @@ import FarmTable from "../../components/miningfarms/FarmTable";
 import SearchFilterBar from "../../components/SearchFilterBar";
 import { FaPen } from "react-icons/fa";
 
+import useFarms from "../../hooks/adminFarms/useFarms";
+import useFarmMiners from "../../hooks/adminFarms/useFarmsMiners";
+
 export default function MiningFarm() {
   const [openAdd, setOpenAdd] = useState(false);
   const [editFarm, setEditFarm] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedFarm, setSelectedFarm] = useState(null);
 
-  const [farms, setFarms] = useState([
-    { name: "AL FALAH", capacity: "70KWH", miners: sampleData },
-    { name: "AL ADLA", capacity: "100KWH", miners: sampleData },
-    { name: "DUBAI UNIT", capacity: "50KWH", miners: sampleData },
-    { name: "KSA LOT", capacity: "150KWH", miners: sampleData },
-  ]);
+  const [selectedFarm, setSelectedFarm] = useState("");
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
 
-  // FILTER MINERS BASED ON SEARCH
-  const filteredFarm = selectedFarm && {
-    ...selectedFarm,
-    miners: selectedFarm.miners.filter(
-      (m) =>
-        m.model.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        m.mac.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        m.worker.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        m.sl.toLowerCase().includes(searchTerm.toLowerCase())
-    ),
-  };
+  // LOAD ALL FARMS
+  const { data: farms, isLoading: loadingFarms } = useFarms();
+
+  // LOAD MINERS FOR SELECTED FARM
+  const { data: minersData, isLoading: loadingMiners } = useFarmMiners(selectedFarm, page, search);
+
+  const farmMiners = minersData?.miners || [];
+  const totalPages = minersData?.totalPages || 1;
 
   return (
     <div className="min-h-screen">
-      {/* HEADER */}
       <PageHeader
         title="Mining Farms"
-        subtitle="Manage system configuration, notifications, and administrative settings"
+        subtitle="Manage all mining farm locations and power capacity"
         buttonText="Add Farm"
+        onButtonClick={() => setOpenAdd(true)}
         ModalComponent={AddFarmModal}
-        onButtonClick={() => {
-          setEditFarm(null);
-          setOpenAdd(true);
-        }}
       />
 
+      {/* FARM CARDS */}
       <div className="bg-[#F5F5F5] m-4 rounded-lg p-4">
         <p className="text-2xl font-bold">Our Farms</p>
-        <p className="text-gray-500">View and manage Mining Farms information for all miners.</p>
+        <p className="text-gray-500">View and edit farm information.</p>
 
-        {/* FARM SCROLL LIST */}
         <div className="flex gap-3 overflow-x-auto mt-3">
-          {farms.map((f, i) => (
-            <div
-              key={i}
-              className="bg-white rounded-lg px-3 py-2 flex items-center gap-3 shadow min-w-[180px]"
-            >
-              <p className="font-semibold">
-                {f.name} ({f.capacity})
-              </p>
+          {!loadingFarms &&
+            farms?.map((farm) => (
+              <div
+                key={farm._id}
+                className="bg-white rounded-lg px-3 py-2 flex items-center gap-3 shadow min-w-[180px]"
+              >
+                <p className="font-semibold">
+                  {farm.farm} ({farm.capacity})
+                </p>
 
-              <FaPen
-                className="text-gray-600 cursor-pointer hover:text-black"
-                onClick={() => {
-                  setEditFarm(f);
-                  setOpenAdd(true);
-                }}
-              />
-            </div>
-          ))}
+                <FaPen
+                  className="text-gray-600 cursor-pointer hover:text-black"
+                  onClick={() => {
+                    setEditFarm(farm);
+                    setOpenAdd(true);
+                  }}
+                />
+              </div>
+            ))}
         </div>
 
-        {/* SEARCH BAR */}
+        {/* SEARCH + FARM DROPDOWN */}
         <SearchFilterBar
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          placeholder="Search Farm Locations by Model, Sl.No, Mac, Worker"
-          customDropdown={
-            <select
-              className="px-4 py-2.5 bg-white border border-gray-200 rounded-lg focus:outline-none"
-              onChange={(e) => setSelectedFarm(farms.find((f) => f.name === e.target.value))}
-            >
-              <option value="">All Farms</option>
-              {farms.map((f, i) => (
-                <option key={i}>{f.name}</option>
-              ))}
-            </select>
-          }
+          search={search}
+          onSearch={(v) => {
+            setSearch(v);
+            setPage(1);
+          }}
+          filterValue={selectedFarm}
+          onFilterChange={(v) => {
+            setSelectedFarm(v);
+            setPage(1);
+          }}
+          filterOptions={["ALL", ...(farms?.map((f) => f.farm) || [])]}
+          placeholder="Search miners by model, worker, SL, MAC..."
+          title="Farm Miners"
+          subtitle="Select a farm to view miners"
         />
 
-        {/* SHOW TABLE ONLY IF SELECTED */}
+        {/* SHOW MINERS TABLE */}
         {selectedFarm && (
-          <div className="mt-3">
-            <FarmTable farm={filteredFarm} />
-          </div>
+          <FarmTable
+            miners={farmMiners}
+            isLoading={loadingMiners}
+            page={page}
+            totalPages={totalPages}
+            setPage={setPage}
+          />
         )}
       </div>
 
-      {/* MODAL */}
-      {openAdd && (
-        <AddFarmModal onClose={() => setOpenAdd(false)} setFarms={setFarms} editFarm={editFarm} />
-      )}
+      {/* ADD / EDIT FARM MODAL */}
+      {openAdd && <AddFarmModal onClose={() => setOpenAdd(false)} editFarm={editFarm} />}
     </div>
   );
 }
-
-// SAMPLE DATA (DO NOT REMOVE)
-const sampleData = [
-  {
-    count: 1,
-    model: "Antminer KS5 20TH",
-    sl: "JYZZF1BBDJHA010S",
-    mac: "92:18:91:E2:21:29",
-    worker: "chrisbeck1212.005",
-    status: "Running",
-    note: "-",
-    kWh: 3.15,
-  },
-  {
-    count: 2,
-    model: "Antminer KS5 20TH",
-    sl: "JYZZF1BBDJHE008M",
-    mac: "5C:F4:18:49:21:16",
-    worker: "grueneberg.002",
-    status: "Running",
-    note: "-",
-    kWh: 3.15,
-  },
-  {
-    count: 3,
-    model: "Antminer KS5 20TH",
-    sl: "JYZZF1BBDJHE008M",
-    mac: "D0:28:26:49:F6:36",
-    worker: "grueneberg.002",
-    status: "Disconnected",
-    note: "Wire Down",
-    kWh: 3.15,
-  },
-];
