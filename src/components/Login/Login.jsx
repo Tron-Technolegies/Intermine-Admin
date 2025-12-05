@@ -12,16 +12,12 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const loginMutation = useMutation({
-    mutationFn: async () => api.post("/api/v1/auth/login", { email, password }),
+  const { mutate, isPending } = useMutation({
+    mutationFn: async () => api.post("/api/v1/auth/login", { email, password }), // api already includes withCredentials
 
     onSuccess: () => {
-      toast.success("Login Successful", { autoClose: 800 });
-
-      // Delay redirect slightly so cookie sets properly
-      setTimeout(() => {
-        window.location.href = "/"; // direct force navigation
-      }, 900);
+      toast.success("Login Successful!", { autoClose: 800 });
+      setTimeout(() => navigate("/", { replace: true }), 800);
     },
 
     onError: (err) => {
@@ -31,9 +27,8 @@ export default function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    loginMutation.mutate();
+    mutate();
   };
-
   return (
     <div className="flex flex-col md:flex-row h-screen overflow-hidden">
       <div
@@ -97,10 +92,10 @@ export default function Login() {
             </div>
             <button
               type="submit"
-              disabled={loginMutation.isPending}
+              disabled={isPending}
               className="w-full bg-blue-600 text-white py-2.5 rounded-full font-semibold hover:bg-blue-700"
             >
-              {loginMutation.isPending ? "Logging in..." : "Login"}
+              {isPending ? "Logging in..." : "Login"}
             </button>
           </form>
 

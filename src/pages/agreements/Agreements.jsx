@@ -20,7 +20,11 @@ export default function Agreements() {
         { title: "Total Agreements", value: stats.total },
         { title: "Signed Agreements", value: stats.signed, subtitle: "Completed signatures" },
         { title: "Pending Signatures", value: stats.pending, subtitle: "Awaiting signature" },
-        { title: "Completion Rate", value: `${stats.ratio}%`, subtitle: "Signature completion" },
+        {
+          title: "Completion Rate",
+          value: `${stats.ratio.toFixed(2)}%`,
+          subtitle: "Signature completion",
+        },
       ]
     : [];
 
