@@ -35,13 +35,16 @@ export default function HomeLayout() {
   }
 
   return (
-    <div className="flex">
+    <div className="flex h-screen overflow-hidden">
+      {/* Sidebar */}
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
-      <div className="flex flex-col flex-1 md:ml-64">
+      <div className="flex flex-col flex-1 lg:ml-64 transition-all duration-300">
+        {/* Header */}
         <Header setSidebarOpen={setSidebarOpen} />
 
-        <main className="p-4 bg-white min-h-screen mt-[60px]">
+        {/* Main content */}
+        <main className="p-4 bg-white min-h-screen mt-[60px] overflow-y-auto">
           <Outlet />
         </main>
       </div>

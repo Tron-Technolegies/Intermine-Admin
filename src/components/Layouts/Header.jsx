@@ -11,7 +11,7 @@ import { UserContext } from "../../UserContext";
 export default function Header({ setSidebarOpen }) {
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
   const navigate = useNavigate();
-  const { user } = useContext(UserContext); // <-- GET USER FROM CONTEXT
+  const { user } = useContext(UserContext);
 
   const logoutMutation = useMutation({
     mutationFn: async () => await api.post("/api/v1/auth/logout"),
@@ -32,9 +32,13 @@ export default function Header({ setSidebarOpen }) {
   };
 
   return (
-    <header className="bg-[#2B347A] text-white flex justify-between items-center px-4 md:px-6 py-3 shadow-sm fixed top-0 left-0 right-0 z-20">
+    <header
+      className="bg-[#2B347A] text-white flex justify-between items-center 
+px-4 md:px-6 py-3 shadow-sm fixed top-0 left-0 right-0 z-20"
+    >
       <div className="flex items-center gap-3">
-        <button className="md:hidden text-white" onClick={() => setSidebarOpen((prev) => !prev)}>
+        {/* Mobile menu button */}
+        <button className="lg:hidden text-white" onClick={() => setSidebarOpen((prev) => !prev)}>
           <MdOutlineMenu size={26} />
         </button>
 
@@ -44,10 +48,9 @@ export default function Header({ setSidebarOpen }) {
       <div className="flex items-center gap-6 relative">
         <Link to="/notifications" className="relative cursor-pointer">
           <IoNotificationsOutline size={22} />
-          {/* <span className="absolute -top-1 -right-1 bg-red-500 text-[9px] rounded-full h-3 w-3"></span> */}
         </Link>
 
-        {/* Profile Dropdown */}
+        {/* Profile dropdown */}
         <div
           onClick={() => setDropdownOpen(!dropdownOpen)}
           className="flex items-center gap-2 cursor-pointer select-none"
@@ -55,22 +58,26 @@ export default function Header({ setSidebarOpen }) {
           {user?.image ? (
             <img
               src={user.image}
-              alt="User"
               className="rounded-full h-8 w-8 border-2 border-white object-cover"
             />
           ) : (
-            <div className="h-8 w-8 rounded-full bg-white text-[#2B347A] font-bold flex items-center justify-center border-2 border-white">
+            <div
+              className="h-8 w-8 rounded-full bg-white text-[#2B347A] font-bold flex 
+        items-center justify-center border-2 border-white"
+            >
               {user?.name?.charAt(0)?.toUpperCase() || "A"}
             </div>
           )}
 
-          <span className="hidden sm:block text-sm font-medium">{user?.name || "Admin"}</span>
-
+          <span className="hidden sm:block text-sm font-medium">{user?.name}</span>
           <FaChevronDown size={12} />
         </div>
 
         {dropdownOpen && (
-          <div className="absolute right-0 top-12 bg-white text-gray-700 shadow-lg rounded-md w-40 z-30">
+          <div
+            className="absolute right-0 top-12 bg-white text-gray-700 shadow-lg 
+      rounded-md w-40 z-30"
+          >
             <Link
               to="/settings"
               className="w-full block px-4 py-2 hover:bg-gray-100 text-sm"
@@ -83,7 +90,8 @@ export default function Header({ setSidebarOpen }) {
 
             <button
               onClick={handleLogout}
-              className="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm text-red-500"
+              className="w-full text-left px-4 py-2 hover:bg-gray-100 
+          text-sm text-red-500"
             >
               Logout
             </button>

@@ -15,7 +15,7 @@ export default function ForgotPasswordPage() {
     },
     onSuccess: () => {
       toast.success("Verification code sent to your email");
-      // pass email to next step
+
       setTimeout(() => {
         navigate("/verify-otp", { state: { email } });
       }, 700);

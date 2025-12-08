@@ -20,12 +20,13 @@ import LoginPage from "./pages/auth/LoginPage";
 import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
 import VerifyOtpPage from "./pages/auth/VerifyOtpPage";
 import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
-import ProtectedRoute from "./routes/ProtectedRoute";
+import ErrorPage from "./pages/error/ErrorPage";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <HomeLayout />,
+    errorElement: <ErrorPage />,
     children: [
       { index: true, element: <Dashboard /> },
       { path: "miners", element: <MinersPage /> },

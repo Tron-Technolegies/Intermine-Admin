@@ -2,23 +2,37 @@ import React, { useState } from "react";
 import { IoClose } from "react-icons/io5";
 import useUsersDropdown from "../../hooks/adminAgreement/useUsersDropdown";
 import useAgreementActions from "../../hooks/adminAgreement/useAgreementActions";
+import { toast } from "react-toastify";
 
 export default function AgreementSendFormModal({ onClose }) {
   const [user, setUser] = useState("");
   const [type, setType] = useState("");
 
-  // USERS DROPDOWN API
   const { data: users = [] } = useUsersDropdown();
-
-  // YOUR EXISTING HOOK
   const { sendAgreement } = useAgreementActions();
 
   const handleSend = async () => {
-    if (!user || !type) return;
+    if (!user) {
+      toast.error("Please select a client");
+      return;
+    }
+    if (!type) {
+      toast.error("Please select an agreement type");
+      return;
+    }
 
-    await sendAgreement.mutateAsync({ user, type });
+    try {
+      // CALL API
+      await sendAgreement.mutateAsync({ user, type });
 
-    onClose();
+      toast.success("Agreement sent successfully!");
+      onClose();
+    } catch (err) {
+      const msg =
+        err?.response?.data?.error || err?.message || "Failed to send agreement. Please try again.";
+
+      toast.error(msg);
+    }
   };
 
   return (

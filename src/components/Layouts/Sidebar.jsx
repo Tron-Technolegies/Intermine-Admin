@@ -15,13 +15,17 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
       {sidebarOpen && (
         <div
           onClick={() => setSidebarOpen(false)}
-          className="fixed inset-0 bg-black/30 backdrop-blur-sm md:hidden z-20"
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm lg:hidden z-20"
         />
       )}
 
       <div
-        className={`bg-white h-screen border-r border-slate-200 flex flex-col w-64 fixed top-[60px] left-0 z-30 transition-transform duration-300
-        ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0 md:w-64`}
+        className={`
+      fixed top-[60px] left-0 h-full bg-white border-r border-slate-200 
+      w-64 z-30 transform transition-transform duration-300
+      ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
+      lg:translate-x-0
+    `}
       >
         <nav className="flex-1 p-4 space-y-3 mt-4">
           <NavLink
