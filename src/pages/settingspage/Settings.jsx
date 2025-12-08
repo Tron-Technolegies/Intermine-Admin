@@ -1,13 +1,15 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import PageHeader from "../../components/PageHeader";
 import api from "../../api/api";
 import { toast } from "react-toastify";
+import { UserContext } from "../../UserContext";
 
 export default function SettingsPage() {
+  const { user } = useContext(UserContext);
   const [formData, setFormData] = useState({
-    companyName: "",
-    companyAddress: "",
-    email: "",
+    companyName: user?.companyName || "",
+    companyAddress: user?.address?.street || "",
+    email: user?.email || "",
   });
 
   const [loading, setLoading] = useState(false);

@@ -1,10 +1,67 @@
-import React, { useState } from "react";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import React, { useEffect, useState } from "react";
+import api from "../../api/api";
+import useIssueTypes from "../../hooks/useIssueTypes";
+import { useReportIssue } from "../../hooks/useReportIssue";
 
 export default function ReportIssueModal({ onClose }) {
+  const { isLoading, data } = useQuery({
+    queryKey: ["miner-dropdown"],
+    queryFn: async () => {
+      const { data } = await api.get("/api/v1/dropdown/miners");
+      return data;
+    },
+  });
+  const { data: types } = useIssueTypes();
+  const { mutate } = useReportIssue();
+
   const [isOnline, setIsOnline] = useState(true);
+  const [workerId, setWorkerId] = useState("");
+  const [miner, setMiner] = useState(null);
+  const [minerId, setMinerId] = useState("");
+  const [issueObject, setIssueObject] = useState(null);
+  const [issue, setIssue] = useState("");
+  const [user, setUser] = useState("");
   const handleOutsideClick = (e) => {
     if (e.target.id === "overlay") onClose();
   };
+
+  useEffect(() => {
+    if (data?.length > 0) {
+      setMiner(data[0]);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (types?.length > 0) {
+      setIssueObject(types[0]);
+    }
+  }, [types]);
+
+  useEffect(() => {
+    if (miner) {
+      setWorkerId(miner.workerId);
+      setUser(miner.client);
+      setMinerId(miner._id);
+    }
+  }, [miner]);
+
+  useEffect(() => {
+    if (issueObject) {
+      setIssue(issueObject._id);
+    }
+  }, [issueObject]);
+
+  function handleClick() {
+    mutate({
+      user,
+      miner: minerId,
+      issue,
+      workerAddress: workerId,
+      offline: isOnline ? false : true,
+    });
+    onClose();
+  }
 
   return (
     <div
@@ -25,30 +82,58 @@ export default function ReportIssueModal({ onClose }) {
         {/* Inputs */}
         <div className="space-y-3">
           <div>
-            <label className="block text-gray-600 text-sm mb-1">Worker Address</label>
+            <label className="block text-gray-600 text-sm mb-1">
+              Miner Details
+            </label>
+            <select
+              type="text"
+              placeholder="Enter miner details"
+              value={minerId}
+              onChange={(e) => {
+                const selected = data.find((m) => m._id === e.target.value);
+                setMiner(selected);
+              }}
+              className="border rounded-lg w-full px-3 py-2 text-sm outline-none focus:ring focus:ring-gray-200"
+            >
+              {data &&
+                data.map((item) => (
+                  <option key={item._id} value={item._id}>
+                    {item.model}
+                  </option>
+                ))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-gray-600 text-sm mb-1">
+              Worker Address
+            </label>
             <input
               type="text"
+              value={workerId}
+              onChange={(e) => setWorkerId(e.target.value)}
               placeholder="Enter worker address"
               className="border rounded-lg w-full px-3 py-2 text-sm outline-none focus:ring focus:ring-gray-200"
             />
           </div>
 
           <div>
-            <label className="block text-gray-600 text-sm mb-1">Miner Details</label>
-            <input
-              type="text"
-              placeholder="Enter miner details"
+            <label className="block text-gray-600 text-sm mb-1">
+              Report what issue
+            </label>
+            <select
+              value={issue}
+              onChange={(e) => {
+                const selected = types.find((m) => m._id === e.target.value);
+                setIssueObject(selected);
+              }}
               className="border rounded-lg w-full px-3 py-2 text-sm outline-none focus:ring focus:ring-gray-200"
-            />
-          </div>
-
-          <div>
-            <label className="block text-gray-600 text-sm mb-1">Report what issue</label>
-            <select className="border rounded-lg w-full px-3 py-2 text-sm outline-none focus:ring focus:ring-gray-200">
-              <option>Low Hashrate</option>
-              <option>Overheating</option>
-              <option>Connection Issue</option>
-              <option>Power Failure</option>
+            >
+              {types &&
+                types.map((item) => (
+                  <option key={item._id} value={item._id}>
+                    {item.issueType}
+                  </option>
+                ))}
             </select>
           </div>
         </div>
@@ -72,13 +157,18 @@ export default function ReportIssueModal({ onClose }) {
                 }`}
               ></div>
             </div>
-            <span className="ml-2 text-sm">{isOnline ? "Online" : "Offline"}</span>
+            <span className="ml-2 text-sm">
+              {isOnline ? "Online" : "Offline"}
+            </span>
           </div>
         </div>
 
         {/* Button */}
-        <button className="bg-indigo-600 text-white w-full mt-5 py-2 rounded-lg">
-          Send to Service Provider
+        <button
+          className="bg-indigo-600 text-white w-full mt-5 py-2 rounded-lg"
+          onClick={handleClick}
+        >
+          Report Issue
         </button>
       </div>
     </div>

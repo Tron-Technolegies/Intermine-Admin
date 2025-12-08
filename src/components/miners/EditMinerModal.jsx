@@ -4,6 +4,8 @@ import api from "../../api/api";
 import { toast } from "react-toastify";
 
 export default function EditMinerModal({ minerData, onClose }) {
+  const [loc, setLoc] = useState("");
+
   // ====== Fetch Clients ======
   const { data: clients } = useQuery({
     queryKey: ["clients"],
@@ -26,48 +28,10 @@ export default function EditMinerModal({ minerData, onClose }) {
     },
   });
 
-  // ====== Form State ======
-  const [formData, setFormData] = useState({
-    client: "",
-    workerId: "",
-    serialNumber: "",
-    model: "",
-    status: "online",
-    location: "",
-    warranty: "",
-    poolAddress: "",
-    connectionDate: "",
-    hashRate: "",
-    power: "",
-    macAddress: "",
-  });
-
-  useEffect(() => {
-    if (minerData) {
-      setFormData({
-        client: minerData.client?._id || "",
-        workerId: minerData.workerId || "",
-        serialNumber: minerData.serialNumber || "",
-        model: minerData.model || "",
-        status: minerData.status || "online",
-        location: minerData.location?._id || "",
-        warranty: minerData.warranty || "",
-        poolAddress: minerData.poolAddress || "",
-        connectionDate: minerData.connectionDate?.split("T")[0] || "",
-        hashRate: minerData.hashRate || "",
-        power: minerData.power || "",
-        macAddress: minerData.macAddress || "",
-      });
-    }
-  }, [minerData]);
-
-  const handleChange = (e) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
   // ====== Update Mutation ======
   const updateMiner = useMutation({
-    mutationFn: (payload) => api.patch(`/api/v1/admin/miner/${minerData._id}`, payload),
+    mutationFn: (payload) =>
+      api.patch(`/api/v1/admin/miner/${minerData._id}`, payload),
     onSuccess: () => {
       toast.success("Miner updated successfully!");
       onClose();
@@ -79,26 +43,25 @@ export default function EditMinerModal({ minerData, onClose }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    updateMiner.mutate({
-      client: formData.client,
-      workerId: formData.workerId,
-      serialNumber: formData.serialNumber,
-      model: formData.model,
-      status: formData.status,
-      location: formData.location,
-      warranty: formData.warranty,
-      poolAddress: formData.poolAddress,
-      connectionDate: formData.connectionDate,
-      hashRate: Number(formData.hashRate),
-      power: Number(formData.power),
-      macAddress: formData.macAddress,
-    });
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData);
+    data.location = loc;
+    data.serviceProvider = "Dahab";
+    updateMiner.mutate(data);
   };
 
   const handleOutsideClick = (e) => {
     if (e.target.id === "overlay") onClose();
   };
+
+  useEffect(() => {
+    if (minerData && locations) {
+      const location = locations.find(
+        (item) => item.farm === minerData.location
+      );
+      if (location) setLoc(location._id);
+    }
+  }, [minerData, locations]);
 
   return (
     <div
@@ -121,8 +84,7 @@ export default function EditMinerModal({ minerData, onClose }) {
           {/* CLIENT */}
           <select
             name="client"
-            value={formData.client}
-            onChange={handleChange}
+            defaultValue={minerData?.client?._id}
             className="border p-2 rounded-md"
           >
             <option value="">Select Client</option>
@@ -136,35 +98,31 @@ export default function EditMinerModal({ minerData, onClose }) {
           {/* WORKER ID */}
           <input
             name="workerId"
-            value={formData.workerId}
-            onChange={handleChange}
             className="border p-2 rounded-md"
             placeholder="Worker ID"
+            defaultValue={minerData?.workerId}
           />
 
           {/* SERIAL NUMBER */}
           <input
             name="serialNumber"
-            value={formData.serialNumber}
-            onChange={handleChange}
             className="border p-2 rounded-md"
             placeholder="Serial Number"
+            defaultValue={minerData?.serialNumber}
           />
 
           {/* MODEL */}
           <input
             name="model"
-            value={formData.model}
-            onChange={handleChange}
             className="border p-2 rounded-md"
             placeholder="Model"
+            defaultValue={minerData?.model}
           />
 
           {/* STATUS */}
           <select
             name="status"
-            value={formData.status}
-            onChange={handleChange}
+            defaultValue={minerData?.status}
             className="border p-2 rounded-md"
           >
             <option value="online">Online</option>
@@ -174,8 +132,8 @@ export default function EditMinerModal({ minerData, onClose }) {
           {/* LOCATION */}
           <select
             name="location"
-            value={formData.location}
-            onChange={handleChange}
+            value={loc}
+            onChange={(e) => setLoc(e.target.value)}
             className="border p-2 rounded-md"
           >
             <option value="">Select Mining Farm</option>
@@ -189,8 +147,7 @@ export default function EditMinerModal({ minerData, onClose }) {
           {/* WARRANTY */}
           <input
             name="warranty"
-            value={formData.warranty}
-            onChange={handleChange}
+            defaultValue={minerData?.warranty}
             className="border p-2 rounded-md"
             placeholder="Warranty (years)"
           />
@@ -198,8 +155,7 @@ export default function EditMinerModal({ minerData, onClose }) {
           {/* POOL ADDRESS */}
           <input
             name="poolAddress"
-            value={formData.poolAddress}
-            onChange={handleChange}
+            defaultValue={minerData.poolAddress}
             className="border p-2 rounded-md"
             placeholder="Pool Address"
           />
@@ -207,17 +163,15 @@ export default function EditMinerModal({ minerData, onClose }) {
           {/* CONNECTION DATE */}
           <input
             type="date"
+            defaultValue={minerData?.connectionDate?.toString().slice(0, 10)}
             name="connectionDate"
-            value={formData.connectionDate}
-            onChange={handleChange}
             className="border p-2 rounded-md"
           />
 
           {/* HASH RATE */}
           <input
             name="hashRate"
-            value={formData.hashRate}
-            onChange={handleChange}
+            defaultValue={minerData?.hashRate}
             className="border p-2 rounded-md"
             placeholder="Hash Rate"
           />
@@ -225,8 +179,7 @@ export default function EditMinerModal({ minerData, onClose }) {
           {/* POWER */}
           <input
             name="power"
-            value={formData.power}
-            onChange={handleChange}
+            defaultValue={minerData?.power}
             className="border p-2 rounded-md"
             placeholder="Power (W)"
           />
@@ -234,13 +187,15 @@ export default function EditMinerModal({ minerData, onClose }) {
           {/* MAC ADDRESS */}
           <input
             name="macAddress"
-            value={formData.macAddress}
-            onChange={handleChange}
+            defaultValue={minerData?.macAddress}
             className="border p-2 rounded-md"
             placeholder="MAC Address"
           />
 
-          <button type="submit" className="bg-blue-900 text-white py-2 rounded-md">
+          <button
+            type="submit"
+            className="bg-blue-900 text-white py-2 rounded-md"
+          >
             Save Changes
           </button>
         </form>

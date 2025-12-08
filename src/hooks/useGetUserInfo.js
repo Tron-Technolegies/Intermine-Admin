@@ -11,6 +11,7 @@ export const useGetUserInfo = () => {
     queryKey: ["user-info"],
     queryFn: async () => {
       const { data } = await api.get("/api/v1/user/info");
+      setUser(data);
       return data;
     },
 

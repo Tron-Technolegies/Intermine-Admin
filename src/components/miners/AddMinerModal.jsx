@@ -34,34 +34,6 @@ export default function AddMinerModal({ onClose }) {
     },
   });
 
-  const [formData, setFormData] = useState({
-    client: "",
-    workerId: "",
-    serialNumber: "",
-    model: "",
-    status: "online",
-    location: "",
-    warranty: "",
-    poolAddress: "",
-    connectionDate: "",
-    serviceProvider: "DAHAB",
-    hashRate: "",
-    power: "",
-    macAddress: "",
-    warrantyType: "",
-  });
-
-  const handleChange = (e) => setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-
-  // --- validation (required by backend) ---
-  const validate = (data) => {
-    const errors = [];
-    if (!data.hashRate) errors.push("Hash Rate is required");
-    if (!data.power) errors.push("Power is required");
-    if (!data.macAddress) errors.push("Mac Address is required");
-    return errors;
-  };
-
   const addMiner = useMutation({
     mutationFn: (payload) => api.post("/api/v1/admin/miner/add", payload),
     onSuccess: () => {
@@ -71,7 +43,9 @@ export default function AddMinerModal({ onClose }) {
     onError: (err) => {
       console.log("ADD MINER ERROR:", err.response?.data);
       const message =
-        err.response?.data?.message || err.response?.data?.error || "Failed to add miner";
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        "Failed to add miner";
       toast.error(message);
     },
   });
@@ -103,30 +77,8 @@ export default function AddMinerModal({ onClose }) {
         <form
           onSubmit={(e) => {
             e.preventDefault();
-
-            const cleaned = {
-              client: formData.client,
-              workerId: formData.workerId.trim(),
-              serialNumber: formData.serialNumber.trim(),
-              model: formData.model.trim(),
-              status: formData.status,
-              location: formData.location,
-              warranty: Number(formData.warranty),
-              warrantyType: formData.warrantyType,
-              poolAddress: formData.poolAddress.trim(),
-              connectionDate: formData.connectionDate,
-              serviceProvider: formData.serviceProvider,
-              hashRate: Number(formData.hashRate),
-              power: Number(formData.power),
-              macAddress: formData.macAddress.trim(),
-            };
-
-            const errors = validate(cleaned);
-            if (errors.length) {
-              toast.error(errors.join(", "));
-              return;
-            }
-
+            const formdata = new FormData(e.target);
+            const cleaned = Object.fromEntries(formdata);
             addMiner.mutate(cleaned);
           }}
           className="flex flex-col gap-3"
@@ -134,8 +86,7 @@ export default function AddMinerModal({ onClose }) {
           {/* CLIENT DROPDOWN */}
           <select
             name="client"
-            value={formData.client}
-            onChange={handleChange}
+            required
             className="w-full border p-2 rounded-md mt-1"
           >
             <option value="">Select Client</option>
@@ -150,18 +101,16 @@ export default function AddMinerModal({ onClose }) {
           {/* WORKER ADDRESS */}
           <input
             name="workerId"
+            required
             placeholder="Worker Address"
-            value={formData.workerId}
-            onChange={handleChange}
             className="w-full border p-2 rounded-md"
           />
 
           {/* SERIAL/MINER ID */}
           <input
             name="serialNumber"
+            required
             placeholder="Miner Serial Number"
-            value={formData.serialNumber}
-            onChange={handleChange}
             className="w-full border p-2 rounded-md"
           />
 
@@ -169,16 +118,14 @@ export default function AddMinerModal({ onClose }) {
           <input
             name="model"
             placeholder="Model"
-            value={formData.model}
-            onChange={handleChange}
+            required
             className="w-full border p-2 rounded-md"
           />
 
           {/* STATUS */}
           <select
             name="status"
-            value={formData.status}
-            onChange={handleChange}
+            required
             className="w-full border p-2 rounded-md"
           >
             <option value="online">Online</option>
@@ -190,9 +137,8 @@ export default function AddMinerModal({ onClose }) {
             <label className="text-sm font-medium">Miner Location</label>
             <select
               name="location"
-              value={formData.location}
-              onChange={handleChange}
               className="w-full border p-2 rounded-md mt-1"
+              required
             >
               <option value="">Select Location</option>
               {!loadingLocations &&
@@ -208,15 +154,13 @@ export default function AddMinerModal({ onClose }) {
           <input
             name="warranty"
             placeholder="Warranty Period"
-            value={formData.warranty}
-            onChange={handleChange}
             className="w-full border p-2 rounded-md"
+            required
           />
 
           <select
             name="warrantyType"
-            value={formData.warrantyType}
-            onChange={handleChange}
+            required
             className="w-full border p-2 rounded-md"
           >
             <option value="">Select Warranty Type</option>
@@ -228,9 +172,8 @@ export default function AddMinerModal({ onClose }) {
           <input
             name="poolAddress"
             placeholder="Pool Address"
-            value={formData.poolAddress}
-            onChange={handleChange}
             className="w-full border p-2 rounded-md"
+            required
           />
 
           {/* HASH RATE (required) */}
@@ -238,9 +181,8 @@ export default function AddMinerModal({ onClose }) {
             name="hashRate"
             type="number"
             placeholder="Hash Rate"
-            value={formData.hashRate}
-            onChange={handleChange}
             className="w-full border p-2 rounded-md"
+            required
           />
 
           {/* POWER (required) */}
@@ -248,29 +190,33 @@ export default function AddMinerModal({ onClose }) {
             name="power"
             type="number"
             placeholder="Power"
-            value={formData.power}
-            onChange={handleChange}
             className="w-full border p-2 rounded-md"
+            required
           />
 
           {/* MAC ADDRESS (required) */}
           <input
             name="macAddress"
             placeholder="MAC Address"
-            value={formData.macAddress}
-            onChange={handleChange}
             className="w-full border p-2 rounded-md"
+            required
           />
 
           {/* CONNECTION DATE */}
+          <label>Connection Date</label>
           <input
             type="date"
             name="connectionDate"
-            value={formData.connectionDate}
-            onChange={handleChange}
             className="w-full border p-2 rounded-md"
+            required
           />
-
+          <label>Service Provider</label>
+          <input
+            value={"Dahab"}
+            name="serviceProvider"
+            className="w-full border p-2 rounded-md"
+            required
+          />
           {/* ADD BTN */}
           <button
             type="submit"
