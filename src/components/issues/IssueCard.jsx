@@ -39,7 +39,7 @@ export default function IssueCard({
 
         <p className="text-xs text-gray-500">Last update: {issue.lastUpdate}</p>
       </div>
-      <p className="font-semibold">{issue.miner.model}</p>
+      <p className="font-semibold">{issue?.model}</p>
       {/* Description */}
       <p className="text-gray-600 text-sm -mt-2">{issue.description}</p>
 

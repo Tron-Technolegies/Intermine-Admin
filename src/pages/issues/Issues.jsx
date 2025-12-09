@@ -23,7 +23,10 @@ export default function Issues() {
 
   // Get issue types
   const { data: issueTypesData } = useIssueTypes();
-  const dropdownOptions = ["All", ...(issueTypesData?.map((t) => t.issueType) || [])];
+  const dropdownOptions = [
+    "All",
+    ...(issueTypesData?.map((t) => t.issueType) || []),
+  ];
   const statusOptions = ["ALL", "Pending", "Warranty", "Resolved"];
 
   // Fetch issues list
@@ -127,6 +130,7 @@ export default function Issues() {
                 lastUpdate: new Date(issue.updatedAt).toLocaleString(),
                 minerServiceProvider: issue.miner?.serviceProvider,
                 serviceProvider: issue.miner?.serviceProvider,
+                model: issue.miner?.model,
               }}
               onRespond={() => setShowRespondModal(issue)}
               onChatOpen={(id) => setShowChatModal(id)}
@@ -145,7 +149,10 @@ export default function Issues() {
       </div>
       {/* Respond Modal */}
       {showRespondModal && (
-        <RespondIssueModal issue={showRespondModal} onClose={() => setShowRespondModal(null)} />
+        <RespondIssueModal
+          issue={showRespondModal}
+          onClose={() => setShowRespondModal(null)}
+        />
       )}
       {/* Reminder Popup */}
       {showRemindSuccess && (
@@ -157,10 +164,16 @@ export default function Issues() {
       )}
       {/* Add/Edit Modal */}
       {showAddTypeModal && (
-        <AddIssueModal onClose={() => setShowAddTypeModal(false)} editData={editTypeData} />
+        <AddIssueModal
+          onClose={() => setShowAddTypeModal(false)}
+          editData={editTypeData}
+        />
       )}
       {showChatModal && (
-        <ChatHistoryModal issueId={showChatModal} onClose={() => setShowChatModal(null)} />
+        <ChatHistoryModal
+          issueId={showChatModal}
+          onClose={() => setShowChatModal(null)}
+        />
       )}
     </div>
   );
