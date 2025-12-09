@@ -39,7 +39,10 @@ export default function AllMiners() {
   const [selectedMiner, setSelectedMiner] = useState(null);
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["miners", { page: currentPage, query: searchTerm, status: statusFilter }],
+    queryKey: [
+      "miners",
+      { page: currentPage, query: searchTerm, status: statusFilter },
+    ],
     queryFn: fetchMiners,
     keepPreviousData: true,
     refetchOnWindowFocus: false,
@@ -109,8 +112,12 @@ export default function AllMiners() {
         </div>
       </div>
 
-      {isLoading && <p className="text-center mt-10 font-semibold">Loading miners...</p>}
-      {isError && <p className="text-center text-red-500 mt-10">No miners found</p>}
+      {isLoading && (
+        <p className="text-center mt-10 font-semibold">Loading miners...</p>
+      )}
+      {isError && (
+        <p className="text-center text-red-500 mt-10">No miners found</p>
+      )}
 
       <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
         {miners.map((miner, index) => (
@@ -123,7 +130,10 @@ export default function AllMiners() {
                   <h3 className="text-xl font-bold text-gray-900 break-all">
                     {miner.serialNumber}
                   </h3>
-                  <p className="text-sm text-gray-500">{miner.model}</p>
+                  <div className="flex gap-2 items-center">
+                    <p className="text-sm text-gray-500">{miner.model}</p>
+                    <p className="text-sm text-gray-500">{miner.workerId}</p>
+                  </div>
                 </div>
               </div>
 
@@ -257,7 +267,10 @@ export default function AllMiners() {
       )}
       {showReport && <ReportIssueModal onClose={() => setShowReport(false)} />}
       {editForm && selectedMiner && (
-        <EditMinerModal minerData={selectedMiner} onClose={() => setEditForm(false)} />
+        <EditMinerModal
+          minerData={selectedMiner}
+          onClose={() => setEditForm(false)}
+        />
       )}
     </div>
   );

@@ -7,7 +7,13 @@ import { MdChatBubbleOutline } from "react-icons/md";
 import { BiMessageDetail } from "react-icons/bi";
 import ChatHistoryModal from "./ChatHistoryModal";
 
-export default function IssueCard({ issue, onRespond, onStatusUpdate, onChatOpen, onReminder }) {
+export default function IssueCard({
+  issue,
+  onRespond,
+  onStatusUpdate,
+  onChatOpen,
+  onReminder,
+}) {
   const [status, setStatus] = useState(issue.status);
   const [saving, setSaving] = useState(false);
 
@@ -33,7 +39,7 @@ export default function IssueCard({ issue, onRespond, onStatusUpdate, onChatOpen
 
         <p className="text-xs text-gray-500">Last update: {issue.lastUpdate}</p>
       </div>
-
+      <p className="font-semibold">{issue.miner.model}</p>
       {/* Description */}
       <p className="text-gray-600 text-sm -mt-2">{issue.description}</p>
 
