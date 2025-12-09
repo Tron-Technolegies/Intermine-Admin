@@ -1,15 +1,8 @@
 import React from "react";
 import { FiDownload, FiSend } from "react-icons/fi";
 
-export default function AgreementTable({
-  data,
-  isLoading,
-  page,
-  totalPages,
-  setPage,
-}) {
-  if (isLoading)
-    return <p className="text-center mt-4">Loading agreements...</p>;
+export default function AgreementTable({ data, isLoading, page, totalPages, setPage }) {
+  if (isLoading) return <p className="text-center mt-4">Loading agreements...</p>;
 
   const agreements = data || [];
 
@@ -17,8 +10,7 @@ export default function AgreementTable({
     <div className="bg-[#F5F5F5] rounded-lg p-4 mt-6">
       <h2 className="text-lg font-semibold mb-2">User Agreement Status</h2>
       <p className="text-sm text-gray-600 mb-3">
-        Track which users have signed agreements and manage electronic
-        signatures.
+        Track which users have signed agreements and manage electronic signatures.
       </p>
 
       {/* TABLE */}
@@ -26,15 +18,9 @@ export default function AgreementTable({
         <thead className="bg-white border-b border-gray-300">
           <tr className="text-sm text-gray-700">
             <th className="p-3 font-medium border-r border-gray-300">User</th>
-            <th className="p-3 font-medium border-r border-gray-300">
-              Agreement
-            </th>
-            <th className="p-3 font-medium border-r border-gray-300">
-              Sent Date
-            </th>
-            <th className="p-3 font-medium border-r border-gray-300">
-              Signed Date
-            </th>
+            <th className="p-3 font-medium border-r border-gray-300">Agreement</th>
+            <th className="p-3 font-medium border-r border-gray-300">Sent Date</th>
+            <th className="p-3 font-medium border-r border-gray-300">Signed Date</th>
             <th className="p-3 font-medium border-r border-gray-300">Status</th>
             <th className="p-3 font-medium">Actions</th>
           </tr>
@@ -43,23 +29,16 @@ export default function AgreementTable({
         <tbody>
           {agreements.map((item) => {
             const sentDate = new Date(item.issuedOn).toLocaleDateString();
-            const signedDate = item.signed
-              ? new Date(item.updatedAt).toLocaleDateString()
-              : "---";
+            const signedDate = item.signed ? new Date(item.updatedAt).toLocaleDateString() : "---";
 
             return (
-              <tr
-                key={item._id}
-                className="border-b border-gray-300 bg-blue-50 text-sm"
-              >
+              <tr key={item._id} className="border-b border-gray-300 bg-blue-50 text-sm">
                 <td className="p-3 border-r border-gray-300">
                   {item.user?.clientName || "Unknown"}
                   <p className="text-xs text-gray-500">{item.user?.clientId}</p>
                 </td>
 
-                <td className="p-3 border-r border-gray-300">
-                  {item.agreementType} Agreement
-                </td>
+                <td className="p-3 border-r border-gray-300">{item.agreementType} Agreement</td>
 
                 <td className="p-3 border-r border-gray-300">{sentDate}</td>
 
@@ -71,15 +50,9 @@ export default function AgreementTable({
 
                 <td className="p-3">
                   {item.signed ? (
-                    <FiDownload
-                      size={18}
-                      className="cursor-pointer hover:text-blue-500"
-                    />
+                    <FiDownload size={18} className="cursor-pointer hover:text-blue-500" />
                   ) : (
-                    <FiSend
-                      size={18}
-                      className="cursor-pointer hover:text-blue-500"
-                    />
+                    <FiSend size={18} className="cursor-pointer hover:text-blue-500" />
                   )}
                 </td>
               </tr>

@@ -22,7 +22,6 @@ export default function AgreementSendFormModal({ onClose }) {
     }
 
     try {
-      // CALL API
       await sendAgreement.mutateAsync({ user, type });
 
       toast.success("Agreement sent successfully!");

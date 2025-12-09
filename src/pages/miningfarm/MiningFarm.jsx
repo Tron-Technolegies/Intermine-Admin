@@ -12,7 +12,7 @@ export default function MiningFarm() {
   const [openAdd, setOpenAdd] = useState(false);
   const [editFarm, setEditFarm] = useState(null);
 
-  const [selectedFarm, setSelectedFarm] = useState("");
+  const [selectedFarm, setSelectedFarm] = useState("ALL");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FiSearch } from "react-icons/fi";
+
 export default function SearchFilterBar(props) {
-  // accept both naming styles
   const searchProp = props.search ?? props.searchTerm ?? "";
   const onSearchProp = props.onSearch ?? props.setSearchTerm ?? (() => {});
   const filterValueProp = props.filterValue ?? props.statusFilter ?? "";
@@ -13,15 +13,12 @@ export default function SearchFilterBar(props) {
   const title = props.title ?? "All Records";
   const subtitle = props.subtitle ?? "View and filter items.";
 
-  // local controlled input so typing doesn't hit backend until Search click
   const [localSearch, setLocalSearch] = useState(searchProp);
 
-  // keep local input in sync if parent programmatically changes search value
   useEffect(() => {
     setLocalSearch(searchProp ?? "");
   }, [searchProp]);
 
-  // auto-clear behavior: if input becomes empty -> trigger search("")
   useEffect(() => {
     if ((localSearch ?? "").trim() === "") {
       onSearchProp("");
@@ -32,14 +29,11 @@ export default function SearchFilterBar(props) {
     if (e.key === "Enter") e.preventDefault();
   };
 
-  // render dropdown: priority -> customDropdown JSX (old style) -> filterOptions (new style)
   const renderDropdown = () => {
     if (customDropdownProp) {
-      // If the customDropdown is a function (rare), call it with onFilterChange
       if (typeof customDropdownProp === "function") {
         return customDropdownProp(onFilterChangeProp);
       }
-      // otherwise it is JSX already
       return customDropdownProp;
     }
 
@@ -52,7 +46,6 @@ export default function SearchFilterBar(props) {
         >
           {filterOptionsProp.map((opt) =>
             typeof opt === "object" ? (
-              // support {label, value}
               <option key={opt.value} value={opt.value}>
                 {opt.label}
               </option>
@@ -66,7 +59,6 @@ export default function SearchFilterBar(props) {
       );
     }
 
-    // nothing to show
     return null;
   };
 
@@ -77,8 +69,10 @@ export default function SearchFilterBar(props) {
         <p className="text-gray-600">{subtitle}</p>
       </div>
 
-      <div className="p-4 mb-6 flex gap-4 items-center">
-        <div className="flex-1 relative">
+      {/* RESPONSIVE WRAP FIX */}
+      <div className="p-4 mb-6 flex flex-wrap gap-4 items-center">
+        {/* Search Input */}
+        <div className="flex-1 min-w-[250px] relative">
           <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
           <input
             type="text"
@@ -90,14 +84,16 @@ export default function SearchFilterBar(props) {
           />
         </div>
 
+        {/* Search Button */}
         <button
           onClick={() => onSearchProp(localSearch)}
-          className="px-6 py-2.5 bg-[#2B347A] text-white rounded-lg hover:bg-[#1f275c]"
+          className="px-6 py-2.5 bg-[#2B347A] text-white rounded-lg hover:bg-[#1f275c] whitespace-nowrap"
         >
           Search
         </button>
 
-        <div>{renderDropdown()}</div>
+        {/* Dropdown */}
+        <div className="min-w-[150px]">{renderDropdown()}</div>
       </div>
     </div>
   );
