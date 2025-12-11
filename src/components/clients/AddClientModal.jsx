@@ -32,6 +32,32 @@ export default function AddClientModal({ onClose }) {
     },
   });
 
+  const bulkUpload = useMutation({
+    mutationFn: (formData) =>
+      api.post("api/v1/admin/user/bulk", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      }),
+
+    onSuccess: () => {
+      toast.success("Bulk Upload Successful!");
+      setTimeout(() => onClose(), 600);
+    },
+
+    onError: (err) => {
+      toast.error(err.response?.data?.error || "Bulk upload failed");
+    },
+  });
+
+  const handleCSVUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const fd = new FormData();
+    fd.append("file", file);
+
+    bulkUpload.mutate(fd);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -54,14 +80,37 @@ export default function AddClientModal({ onClose }) {
       onClick={onClose}
     >
       <div
-        className="relative bg-white rounded-2xl p-6 w-[420px] shadow-lg"
+        className="relative bg-white rounded-2xl p-6 w-[420px] shadow-lg max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Close Icon */}
         <button onClick={onClose} className="absolute top-3 right-3 text-gray-500 hover:text-black">
           <IoClose size={22} />
         </button>
+
         <h2 className="text-xl font-semibold text-gray-900 mb-1">Add New Client</h2>
-        <p className="text-sm text-gray-500 mb-5">Create a new client account.</p>
+        <p className="text-sm text-gray-500 mb-3">Create a new client or upload CSV file.</p>
+
+        <div className="mb-4">
+          <input
+            type="file"
+            accept=".csv"
+            id="csvUpload"
+            className="hidden"
+            onChange={handleCSVUpload}
+          />
+
+          <button
+            type="button"
+            onClick={() => document.getElementById("csvUpload").click()}
+            className="w-full bg-[#3893D0] text-white py-2 rounded-md"
+          >
+            {bulkUpload.isPending ? "Uploading..." : "Upload CSV File"}
+          </button>
+        </div>
+
+        {/* Divider */}
+        <div className="text-center text-xs text-gray-400 my-3">OR</div>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           <div>
@@ -74,6 +123,7 @@ export default function AddClientModal({ onClose }) {
               className="w-full border border-gray-300 rounded-md p-2 mt-1 focus:ring-blue-500"
             />
           </div>
+
           <div>
             <label className="text-sm text-gray-700">Client ID</label>
             <input

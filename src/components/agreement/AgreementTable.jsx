@@ -1,8 +1,9 @@
 import React from "react";
 import { FiDownload, FiSend } from "react-icons/fi";
+import Loading from "../Loading";
 
 export default function AgreementTable({ data, isLoading, page, totalPages, setPage }) {
-  if (isLoading) return <p className="text-center mt-4">Loading agreements...</p>;
+  if (isLoading) return <Loading />;
 
   const agreements = data || [];
 

@@ -5,6 +5,7 @@ import SearchFilterBar from "../../components/SearchFilterBar";
 import ClientCard from "../../components/clients/ClientCard";
 import AddClientModal from "../../components/clients/AddClientModal";
 import useClients from "../../hooks/useClients";
+import Loading from "../../components/Loading";
 
 export default function Clients() {
   const [page, setPage] = useState(1);
@@ -14,7 +15,7 @@ export default function Clients() {
   const navigate = useNavigate();
   const { data, error, isLoading } = useClients(page, search, status);
 
-  if (isLoading) return <div className="p-6 text-center text-gray-500">Loading clients...</div>;
+  if (isLoading) return <Loading />;
   if (error) return <div className="p-6 text-center text-red-500">{error.message}</div>;
 
   return (

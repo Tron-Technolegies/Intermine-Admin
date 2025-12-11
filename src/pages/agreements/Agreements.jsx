@@ -29,24 +29,33 @@ export default function Agreements() {
     : [];
 
   return (
-    <div className="p-1">
-      <PageHeader
-        title="Agreement"
-        subtitle="Create and manage mining agreement models."
-        buttonText="Send Agreement"
-        buttonIcon={AiOutlineSend}
-        ModalComponent={AgreementSendFormModal}
-      />
+    <div className="w-full px-2 sm:px-4 md:px-6 lg:px-8 py-2">
+      {/* PAGE HEADER */}
+      <div className="mb-4">
+        <PageHeader
+          title="Agreement"
+          subtitle="Create and manage mining agreement models."
+          buttonText="Send Agreement"
+          buttonIcon={AiOutlineSend}
+          ModalComponent={AgreementSendFormModal}
+        />
+      </div>
 
-      <AgreementStatsCard stats={statBlocks} />
+      {/* STATS CARD (Responsive Grid handled inside component) */}
+      <div className="mt-2">
+        <AgreementStatsCard stats={statBlocks} />
+      </div>
 
-      <AgreementTable
-        data={data?.agreements}
-        isLoading={isLoading}
-        page={page}
-        totalPages={data?.totalPages || 1}
-        setPage={setPage}
-      />
+      {/* AGREEMENT TABLE */}
+      <div className="mt-4">
+        <AgreementTable
+          data={data?.agreements}
+          isLoading={isLoading}
+          page={page}
+          totalPages={data?.totalPages || 1}
+          setPage={setPage}
+        />
+      </div>
     </div>
   );
 }

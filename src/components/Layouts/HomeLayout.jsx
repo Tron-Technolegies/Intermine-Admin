@@ -4,6 +4,7 @@ import Sidebar from "./Sidebar";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useGetUserInfo } from "../../hooks/useGetUserInfo";
 import { UserContext } from "../../UserContext";
+import Loading from "../Loading";
 
 export default function HomeLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -31,7 +32,7 @@ export default function HomeLayout() {
   }, [isSuccess, data, navigate, setUser]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   return (

@@ -12,6 +12,7 @@ import EditMinerModal from "./EditMinerModal";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import api from "../../api/api";
+import Loading from "../Loading";
 
 const fetchMiners = async ({ queryKey }) => {
   const [_key, { page, query, status }] = queryKey;
@@ -39,10 +40,7 @@ export default function AllMiners() {
   const [selectedMiner, setSelectedMiner] = useState(null);
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: [
-      "miners",
-      { page: currentPage, query: searchTerm, status: statusFilter },
-    ],
+    queryKey: ["miners", { page: currentPage, query: searchTerm, status: statusFilter }],
     queryFn: fetchMiners,
     keepPreviousData: true,
     refetchOnWindowFocus: false,
@@ -112,12 +110,8 @@ export default function AllMiners() {
         </div>
       </div>
 
-      {isLoading && (
-        <p className="text-center mt-10 font-semibold">Loading miners...</p>
-      )}
-      {isError && (
-        <p className="text-center text-red-500 mt-10">No miners found</p>
-      )}
+      {isLoading && <Loading />}
+      {isError && <p className="text-center text-red-500 mt-10">No miners found</p>}
 
       <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
         {miners.map((miner, index) => (
@@ -267,10 +261,7 @@ export default function AllMiners() {
       )}
       {showReport && <ReportIssueModal onClose={() => setShowReport(false)} />}
       {editForm && selectedMiner && (
-        <EditMinerModal
-          minerData={selectedMiner}
-          onClose={() => setEditForm(false)}
-        />
+        <EditMinerModal minerData={selectedMiner} onClose={() => setEditForm(false)} />
       )}
     </div>
   );

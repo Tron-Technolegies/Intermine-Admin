@@ -1,5 +1,7 @@
+import Loading from "../Loading";
+
 export default function FarmTable({ miners = [], isLoading, page, totalPages, setPage }) {
-  if (isLoading) return <p className="text-center mt-4">Loading miners...</p>;
+  if (isLoading) return <Loading />;
 
   if (!miners || miners.length === 0)
     return <p className="text-center mt-4 text-gray-500">No miners found</p>;

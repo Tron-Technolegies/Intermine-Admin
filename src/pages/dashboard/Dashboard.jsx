@@ -8,11 +8,12 @@ import ActiveMiners from "../../components/overview/ActiveMiners";
 import RecentIssues from "../../components/overview/RecentIssues";
 
 import useOverviewActions from "../../hooks/useOverviewActions";
+import Loading from "../../components/Loading";
 
 export default function Dashboard() {
   const { stats, graph, isLoading, isError } = useOverviewActions("month");
 
-  if (isLoading) return <p>Loading dashboard...</p>;
+  if (isLoading) return <Loading />;
   if (isError) return <p>Error loading dashboard data</p>;
 
   return (
