@@ -10,7 +10,7 @@ export default function PageHeader({
   const [showModal, setShowModal] = useState(false);
 
   return (
-    <div className="p-6 border-b border-[#DCDCDC] flex items-center justify-between bg-white rounded-t-xl">
+    <div className="md:p-6 p-3 border-b border-[#DCDCDC] flex md:flex-row flex-col md:items-center items-start gap-2 justify-between bg-white rounded-t-xl">
       <div>
         <h1 className="text-2xl font-semibold text-black">{title}</h1>
         <p className="text-md text-gray-500">{subtitle}</p>
@@ -22,7 +22,11 @@ export default function PageHeader({
             onClick={() => setShowModal(true)}
             className="bg-[#3893D0] hover:bg-[#2c7cb5] text-white rounded-xl px-4 py-1 transition-all flex items-center gap-2"
           >
-            {ButtonIcon ? <ButtonIcon size={18} /> : <span className="text-lg font-bold">+</span>}
+            {ButtonIcon ? (
+              <ButtonIcon size={18} />
+            ) : (
+              <span className="text-lg font-bold">+</span>
+            )}
             {buttonText}
           </button>
 

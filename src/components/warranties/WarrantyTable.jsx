@@ -3,6 +3,13 @@ import { CiSearch } from "react-icons/ci";
 import { FiEdit } from "react-icons/fi";
 import UpdateWarrantyModal from "./UpdateWarrantyModal";
 import dayjs from "dayjs";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
 
 export default function WarrantyTable({
   data,
@@ -28,7 +35,7 @@ export default function WarrantyTable({
   };
 
   return (
-    <div className="mt-10 bg-[#F5F5F5] p-5 rounded-2xl shadow-sm">
+    <div className="mt-10 bg-[#F5F5F5] lg:p-5 p-3 rounded-2xl shadow-sm max-w-[90vw]">
       <p className="text-xl font-semibold">All Warranties</p>
       <p className="text-gray-500 mb-4 text-sm">
         View and manage warranty information for all miners.
@@ -47,74 +54,182 @@ export default function WarrantyTable({
       </div>
 
       {/* TABLE */}
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse border border-[#DCDCDC] min-w-[900px]">
-          <thead>
-            <tr className="bg-white text-left">
-              <th className="p-3">Miner</th>
-              <th className="p-3">Client</th>
-              <th className="p-3">Type</th>
-              <th className="p-3">Start Date</th>
-              <th className="p-3">End Date</th>
-              <th className="p-3">Days Remaining</th>
-              <th className="p-3">Status</th>
-              <th></th>
-            </tr>
-          </thead>
-
-          <tbody>
+      <TableContainer component={Paper} sx={{ marginTop: 3 }}>
+        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <TableHead>
+            <TableRow sx={{ backgroundColor: "#F9FAFB" }}>
+              <TableCell
+                sx={{
+                  textAlign: "center",
+                  fontWeight: "bold",
+                }}
+              >
+                Miner
+              </TableCell>
+              <TableCell
+                sx={{
+                  textAlign: "center",
+                  fontWeight: "bold",
+                }}
+              >
+                Client
+              </TableCell>
+              <TableCell
+                sx={{
+                  textAlign: "center",
+                  fontWeight: "bold",
+                }}
+              >
+                Type
+              </TableCell>
+              <TableCell
+                sx={{
+                  textAlign: "center",
+                  fontWeight: "bold",
+                }}
+              >
+                Start Date
+              </TableCell>
+              <TableCell
+                sx={{
+                  textAlign: "center",
+                  fontWeight: "bold",
+                }}
+              >
+                End Date
+              </TableCell>
+              <TableCell
+                sx={{
+                  textAlign: "center",
+                  fontWeight: "bold",
+                }}
+              >
+                Days Remaining
+              </TableCell>
+              <TableCell
+                sx={{
+                  textAlign: "center",
+                  fontWeight: "bold",
+                }}
+              >
+                Status
+              </TableCell>
+              <TableCell
+                sx={{
+                  textAlign: "center",
+                  fontWeight: "bold",
+                }}
+              >
+                Action
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody sx={{ background: "#eff6ff" }}>
             {!isLoading &&
-              data.map((w) => (
-                <tr key={w._id} className="border-y border-[#DCDCDC] bg-[#E9F2FF]">
-                  <td className="p-3">
-                    {w.miner?.model}
-                    <br />
-                    <span className="text-xs text-gray-500">SN: {w.miner?.serialNumber}</span>
-                  </td>
-                  <td className="p-3">
-                    {w.user?.clientName}
-                    <br />
-                    <span className="text-xs text-gray-500">{w.user?.clientId}</span>
-                  </td>
-
-                  <td className="p-3">{w.warrantyType}</td>
-                  <td className="p-3">{dayjs(w.startDate).format("YYYY-MM-DD")}</td>
-                  <td className="p-3">{dayjs(w.endDate).format("YYYY-MM-DD")}</td>
-
-                  {/* Days Remaining */}
-                  <td className="p-3">{calcDaysRemaining(w.endDate)}</td>
-
-                  {/* STATUS BADGE */}
-                  <td className="p-3">
-                    <span
-                      className={`px-2 py-1 rounded-full text-white ${
-                        getStatus(w.endDate) === "Active"
-                          ? "bg-green-600"
-                          : getStatus(w.endDate) === "Expired"
-                          ? "bg-red-600"
-                          : "bg-yellow-600"
-                      }`}
+              data?.map((item) => {
+                return (
+                  <TableRow
+                    key={item._id}
+                    sx={{
+                      "&:last-child td, &:last-child th": { border: 0 },
+                    }}
+                  >
+                    <TableCell
+                      component="th"
+                      scope="row"
+                      sx={{ textAlign: "center" }}
                     >
-                      {getStatus(w.endDate)}
-                    </span>
-                  </td>
-
-                  <td className="p-2">
-                    <FiEdit className="w-5 h-5 cursor-pointer" onClick={() => setEditItem(w)} />
-                  </td>
-                </tr>
-              ))}
-
+                      {item.miner?.model}
+                      <br />
+                      <span className="text-xs text-gray-500">
+                        SN: {item.miner?.serialNumber}
+                      </span>
+                    </TableCell>
+                    <TableCell
+                      component="th"
+                      scope="row"
+                      sx={{ textAlign: "center" }}
+                    >
+                      {item.user?.clientName}
+                      <br />
+                      <span className="text-xs text-gray-500">
+                        {item.user?.clientId}
+                      </span>
+                    </TableCell>
+                    <TableCell
+                      component="th"
+                      scope="row"
+                      sx={{ textAlign: "center" }}
+                    >
+                      {item.warrantyType}
+                    </TableCell>
+                    <TableCell
+                      component="th"
+                      scope="row"
+                      sx={{ textAlign: "center" }}
+                    >
+                      {dayjs(item.startDate).format("YYYY-MM-DD")}
+                    </TableCell>
+                    <TableCell
+                      component="th"
+                      scope="row"
+                      sx={{ textAlign: "center" }}
+                    >
+                      {dayjs(item.endDate).format("YYYY-MM-DD")}
+                    </TableCell>
+                    <TableCell
+                      component="th"
+                      scope="row"
+                      sx={{ textAlign: "center" }}
+                    >
+                      {calcDaysRemaining(item.endDate)}
+                    </TableCell>
+                    <TableCell
+                      component="th"
+                      scope="row"
+                      sx={{ textAlign: "center" }}
+                    >
+                      <span
+                        className={`px-2 py-1 rounded-full text-white ${
+                          getStatus(item.endDate) === "Active"
+                            ? "bg-green-600"
+                            : getStatus(item.endDate) === "Expired"
+                            ? "bg-red-600"
+                            : "bg-yellow-600"
+                        }`}
+                      >
+                        {getStatus(item.endDate)}
+                      </span>
+                    </TableCell>
+                    <TableCell
+                      component="th"
+                      scope="row"
+                      sx={{ textAlign: "center" }}
+                    >
+                      <div className="flex justify-center">
+                        <FiEdit
+                          className="w-5 h-5 cursor-pointer"
+                          onClick={() => setEditItem(w)}
+                        />
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             {!isLoading && data.length === 0 && (
-              <tr>
-                <td colSpan="8" className="text-center py-5 text-gray-500">
-                  No warranties found.
-                </td>
-              </tr>
+              <TableRow>
+                <TableCell
+                  component="th"
+                  scope="row"
+                  sx={{ textAlign: "center" }}
+                >
+                  No Warranties Found
+                </TableCell>
+              </TableRow>
             )}
-          </tbody>
-        </table>
-      </div>
+          </TableBody>
+        </Table>
+      </TableContainer>
 
       {/* PAGINATION */}
       <div className="flex justify-center gap-4 mt-6">
@@ -140,7 +255,12 @@ export default function WarrantyTable({
       </div>
 
       {/* UPDATE WARRANTY MODAL */}
-      {editItem && <UpdateWarrantyModal item={editItem} onClose={() => setEditItem(null)} />}
+      {editItem && (
+        <UpdateWarrantyModal
+          item={editItem}
+          onClose={() => setEditItem(null)}
+        />
+      )}
     </div>
   );
 }

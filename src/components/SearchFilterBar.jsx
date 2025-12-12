@@ -5,7 +5,8 @@ export default function SearchFilterBar(props) {
   const searchProp = props.search ?? props.searchTerm ?? "";
   const onSearchProp = props.onSearch ?? props.setSearchTerm ?? (() => {});
   const filterValueProp = props.filterValue ?? props.statusFilter ?? "";
-  const onFilterChangeProp = props.onFilterChange ?? props.setStatusFilter ?? (() => {});
+  const onFilterChangeProp =
+    props.onFilterChange ?? props.setStatusFilter ?? (() => {});
   const filterOptionsProp = props.filterOptions ?? null;
   const customDropdownProp = props.customDropdown ?? null;
 
@@ -70,10 +71,13 @@ export default function SearchFilterBar(props) {
       </div>
 
       {/* RESPONSIVE WRAP FIX */}
-      <div className="p-4 mb-6 flex flex-wrap gap-4 items-center">
+      <div className=" mb-6 flex flex-wrap gap-4 items-center">
         {/* Search Input */}
         <div className="flex-1 min-w-[250px] relative">
-          <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+          <FiSearch
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+            size={20}
+          />
           <input
             type="text"
             placeholder={placeholder}
@@ -93,7 +97,7 @@ export default function SearchFilterBar(props) {
         </button>
 
         {/* Dropdown */}
-        <div className="min-w-[150px]">{renderDropdown()}</div>
+        <div className="md:min-w-[150px]">{renderDropdown()}</div>
       </div>
     </div>
   );

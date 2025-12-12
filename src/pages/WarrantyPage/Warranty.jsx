@@ -22,15 +22,31 @@ export default function Warranty() {
   // Build stats box safely
   const stats = statsData
     ? [
-        { title: "Active Warranties", value: statsData.active, subtitle: "Currently covered" },
-        { title: "Expiring Soon", value: statsData.expireSoon, subtitle: "Within 30 days" },
-        { title: "Expired", value: statsData.expired, subtitle: "Need renewal" },
-        { title: "Total Warranties", value: statsData.warranties, subtitle: "All miners" },
+        {
+          title: "Active Warranties",
+          value: statsData.active,
+          subtitle: "Currently covered",
+        },
+        {
+          title: "Expiring Soon",
+          value: statsData.expireSoon,
+          subtitle: "Within 30 days",
+        },
+        {
+          title: "Expired",
+          value: statsData.expired,
+          subtitle: "Need renewal",
+        },
+        {
+          title: "Total Warranties",
+          value: statsData.warranties,
+          subtitle: "All miners",
+        },
       ]
     : [];
 
   return (
-    <div className="p-5">
+    <div className="lg:p-5 p-3">
       {/* TABS */}
       <div className="flex gap-4 border-b border-[#DCDCDC]">
         <button
@@ -39,7 +55,9 @@ export default function Warranty() {
             setPage(1);
           }}
           className={`px-4 py-2 rounded-t-lg font-medium ${
-            activeTab === "Manufacturer" ? "bg-[#E9F2FF] text-black" : "text-gray-500"
+            activeTab === "Manufacturer"
+              ? "bg-[#E9F2FF] text-black"
+              : "text-gray-500"
           }`}
         >
           Manufacturer Warranty
@@ -51,7 +69,9 @@ export default function Warranty() {
             setPage(1);
           }}
           className={`px-4 py-2 rounded-t-lg font-medium ${
-            activeTab === "Intermine" ? "bg-[#E9F2FF] text-black" : "text-gray-500"
+            activeTab === "Intermine"
+              ? "bg-[#E9F2FF] text-black"
+              : "text-gray-500"
           }`}
         >
           Intermine Warranty

@@ -20,7 +20,11 @@ export default function MiningFarm() {
   const { data: farms, isLoading: loadingFarms } = useFarms();
 
   // LOAD MINERS FOR SELECTED FARM
-  const { data: minersData, isLoading: loadingMiners } = useFarmMiners(selectedFarm, page, search);
+  const { data: minersData, isLoading: loadingMiners } = useFarmMiners(
+    selectedFarm,
+    page,
+    search
+  );
 
   const farmMiners = minersData?.miners || [];
   const totalPages = minersData?.totalPages || 1;
@@ -36,16 +40,16 @@ export default function MiningFarm() {
       />
 
       {/* FARM CARDS */}
-      <div className="bg-[#F5F5F5] m-4 rounded-lg p-4">
+      <div className="bg-[#F5F5F5] my-4 rounded-lg p-4 flex flex-col gap-3">
         <p className="text-2xl font-bold">Our Farms</p>
         <p className="text-gray-500">View and edit farm information.</p>
 
-        <div className="flex gap-3 overflow-x-auto mt-3">
+        <div className="flex gap-3 flex-wrap mt-3 max-h-[300px] overflow-y-scroll my-3">
           {!loadingFarms &&
             farms?.map((farm) => (
               <div
                 key={farm._id}
-                className="bg-white rounded-lg px-3 py-2 flex items-center gap-3 shadow min-w-[180px]"
+                className="bg-white rounded-lg px-3 py-2 flex items-center gap-3 shadow md:min-w-[180px]"
               >
                 <p className="font-semibold">
                   {farm.farm} ({farm.capacity})
@@ -93,7 +97,9 @@ export default function MiningFarm() {
       </div>
 
       {/* ADD / EDIT FARM MODAL */}
-      {openAdd && <AddFarmModal onClose={() => setOpenAdd(false)} editFarm={editFarm} />}
+      {openAdd && (
+        <AddFarmModal onClose={() => setOpenAdd(false)} editFarm={editFarm} />
+      )}
     </div>
   );
 }

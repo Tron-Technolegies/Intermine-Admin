@@ -18,8 +18,16 @@ export default function Agreements() {
   const statBlocks = stats
     ? [
         { title: "Total Agreements", value: stats.total },
-        { title: "Signed Agreements", value: stats.signed, subtitle: "Completed signatures" },
-        { title: "Pending Signatures", value: stats.pending, subtitle: "Awaiting signature" },
+        {
+          title: "Signed Agreements",
+          value: stats.signed,
+          subtitle: "Completed signatures",
+        },
+        {
+          title: "Pending Signatures",
+          value: stats.pending,
+          subtitle: "Awaiting signature",
+        },
         {
           title: "Completion Rate",
           value: `${stats.ratio.toFixed(2)}%`,
@@ -29,9 +37,9 @@ export default function Agreements() {
     : [];
 
   return (
-    <div className="w-full px-2 sm:px-4 md:px-6 lg:px-8 py-2">
+    <div className=" px-2 sm:px-4 md:px-6 lg:px-8 py-2 flex flex-col gap-2 ">
       {/* PAGE HEADER */}
-      <div className="mb-4">
+      <div className="">
         <PageHeader
           title="Agreement"
           subtitle="Create and manage mining agreement models."
@@ -42,12 +50,12 @@ export default function Agreements() {
       </div>
 
       {/* STATS CARD (Responsive Grid handled inside component) */}
-      <div className="mt-2">
+      <div className="">
         <AgreementStatsCard stats={statBlocks} />
       </div>
 
       {/* AGREEMENT TABLE */}
-      <div className="mt-4">
+      <div className="">
         <AgreementTable
           data={data?.agreements}
           isLoading={isLoading}

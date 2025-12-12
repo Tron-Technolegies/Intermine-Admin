@@ -1,4 +1,11 @@
 import React, { useEffect, useState } from "react";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
 import { FiSearch } from "react-icons/fi";
 import { MdClose } from "react-icons/md";
 import EditMessageModal from "../../components/pending/EditMessageModal";
@@ -9,7 +16,10 @@ import { IoSendOutline } from "react-icons/io5";
 import PageHeader from "../../components/PageHeader";
 import api from "../../api/api";
 import { toast } from "react-toastify";
-import { cancelPendingMessage, releasePendingMessage } from "../../hooks/useMessageActions";
+import {
+  cancelPendingMessage,
+  releasePendingMessage,
+} from "../../hooks/useMessageActions";
 
 export default function PendingMessages() {
   const [messages, setMessages] = useState([]);
@@ -45,17 +55,18 @@ export default function PendingMessages() {
     fetchMessages();
   }, [currentPage, searchTerm]);
 
-  const countStatus = (status) => messages.filter((x) => x.status === status).length;
+  const countStatus = (status) =>
+    messages.filter((x) => x.status === status).length;
 
   return (
-    <div className="">
+    <div className="w-full">
       <PageHeader
         title="Pending Messages"
         subtitle="Real-time issues across clients and machines"
       />
 
       {/* Summary */}
-      <div className="grid grid-cols-3 gap-4 bg-[#F5F5F5] p-6 mt-4 rounded-xl">
+      <div className="grid lg:grid-cols-3 gap-4 bg-[#F5F5F5] p-6 mt-4 rounded-xl w-full">
         <SummaryCard
           number={countStatus("Pending")}
           title="Pending Review"
@@ -80,12 +91,16 @@ export default function PendingMessages() {
 
       <p className="font-semibold text-lg mt-6 mb-2">All Messages</p>
       <p className="text-gray-500 mb-4">
-        Review messages from Operations. Edit if needed, then release to send to clients or reject.
+        Review messages from Operations. Edit if needed, then release to send to
+        clients or reject.
       </p>
 
       {/* SEARCH */}
       <div className="relative mb-5">
-        <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+        <FiSearch
+          className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+          size={20}
+        />
         <input
           type="text"
           placeholder="Search by subject, client or miner..."
@@ -97,74 +112,166 @@ export default function PendingMessages() {
 
       {/* TABLE */}
       {/* TABLE WRAPPER FOR RESPONSIVE SCROLL */}
-      <div className="border rounded-lg overflow-hidden w-full overflow-x-auto">
-        <div className="min-w-[900px]">
-          {/* TABLE HEADER */}
-          <div className="grid grid-cols-7 font-semibold bg-white text-gray-700 border-b px-4 py-3">
-            <span>Message ID</span>
-            <span>Subject</span>
-            <span>Client</span>
-            <span>Miner</span>
-            <span>Status</span>
-            <span>Created</span>
-            <span>Actions</span>
-          </div>
-
-          {/* TABLE ROWS */}
-          {loading ? (
-            <p className="text-center py-6">Loading...</p>
-          ) : (
-            messages.map((m) => (
-              <div
-                key={m._id}
-                className="grid grid-cols-7 items-center text-sm border-b py-3 px-4 bg-blue-50"
+      <TableContainer component={Paper} sx={{ marginTop: 3, maxWidth: "90vw" }}>
+        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <TableHead>
+            <TableRow sx={{ backgroundColor: "#F9FAFB" }}>
+              <TableCell
+                sx={{
+                  textAlign: "center",
+                  fontWeight: "bold",
+                }}
               >
-                {/* WRAP LONG ID INTO 2 LINES */}
-                <span className="break-all max-w-[110px] text-xs leading-tight">{m._id}</span>
-
-                <span className="font-medium">
-                  {m.issueType}
-                  <br />
-                  <span className="text-gray-500 text-xs">{m.message.slice(0, 30)}...</span>
-                </span>
-
-                <span>{m.clientName}</span>
-                <span>{m.miner}</span>
-
-                {/* STATUS */}
-                <span>
-                  <span
-                    className={`px-3 py-1 rounded-full text-white text-xs
-              ${m.status === "Pending" ? "bg-gray-600" : "bg-blue-500"}`}
+                Message Id
+              </TableCell>
+              <TableCell
+                sx={{
+                  textAlign: "center",
+                  fontWeight: "bold",
+                }}
+              >
+                Subject
+              </TableCell>
+              <TableCell
+                sx={{
+                  textAlign: "center",
+                  fontWeight: "bold",
+                }}
+              >
+                Client
+              </TableCell>
+              <TableCell
+                sx={{
+                  textAlign: "center",
+                  fontWeight: "bold",
+                }}
+              >
+                Miner
+              </TableCell>
+              <TableCell
+                sx={{
+                  textAlign: "center",
+                  fontWeight: "bold",
+                }}
+              >
+                Status
+              </TableCell>
+              <TableCell
+                sx={{
+                  textAlign: "center",
+                  fontWeight: "bold",
+                }}
+              >
+                Created
+              </TableCell>
+              <TableCell
+                sx={{
+                  textAlign: "center",
+                  fontWeight: "bold",
+                }}
+              >
+                Actions
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody sx={{ background: "#eff6ff" }}>
+            {loading ? (
+              <p className="text-center py-6 w-full">Loading.....</p>
+            ) : (
+              messages?.map((item) => {
+                return (
+                  <TableRow
+                    key={item._id}
+                    sx={{
+                      "&:last-child td, &:last-child th": { border: 0 },
+                    }}
                   >
-                    {m.status}
-                  </span>
-                </span>
+                    <TableCell
+                      component="th"
+                      scope="row"
+                      sx={{ textAlign: "center" }}
+                    >
+                      {item._id}
+                    </TableCell>
+                    <TableCell
+                      component="th"
+                      scope="row"
+                      sx={{ textAlign: "center" }}
+                    >
+                      <span className="font-medium">
+                        {item.issueType}
+                        <br />
+                        <span className="text-gray-500 text-xs">
+                          {item.message.slice(0, 30)}...
+                        </span>
+                      </span>
+                    </TableCell>
+                    <TableCell
+                      component="th"
+                      scope="row"
+                      sx={{ textAlign: "center" }}
+                    >
+                      {item.clientName}
+                    </TableCell>
+                    <TableCell
+                      component="th"
+                      scope="row"
+                      sx={{ textAlign: "center" }}
+                    >
+                      {item.miner}
+                    </TableCell>
+                    <TableCell
+                      component="th"
+                      scope="row"
+                      sx={{ textAlign: "center" }}
+                    >
+                      <span
+                        className={`px-3 py-1 rounded-full text-white text-xs
+              ${item.status === "Pending" ? "bg-gray-600" : "bg-blue-500"}`}
+                      >
+                        {item.status}
+                      </span>
+                    </TableCell>
+                    <TableCell
+                      component="th"
+                      scope="row"
+                      sx={{ textAlign: "center" }}
+                    >
+                      {new Date(item.createdAt).toLocaleString()}
+                    </TableCell>
+                    <TableCell
+                      component="th"
+                      scope="row"
+                      sx={{ textAlign: "center" }}
+                    >
+                      <div className="flex gap-3 text-lg items-center">
+                        <TbEdit
+                          className="cursor-pointer text-gray-600 hover:text-black h-6 w-6"
+                          onClick={() => setEditData(m)}
+                        />
 
-                <span className="text-xs sm:text-sm">{new Date(m.createdAt).toLocaleString()}</span>
+                        <IoSendOutline
+                          className="cursor-pointer text-green-600 hover:text-green-800 h-6 w-6"
+                          onClick={() =>
+                            releasePendingMessage(m).then(fetchMessages)
+                          }
+                        />
 
-                {/* ACTIONS */}
-                <div className="flex gap-3 text-lg items-center">
-                  <TbEdit
-                    className="cursor-pointer text-gray-600 hover:text-black h-6 w-6"
-                    onClick={() => setEditData(m)}
-                  />
-
-                  <IoSendOutline
-                    className="cursor-pointer text-green-600 hover:text-green-800 h-6 w-6"
-                    onClick={() => releasePendingMessage(m).then(fetchMessages)}
-                  />
-
-                  <MdClose
-                    className="cursor-pointer text-red-600 hover:text-red-800 h-6 w-6"
-                    onClick={() => cancelPendingMessage(m).then(fetchMessages)}
-                  />
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-      </div>
+                        <MdClose
+                          className="cursor-pointer text-red-600 hover:text-red-800 h-6 w-6"
+                          onClick={() =>
+                            cancelPendingMessage(m).then(fetchMessages)
+                          }
+                        />
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
       {/* PAGINATION */}
       <div className="flex justify-center gap-3 mt-6">
