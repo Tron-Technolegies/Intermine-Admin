@@ -20,11 +20,11 @@ export default function SearchFilterBar(props) {
     setLocalSearch(searchProp ?? "");
   }, [searchProp]);
 
-  useEffect(() => {
-    if ((localSearch ?? "").trim() === "") {
-      onSearchProp("");
-    }
-  }, [localSearch, onSearchProp]);
+  // useEffect(() => {
+  //   if ((localSearch ?? "").trim() === "") {
+  //     onSearchProp("");
+  //   }
+  // }, [localSearch, onSearchProp]);
 
   const disableEnter = (e) => {
     if (e.key === "Enter") e.preventDefault();

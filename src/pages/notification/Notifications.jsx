@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FiSearch, FiBell } from "react-icons/fi";
 import { FaCheckCircle } from "react-icons/fa";
 import PageHeader from "../../components/PageHeader";
@@ -9,39 +9,66 @@ import useNotificationActions from "../../hooks/notifications/useNotificationAct
 
 export default function Notifications() {
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [showUnseen, setShowUnseen] = useState(false);
   const [page, setPage] = useState(1);
 
   const status = showUnseen ? "UNREAD" : "ALL";
 
-  const { data, isLoading } = useAdminNotifications(page, search, status);
+  const { data, isLoading } = useAdminNotifications(
+    page,
+    debouncedSearch,
+    status
+  );
   const { markAll, markOne } = useNotificationActions();
 
   // Wrap mutate with toast feedback
   const handleMarkAll = () => {
     markAll.mutate(undefined, {
       onSuccess: () => toast.success("All notifications marked as seen"),
-      onError: (err) => toast.error(err?.response?.data?.message || "Failed to mark all as seen"),
+      onError: (err) =>
+        toast.error(
+          err?.response?.data?.message || "Failed to mark all as seen"
+        ),
     });
   };
 
   const handleMarkOne = (id) => {
     markOne.mutate(id, {
       onSuccess: () => toast.success("Marked as read"),
-      onError: (err) => toast.error(err?.response?.data?.message || "Failed to mark notification"),
+      onError: (err) =>
+        toast.error(
+          err?.response?.data?.message || "Failed to mark notification"
+        ),
     });
   };
 
   const notifications = data?.notifications || [];
   const totalPages = data?.totalPages || 1;
 
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch((prev) => {
+        return search;
+      });
+    }, 800);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [search]);
   return (
     <div>
-      <PageHeader title="Notifications" subtitle="Real-time issues across clients and machines" />
+      <PageHeader
+        title="Notifications"
+        subtitle="Real-time issues across clients and machines"
+      />
 
       <div className="bg-[#F5F5F5] p-6 mt-4 rounded-xl">
         <h2 className="text-xl font-semibold">Machine Problem Alerts</h2>
-        <p className="text-gray-500 mb-5">Real-time issues across clients and machines</p>
+        <p className="text-gray-500 mb-5">
+          Real-time issues across clients and machines
+        </p>
 
         {/* Search + Toggle + Button */}
         <div className="flex items-center gap-4 mb-5">
@@ -108,12 +135,14 @@ export default function Notifications() {
                   <p className="font-semibold text-gray-900">{n.problem}</p>
 
                   <p className="text-gray-600 text-sm mt-1">
-                    Client: <span className="font-medium">{n.client?.clientName}</span>
+                    Client:{" "}
+                    <span className="font-medium">{n.client?.clientName}</span>
                   </p>
 
                   <p className="text-gray-600 text-sm">
                     Miner: <span className="font-medium">{n.miner?.model}</span>
-                    &nbsp;• Worker ID: <span className="font-medium">{n.miner?.workerId}</span>
+                    &nbsp;• Worker ID:{" "}
+                    <span className="font-medium">{n.miner?.workerId}</span>
                   </p>
 
                   <p className="text-gray-500 text-xs mt-1">
@@ -143,6 +172,28 @@ export default function Notifications() {
               </div>
             );
           })}
+        </div>
+        {/* PAGINATION */}
+        <div className="flex justify-center gap-4 mt-4">
+          <button
+            disabled={page === 1}
+            onClick={() => setPage((p) => p - 1)}
+            className="px-4 py-2 border rounded disabled:opacity-40"
+          >
+            Prev
+          </button>
+
+          <span className="py-2">
+            Page {page} / {totalPages}
+          </span>
+
+          <button
+            disabled={page === totalPages}
+            onClick={() => setPage((p) => p + 1)}
+            className="px-4 py-2 border rounded disabled:opacity-40"
+          >
+            Next
+          </button>
         </div>
       </div>
     </div>

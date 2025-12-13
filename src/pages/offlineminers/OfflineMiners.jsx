@@ -101,7 +101,9 @@ export default function OfflineMiners() {
         </div>
       )}
 
-      {isError && <p className="text-center text-red-500 mt-6">Failed to load miners</p>}
+      {isError && (
+        <p className="text-center text-red-500 mt-6">Failed to load miners</p>
+      )}
 
       {!isLoading && !isError && (
         <Paper
@@ -130,7 +132,11 @@ export default function OfflineMiners() {
                     <TableCell
                       key={head}
                       className="bg-gray-50 text-gray-600 font-semibold"
-                      sx={{ fontWeight: "bold", color: "#4b5563", whiteSpace: "nowrap" }}
+                      sx={{
+                        fontWeight: "bold",
+                        color: "#4b5563",
+                        whiteSpace: "nowrap",
+                      }}
                     >
                       {head}
                     </TableCell>
@@ -145,10 +151,14 @@ export default function OfflineMiners() {
 
                     <TableCell sx={{ whiteSpace: "nowrap" }}>
                       {m.client?.clientName}{" "}
-                      <span className="text-xs text-gray-400">({m.client?.clientId})</span>
+                      <span className="text-xs text-gray-400">
+                        ({m.client?.clientId})
+                      </span>
                     </TableCell>
 
-                    <TableCell sx={{ whiteSpace: "nowrap" }}>{m.model}</TableCell>
+                    <TableCell sx={{ whiteSpace: "nowrap" }}>
+                      {m.model}
+                    </TableCell>
 
                     <TableCell>
                       <span
@@ -164,16 +174,22 @@ export default function OfflineMiners() {
                       {m.currentIssue?.issue?.issueType || "-"}
                     </TableCell>
 
-                    <TableCell sx={{ whiteSpace: "nowrap" }}>{m.location}</TableCell>
+                    <TableCell sx={{ whiteSpace: "nowrap" }}>
+                      {m.location}
+                    </TableCell>
 
-                    <TableCell sx={{ whiteSpace: "nowrap" }}>{m.serviceProvider}</TableCell>
+                    <TableCell sx={{ whiteSpace: "nowrap" }}>
+                      {m.serviceProvider}
+                    </TableCell>
 
                     <TableCell sx={{ minWidth: 200 }}>
                       {m.currentIssue ? (
                         <>
                           {m.currentIssue.status}
                           <span className="text-[10px] text-gray-400 block whitespace-nowrap">
-                            {new Date(m.currentIssue.updatedAt).toLocaleTimeString()}
+                            {new Date(
+                              m.currentIssue.updatedAt
+                            ).toLocaleTimeString()}
                           </span>
                         </>
                       ) : (
@@ -195,17 +211,30 @@ export default function OfflineMiners() {
               </TableBody>
             </Table>
           </TableContainer>
-
-          <TablePagination
-            component="div"
-            rowsPerPage={rowsPerPage}
-            rowsPerPageOptions={[rowsPerPage]} // fixed by backend
-            count={totalCount}
-            page={currentPage - 1}
-            onPageChange={handleChangePage}
-          />
         </Paper>
       )}
+      {/* PAGINATION */}
+      <div className="flex justify-center gap-4 mt-4">
+        <button
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage((p) => p - 1)}
+          className="px-4 py-2 border rounded disabled:opacity-40"
+        >
+          Prev
+        </button>
+
+        <span className="py-2">
+          Page {currentPage} / {totalPages}
+        </span>
+
+        <button
+          disabled={currentPage === totalPages}
+          onClick={() => setCurrentPage((p) => p + 1)}
+          className="px-4 py-2 border rounded disabled:opacity-40"
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 }

@@ -14,6 +14,7 @@ import SearchFilterBar from "../../components/SearchFilterBar";
 export default function Issues() {
   const [selectedType, setSelectedType] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
+  const [page, setPage] = useState(1);
 
   const [showAddTypeModal, setShowAddTypeModal] = useState(false);
   const [editTypeData, setEditTypeData] = useState(null);
@@ -30,7 +31,11 @@ export default function Issues() {
   const statusOptions = ["ALL", "Pending", "Warranty", "Resolved"];
 
   // Fetch issues list
-  const { data: issuesData, isLoading } = useIssues(selectedType, searchTerm);
+  const { data: issuesData, isLoading } = useIssues(
+    selectedType,
+    searchTerm,
+    page
+  );
   const issues = issuesData?.issues || [];
 
   // Actions
@@ -146,6 +151,28 @@ export default function Issues() {
               }
             />
           ))}
+      </div>
+      {/* PAGINATION */}
+      <div className="flex justify-center gap-4 mt-4">
+        <button
+          disabled={page === 1}
+          onClick={() => setPage((p) => p - 1)}
+          className="px-4 py-2 border rounded disabled:opacity-40"
+        >
+          Prev
+        </button>
+
+        <span className="py-2">
+          Page {page} / {issuesData?.totalPages}
+        </span>
+
+        <button
+          disabled={page === issuesData?.totalPages}
+          onClick={() => setPage((p) => p + 1)}
+          className="px-4 py-2 border rounded disabled:opacity-40"
+        >
+          Next
+        </button>
       </div>
       {/* Respond Modal */}
       {showRespondModal && (
