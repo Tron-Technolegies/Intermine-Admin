@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../../api/api";
 import { toast } from "react-toastify";
 
 export default function EditMinerModal({ minerData, onClose }) {
   const [loc, setLoc] = useState("");
+  const queryClient = useQueryClient();
 
   // ====== Fetch Clients ======
   const { data: clients } = useQuery({
@@ -30,8 +31,10 @@ export default function EditMinerModal({ minerData, onClose }) {
 
   // ====== Update Mutation ======
   const updateMiner = useMutation({
-    mutationFn: (payload) => api.patch(`/api/v1/admin/miner/${minerData._id}`, payload),
+    mutationFn: (payload) =>
+      api.patch(`/api/v1/admin/miner/${minerData._id}`, payload),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["miners"] });
       toast.success("Miner updated successfully!");
       onClose();
     },
@@ -54,7 +57,9 @@ export default function EditMinerModal({ minerData, onClose }) {
 
   useEffect(() => {
     if (minerData && locations) {
-      const location = locations.find((item) => item.farm === minerData.location);
+      const location = locations.find(
+        (item) => item.farm === minerData.location
+      );
       if (location) setLoc(location._id);
     }
   }, [minerData, locations]);
@@ -203,7 +208,10 @@ export default function EditMinerModal({ minerData, onClose }) {
             required
           />
 
-          <button type="submit" className="bg-blue-900 text-white py-2 rounded-md">
+          <button
+            type="submit"
+            className="bg-blue-900 text-white py-2 rounded-md"
+          >
             Save Changes
           </button>
         </form>

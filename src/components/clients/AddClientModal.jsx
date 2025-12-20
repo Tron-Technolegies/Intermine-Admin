@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { IoClose } from "react-icons/io5";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../../api/api";
 import { toast } from "react-toastify";
 
 export default function AddClientModal({ onClose }) {
+  const queryClient = useQueryClient();
   const [formData, setFormData] = useState({
     name: "",
     clientId: "",
@@ -23,6 +24,7 @@ export default function AddClientModal({ onClose }) {
     mutationFn: async () => api.post("/api/v1/auth/register", formData),
 
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["clients"] });
       toast.success("Client registered successfully");
       setTimeout(() => onClose(), 700);
     },
@@ -84,12 +86,19 @@ export default function AddClientModal({ onClose }) {
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Icon */}
-        <button onClick={onClose} className="absolute top-3 right-3 text-gray-500 hover:text-black">
+        <button
+          onClick={onClose}
+          className="absolute top-3 right-3 text-gray-500 hover:text-black"
+        >
           <IoClose size={22} />
         </button>
 
-        <h2 className="text-xl font-semibold text-gray-900 mb-1">Add New Client</h2>
-        <p className="text-sm text-gray-500 mb-3">Create a new client or upload CSV file.</p>
+        <h2 className="text-xl font-semibold text-gray-900 mb-1">
+          Add New Client
+        </h2>
+        <p className="text-sm text-gray-500 mb-3">
+          Create a new client or upload CSV file.
+        </p>
 
         <div className="mb-4">
           <input
@@ -176,7 +185,9 @@ export default function AddClientModal({ onClose }) {
               onChange={handleChange}
               className="accent-blue-600"
             />
-            <label className="text-sm text-gray-700">Include Mining Agreement</label>
+            <label className="text-sm text-gray-700">
+              Include Mining Agreement
+            </label>
           </div>
 
           <button

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://intermine-backend.onrender.com",
+  baseURL: "https://api.intermine-solutions.de",
   withCredentials: true,
 });
 

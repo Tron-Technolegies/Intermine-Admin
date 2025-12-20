@@ -14,21 +14,35 @@ export default function Dashboard() {
   const { stats, graph, isLoading, isError } = useOverviewActions("month");
 
   if (isLoading) return <Loading />;
-  if (isError) return <p>Error loading dashboard data</p>;
+  // if (isError) return <p>Error loading dashboard data</p>;
 
   return (
     <div className="space-y-6 ">
       <div>
         <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
-        <p className="text-gray-500 text-sm">Welcome back, Admin. Here’s what’s happening today.</p>
+        <p className="text-gray-500 text-sm">
+          Welcome back, Admin. Here’s what’s happening today.
+        </p>
       </div>
 
       {/* Stats Section */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <StatsCard title="Total Miners" value={stats.miners} icon={<FiCpu />} />
-        <StatsCard title="Miners Online" value={stats.onlineMiners} icon={<FiCheckCircle />} />
-        <StatsCard title="Offline Miners" value={stats.offlineMiners} icon={<TbCancel />} />
-        <StatsCard title="Pending Issues" value={stats.issues} icon={<FiAlertTriangle />} />
+        <StatsCard
+          title="Miners Online"
+          value={stats.onlineMiners}
+          icon={<FiCheckCircle />}
+        />
+        <StatsCard
+          title="Offline Miners"
+          value={stats.offlineMiners}
+          icon={<TbCancel />}
+        />
+        <StatsCard
+          title="Pending Issues"
+          value={stats.issues}
+          icon={<FiAlertTriangle />}
+        />
       </div>
 
       {/* Chart Section */}

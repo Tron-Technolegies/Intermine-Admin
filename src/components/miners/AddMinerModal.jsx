@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { IoClose } from "react-icons/io5";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../../api/api";
 import { toast } from "react-toastify";
 
 export default function AddMinerModal({ onClose }) {
+  const queryClient = useQueryClient();
   const { data: clients, isLoading: loadingClients } = useQuery({
     queryKey: ["clients"],
     queryFn: async () => {
@@ -37,6 +38,7 @@ export default function AddMinerModal({ onClose }) {
   const addMiner = useMutation({
     mutationFn: (payload) => api.post("/api/v1/admin/miner/add", payload),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["miners"] });
       toast.success("Miner Added Successfully");
       setTimeout(onClose, 400);
     },
