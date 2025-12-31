@@ -21,6 +21,7 @@ import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
 import VerifyOtpPage from "./pages/auth/VerifyOtpPage";
 import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
 import ErrorPage from "./pages/error/ErrorPage";
+import SingleMinerPage from "./pages/myminers/SingleMinerPage";
 
 const router = createBrowserRouter([
   {
@@ -30,6 +31,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Dashboard /> },
       { path: "miners", element: <MinersPage /> },
+      { path: "miners/:id", element: <SingleMinerPage /> },
       { path: "clients", element: <Clients /> },
       { path: "clients/:id", element: <ClientDetails /> },
       { path: "issues", element: <Issues /> },

@@ -1,8 +1,10 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://api.intermine-solutions.de",
+  baseURL: "http://localhost:3000",
   withCredentials: true,
 });
 
 export default api;
+
+// https://api.intermine-solutions.de

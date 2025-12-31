@@ -83,13 +83,14 @@ export default function AddMinerModal({ onClose }) {
             const cleaned = Object.fromEntries(formdata);
             addMiner.mutate(cleaned);
           }}
-          className="flex flex-col gap-3"
+          className="flex flex-col gap-2"
         >
           {/* CLIENT DROPDOWN */}
+          <label className="text-xs">Client</label>
           <select
             name="client"
             required
-            className="w-full border p-2 rounded-md mt-1"
+            className="w-full border p-2 rounded-md"
           >
             <option value="">Select Client</option>
             {!loadingClients &&
@@ -101,22 +102,23 @@ export default function AddMinerModal({ onClose }) {
           </select>
 
           {/* WORKER ADDRESS */}
+          <label className="text-xs">Worker Id</label>
           <input
             name="workerId"
-            required
             placeholder="Worker Address"
             className="w-full border p-2 rounded-md"
           />
 
           {/* SERIAL/MINER ID */}
+          <label className="text-xs">Serial Number</label>
           <input
             name="serialNumber"
-            required
             placeholder="Miner Serial Number"
             className="w-full border p-2 rounded-md"
           />
 
           {/* MODEL */}
+          <label className="text-xs">Model</label>
           <input
             name="model"
             placeholder="Model"
@@ -125,6 +127,7 @@ export default function AddMinerModal({ onClose }) {
           />
 
           {/* STATUS */}
+          <label className="text-xs">Status</label>
           <select
             name="status"
             required
@@ -132,16 +135,19 @@ export default function AddMinerModal({ onClose }) {
           >
             <option value="online">Online</option>
             <option value="offline">Offline</option>
+            <option value="In Transit">In Transit</option>
           </select>
-
+          {/* Tracking Link */}
+          <label className="text-xs">Tracking Link</label>
+          <input
+            name="tracking"
+            placeholder="Enter tracking id (optional)"
+            className="w-full border p-2 rounded-md"
+          />
           {/* LOCATION DROPDOWN */}
           <div>
-            <label className="text-sm font-medium">Miner Location</label>
-            <select
-              name="location"
-              className="w-full border p-2 rounded-md mt-1"
-              required
-            >
+            <label className="text-xs">Miner Location</label>
+            <select name="location" className="w-full border p-2 rounded-md">
               <option value="">Select Location</option>
               {!loadingLocations &&
                 locations?.map((l) => (
@@ -153,16 +159,17 @@ export default function AddMinerModal({ onClose }) {
           </div>
 
           {/* WARRANTY */}
+          <label className="text-xs">Warranty</label>
           <input
             name="warranty"
+            required
             placeholder="Warranty Period"
             className="w-full border p-2 rounded-md"
-            required
           />
-
+          <label className="text-xs">Warranty Type</label>
           <select
-            name="warrantyType"
             required
+            name="warrantyType"
             className="w-full border p-2 rounded-md"
           >
             <option value="">Select Warranty Type</option>
@@ -171,14 +178,15 @@ export default function AddMinerModal({ onClose }) {
           </select>
 
           {/* POOL ADDRESS */}
+          <label className="text-xs">Pool Address</label>
           <input
             name="poolAddress"
             placeholder="Pool Address"
             className="w-full border p-2 rounded-md"
-            required
           />
 
           {/* HASH RATE (required) */}
+          <label className="text-xs">Hashrate</label>
           <input
             name="hashRate"
             type="number"
@@ -188,6 +196,7 @@ export default function AddMinerModal({ onClose }) {
           />
 
           {/* POWER (required) */}
+          <label className="text-xs">Power</label>
           <input
             name="power"
             type="number"
@@ -197,22 +206,21 @@ export default function AddMinerModal({ onClose }) {
           />
 
           {/* MAC ADDRESS (required) */}
+          <label className="text-xs">Mac Address</label>
           <input
             name="macAddress"
             placeholder="MAC Address"
             className="w-full border p-2 rounded-md"
-            required
           />
 
           {/* CONNECTION DATE */}
-          <label>Connection Date</label>
+          <label className="text-xs">Connection Date</label>
           <input
             type="date"
             name="connectionDate"
             className="w-full border p-2 rounded-md"
-            required
           />
-          <label>Service Provider</label>
+          <label className="text-xs">Service Provider</label>
           <input
             value={"Dahab"}
             name="serviceProvider"

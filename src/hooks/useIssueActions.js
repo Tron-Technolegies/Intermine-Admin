@@ -30,6 +30,9 @@ export default function useIssueActions() {
         serviceProvider,
         serialNumber,
       }),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["issues"]);
+    },
   });
 
   return {

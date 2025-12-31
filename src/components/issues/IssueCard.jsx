@@ -3,9 +3,13 @@ import { FaUser } from "react-icons/fa";
 import { CiClock2 } from "react-icons/ci";
 import { LuCpu } from "react-icons/lu";
 import { AiOutlineWarning } from "react-icons/ai";
-import { MdChatBubbleOutline } from "react-icons/md";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 import { BiMessageDetail } from "react-icons/bi";
-import ChatHistoryModal from "./ChatHistoryModal";
 
 export default function IssueCard({
   issue,
@@ -16,6 +20,7 @@ export default function IssueCard({
 }) {
   const [status, setStatus] = useState(issue.status);
   const [saving, setSaving] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const handleSave = async () => {
     setSaving(true);
@@ -25,6 +30,13 @@ export default function IssueCard({
 
   const isDahab = issue.serviceProvider === "Dahab";
 
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
   return (
     <div className="bg-[#F9F9F9] border border-[#E6E6E6] rounded-2xl px-7 py-7 flex flex-col gap-5 shadow-sm">
       {/* Top: title + status */}
@@ -114,6 +126,31 @@ export default function IssueCard({
           )}
         </div>
       </div>
+      {issue.reminderHistory && (
+        <button
+          onClick={handleClickOpen}
+          className="bg-gray-300 w-fit self-end p-2 rounded-md text-sm"
+        >
+          Show Reminder History
+        </button>
+      )}
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"All Reminders"}</DialogTitle>
+        <DialogContent style={{ minWidth: 300 }}>
+          <DialogContentText id="alert-dialog-description">
+            {issue?.reminderHistory?.map((item) => (
+              <p key={item} className="py-2 shadow">
+                {new Date(item).toLocaleDateString()}
+              </p>
+            ))}
+          </DialogContentText>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

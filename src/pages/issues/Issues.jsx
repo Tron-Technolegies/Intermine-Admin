@@ -136,6 +136,7 @@ export default function Issues() {
                 minerServiceProvider: issue.miner?.serviceProvider,
                 serviceProvider: issue.miner?.serviceProvider,
                 model: issue.miner?.model,
+                reminderHistory: issue.reminderHistory,
               }}
               onRespond={() => setShowRespondModal(issue)}
               onChatOpen={(id) => setShowChatModal(id)}

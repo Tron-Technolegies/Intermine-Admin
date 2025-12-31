@@ -4,13 +4,23 @@ import AddFarmModal from "../../components/miningfarms/AddFarmModal";
 import FarmTable from "../../components/miningfarms/FarmTable";
 import SearchFilterBar from "../../components/SearchFilterBar";
 import { FaPen } from "react-icons/fa";
-
+import { AiOutlineDelete } from "react-icons/ai";
 import useFarms from "../../hooks/adminFarms/useFarms";
 import useFarmMiners from "../../hooks/adminFarms/useFarmsMiners";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import { useDeleteFarm } from "../../hooks/adminFarms/useDeleteFarm";
+import Loading from "../../components/Loading";
 
 export default function MiningFarm() {
   const [openAdd, setOpenAdd] = useState(false);
   const [editFarm, setEditFarm] = useState(null);
+  const [deleteFarm, setDeleteFarm] = useState(null);
+  const [open, setOpen] = useState(false);
 
   const [selectedFarm, setSelectedFarm] = useState("ALL");
   const [search, setSearch] = useState("");
@@ -18,7 +28,8 @@ export default function MiningFarm() {
 
   // LOAD ALL FARMS
   const { data: farms, isLoading: loadingFarms } = useFarms();
-
+  //delete farm
+  const { isPending, deleteFarm: farmDelete } = useDeleteFarm();
   // LOAD MINERS FOR SELECTED FARM
   const { data: minersData, isLoading: loadingMiners } = useFarmMiners(
     selectedFarm,
@@ -28,6 +39,15 @@ export default function MiningFarm() {
 
   const farmMiners = minersData?.miners || [];
   const totalPages = minersData?.totalPages || 1;
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setDeleteFarm(null);
+    setOpen(false);
+  };
 
   return (
     <div className="min-h-screen">
@@ -44,7 +64,7 @@ export default function MiningFarm() {
         <p className="text-2xl font-bold">Our Farms</p>
         <p className="text-gray-500">View and edit farm information.</p>
 
-        <div className="flex gap-3 flex-wrap mt-3 max-h-[300px] overflow-y-scroll my-3">
+        <div className="flex gap-3 flex-wrap mt-3 my-3">
           {!loadingFarms &&
             farms?.map((farm) => (
               <div
@@ -62,9 +82,45 @@ export default function MiningFarm() {
                     setOpenAdd(true);
                   }}
                 />
+                <AiOutlineDelete
+                  className="text-red-700 text-lg "
+                  onClick={() => {
+                    setDeleteFarm(farm);
+                    handleClickOpen();
+                  }}
+                />
               </div>
             ))}
         </div>
+        {isPending && <Loading />}
+        {/* //Delete Popup */}
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {"Delete Mining Farm?"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Are you sure want to delete the Mining Farm?. You will only be
+              able to complete this operation if there is no miners at your farm
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={() => {
+                farmDelete({ id: deleteFarm._id });
+                handleClose();
+              }}
+            >
+              Yes
+            </Button>
+            <Button onClick={handleClose}>No</Button>
+          </DialogActions>
+        </Dialog>
 
         {/* SEARCH + FARM DROPDOWN */}
         <SearchFilterBar
@@ -98,7 +154,13 @@ export default function MiningFarm() {
 
       {/* ADD / EDIT FARM MODAL */}
       {openAdd && (
-        <AddFarmModal onClose={() => setOpenAdd(false)} editFarm={editFarm} />
+        <AddFarmModal
+          onClose={() => {
+            setOpenAdd(false);
+            setEditFarm(null);
+          }}
+          editFarm={editFarm}
+        />
       )}
     </div>
   );
