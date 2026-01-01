@@ -6,3 +6,6 @@ const api = axios.create({
 });
 
 export default api;
+
+// https://api.intermine-solutions.de
+// http://localhost:3000

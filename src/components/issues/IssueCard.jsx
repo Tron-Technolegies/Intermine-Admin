@@ -3,9 +3,13 @@ import { FaUser } from "react-icons/fa";
 import { CiClock2 } from "react-icons/ci";
 import { LuCpu } from "react-icons/lu";
 import { AiOutlineWarning } from "react-icons/ai";
-import { MdChatBubbleOutline } from "react-icons/md";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 import { BiMessageDetail } from "react-icons/bi";
-import ChatHistoryModal from "./ChatHistoryModal";
 
 export default function IssueCard({
   issue,
@@ -16,6 +20,7 @@ export default function IssueCard({
 }) {
   const [status, setStatus] = useState(issue.status);
   const [saving, setSaving] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const handleSave = async () => {
     setSaving(true);
@@ -25,10 +30,17 @@ export default function IssueCard({
 
   const isDahab = issue.serviceProvider === "Dahab";
 
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
   return (
     <div className="bg-[#F9F9F9] border border-[#E6E6E6] rounded-2xl px-7 py-7 flex flex-col gap-5 shadow-sm">
       {/* Top: title + status */}
-      <div className="flex justify-between items-start">
+      <div className="flex md:flex-row flex-col-reverse gap-2 md:gap-0 justify-between items-start">
         <div className="flex items-center gap-3">
           <h3 className="text-lg font-semibold text-black">{issue.title}</h3>
 
@@ -44,7 +56,7 @@ export default function IssueCard({
       <p className="text-gray-600 text-sm -mt-2">{issue.description}</p>
 
       {/* Client + Created + Serial */}
-      <div className="flex flex-wrap justify-between items-center">
+      <div className="flex md:flex-row flex-col justify-between md:items-center">
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-3 text-sm text-gray-700">
             <FaUser className="text-gray-500" />
@@ -67,38 +79,39 @@ export default function IssueCard({
       {/* Bottom Actions */}
       <div className="flex justify-between items-center mt-3 flex-wrap gap-3">
         {/* Left controls */}
-        <div className="flex items-center gap-3">
+        <div className="flex md:flex-row flex-col md:items-center gap-3">
           <button
             onClick={onRespond}
             className="px-4 py-1.5 text-sm rounded-lg border border-gray-300 text-gray-700"
           >
             Send Response
           </button>
+          <div className="flex items-center gap-2">
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              className="px-4 py-1.5 text-sm rounded-lg border border-gray-300 text-gray-700"
+            >
+              <option value="Pending">Pending</option>
+              <option value="Warranty">Warranty</option>
+              <option value="Resolved">Resolved</option>
+            </select>
 
-          <select
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-            className="px-4 py-1.5 text-sm rounded-lg border border-gray-300 text-gray-700"
-          >
-            <option value="Pending">Pending</option>
-            <option value="Warranty">Warranty</option>
-            <option value="Resolved">Resolved</option>
-          </select>
-
-          <button
-            onClick={handleSave}
-            className="px-4 py-1.5 text-sm rounded-lg bg-blue-600 text-white"
-          >
-            {saving ? "Saving..." : "Save"}
-          </button>
+            <button
+              onClick={handleSave}
+              className="px-4 py-1.5 text-sm rounded-lg bg-blue-600 text-white"
+            >
+              {saving ? "Saving..." : "Save"}
+            </button>
+          </div>
         </div>
 
         {/* Right side buttons */}
-        <div className="flex items-center gap-4">
+        <div className="flex md:flex-row flex-col md:items-center md:justify-end gap-4 w-full">
           {/* Chat History */}
           <button
             onClick={() => onChatOpen(issue.id)}
-            className="bg-gray-200 px-4 py-2 rounded-full flex items-center gap-1 text-gray-700"
+            className="bg-gray-200 w-full md:w-fit px-4 py-2 rounded-full flex items-center gap-1 text-gray-700 justify-center"
           >
             <BiMessageDetail className="text-lg" />
             Messages
@@ -107,13 +120,38 @@ export default function IssueCard({
           {issue.serviceProvider === "Dahab" && (
             <button
               onClick={() => onReminder(issue.id)}
-              className="bg-[#3B8BEA] text-white px-5 py-2 rounded-full flex items-center gap-1"
+              className="bg-[#3B8BEA] text-white w-full md:w-fit px-5 py-2 rounded-full flex items-center justify-center gap-1"
             >
               <AiOutlineWarning className="text-lg" /> Remind Dahab
             </button>
           )}
         </div>
       </div>
+      {issue.reminderHistory && (
+        <button
+          onClick={handleClickOpen}
+          className="bg-gray-300 md:w-fit w-full self-end p-2 rounded-md text-sm"
+        >
+          Show Reminder History
+        </button>
+      )}
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"All Reminders"}</DialogTitle>
+        <DialogContent style={{ minWidth: 300 }}>
+          <DialogContentText id="alert-dialog-description">
+            {issue?.reminderHistory?.map((item) => (
+              <p key={item} className="py-2 shadow">
+                {new Date(item).toLocaleDateString()}
+              </p>
+            ))}
+          </DialogContentText>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

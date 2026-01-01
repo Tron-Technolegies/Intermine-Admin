@@ -16,7 +16,8 @@ export default function Clients() {
   const { data, error, isLoading } = useClients(page, search, status);
 
   if (isLoading) return <Loading />;
-  if (error) return <div className="p-6 text-center text-red-500">{error.message}</div>;
+  if (error)
+    return <div className="p-6 text-center text-red-500">{error.message}</div>;
 
   return (
     <div className="min-h-screen">
@@ -36,7 +37,7 @@ export default function Clients() {
       />
 
       {/* Client Cards Grid */}
-      <div className="p-6 grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div className="p-6 flex flex-col gap-2">
         {data?.clients?.map((client) => (
           <ClientCard
             key={client._id}

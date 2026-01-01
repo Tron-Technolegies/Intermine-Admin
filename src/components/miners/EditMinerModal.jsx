@@ -84,8 +84,9 @@ export default function EditMinerModal({ minerData, onClose }) {
 
         <h2 className="text-xl font-semibold mb-2">Edit Miner</h2>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-2">
           {/* CLIENT */}
+          <label className="text-xs">Client</label>
           <select
             name="client"
             defaultValue={minerData?.client?._id}
@@ -101,24 +102,25 @@ export default function EditMinerModal({ minerData, onClose }) {
           </select>
 
           {/* WORKER ID */}
+          <label className="text-xs">Worker Id</label>
           <input
             name="workerId"
             className="border p-2 rounded-md"
             placeholder="Worker ID"
             defaultValue={minerData?.workerId}
-            required
           />
 
           {/* SERIAL NUMBER */}
+          <label className="text-xs">Serial Number</label>
           <input
             name="serialNumber"
             className="border p-2 rounded-md"
             placeholder="Serial Number"
             defaultValue={minerData?.serialNumber}
-            required
           />
 
           {/* MODEL */}
+          <label className="text-xs">Model</label>
           <input
             name="model"
             className="border p-2 rounded-md"
@@ -128,6 +130,7 @@ export default function EditMinerModal({ minerData, onClose }) {
           />
 
           {/* STATUS */}
+          <label className="text-xs">Status</label>
           <select
             name="status"
             defaultValue={minerData?.status}
@@ -136,15 +139,24 @@ export default function EditMinerModal({ minerData, onClose }) {
           >
             <option value="online">Online</option>
             <option value="offline">Offline</option>
+            <option value="In Transit">In Transit</option>
           </select>
+          {/* Tracking */}
+          <label className="text-xs">Tracking Link</label>
+          <input
+            name="tracking"
+            className="border p-2 rounded-md"
+            placeholder="Enter Tracking Id"
+            defaultValue={minerData?.trackingLink}
+          />
 
           {/* LOCATION */}
+          <label className="text-xs">Mining Location</label>
           <select
             name="location"
             value={loc}
             onChange={(e) => setLoc(e.target.value)}
             className="border p-2 rounded-md"
-            required
           >
             <option value="">Select Mining Farm</option>
             {locations?.map((farm) => (
@@ -155,6 +167,7 @@ export default function EditMinerModal({ minerData, onClose }) {
           </select>
 
           {/* WARRANTY */}
+          <label className="text-xs">Warranty</label>
           <input
             name="warranty"
             defaultValue={minerData?.warranty}
@@ -164,24 +177,25 @@ export default function EditMinerModal({ minerData, onClose }) {
           />
 
           {/* POOL ADDRESS */}
+          <label className="text-xs">Pool Address</label>
           <input
             name="poolAddress"
             defaultValue={minerData?.poolAddress}
             className="border p-2 rounded-md"
             placeholder="Pool Address"
-            required
           />
 
           {/* CONNECTION DATE */}
+          <label className="text-xs">Connection Date</label>
           <input
             type="date"
             name="connectionDate"
             defaultValue={minerData?.connectionDate?.slice(0, 10)}
             className="border p-2 rounded-md"
-            required
           />
 
           {/* HASH RATE */}
+          <label className="text-xs">Hashrate</label>
           <input
             name="hashRate"
             defaultValue={minerData?.hashRate}
@@ -191,6 +205,7 @@ export default function EditMinerModal({ minerData, onClose }) {
           />
 
           {/* POWER */}
+          <label className="text-xs">Power</label>
           <input
             name="power"
             defaultValue={minerData?.power}
@@ -200,19 +215,20 @@ export default function EditMinerModal({ minerData, onClose }) {
           />
 
           {/* MAC ADDRESS */}
+          <label className="text-xs">Mac Address</label>
           <input
             name="macAddress"
             defaultValue={minerData?.macAddress}
             className="border p-2 rounded-md"
             placeholder="MAC Address"
-            required
           />
 
           <button
             type="submit"
+            disabled={updateMiner.isPending}
             className="bg-blue-900 text-white py-2 rounded-md"
           >
-            Save Changes
+            {updateMiner.isPending ? "Saving..." : "Save Changes"}
           </button>
         </form>
       </div>

@@ -209,7 +209,7 @@ export default function WarrantyTable({
                       <div className="flex justify-center">
                         <FiEdit
                           className="w-5 h-5 cursor-pointer"
-                          onClick={() => setEditItem(w)}
+                          onClick={() => setEditItem(item)}
                         />
                       </div>
                     </TableCell>
