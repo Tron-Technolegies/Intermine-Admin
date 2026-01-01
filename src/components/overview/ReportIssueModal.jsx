@@ -4,7 +4,7 @@ import api from "../../api/api";
 import useIssueTypes from "../../hooks/useIssueTypes";
 import { useReportIssue } from "../../hooks/useReportIssue";
 
-export default function ReportIssueModal({ onClose }) {
+export default function ReportIssueModal({ onClose, currentMiner }) {
   const { isLoading, data } = useQuery({
     queryKey: ["miner-dropdown"],
     queryFn: async () => {
@@ -28,9 +28,13 @@ export default function ReportIssueModal({ onClose }) {
 
   useEffect(() => {
     if (data?.length > 0) {
-      setMiner(data[0]);
+      if (currentMiner) {
+        setMiner(currentMiner);
+      } else {
+        setMiner(data[0]);
+      }
     }
-  }, [data]);
+  }, [data, currentMiner]);
 
   useEffect(() => {
     if (types?.length > 0) {
@@ -41,7 +45,7 @@ export default function ReportIssueModal({ onClose }) {
   useEffect(() => {
     if (miner) {
       setWorkerId(miner.workerId);
-      setUser(miner.client);
+      setUser(miner.client._id || miner.client);
       setMinerId(miner._id);
     }
   }, [miner]);

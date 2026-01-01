@@ -148,7 +148,6 @@ export default function EditMinerModal({ minerData, onClose }) {
             className="border p-2 rounded-md"
             placeholder="Enter Tracking Id"
             defaultValue={minerData?.trackingLink}
-            required
           />
 
           {/* LOCATION */}

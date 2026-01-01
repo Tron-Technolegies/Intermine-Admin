@@ -1,6 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { FaArrowLeft, FaChevronDown, FaChevronUp, FaTools, FaClock, FaBolt } from "react-icons/fa";
+import {
+  FaArrowLeft,
+  FaChevronDown,
+  FaChevronUp,
+  FaTools,
+  FaClock,
+  FaBolt,
+} from "react-icons/fa";
 import useClientDetails from "../../hooks/useClientDetails";
 
 export default function ClientDetails() {
@@ -13,11 +20,15 @@ export default function ClientDetails() {
   const { data: client, isLoading, error } = useClientDetails(id);
 
   if (isLoading) return <div className="p-6">Loading client...</div>;
-  if (error) return <div className="p-6 text-red-500">Failed to load client</div>;
+  if (error)
+    return <div className="p-6 text-red-500">Failed to load client</div>;
 
   return (
     <div className="p-6 min-h-screen bg-white">
-      <button onClick={() => navigate(-1)} className="flex items-center mb-4 text-gray-600">
+      <button
+        onClick={() => navigate(-1)}
+        className="flex items-center mb-4 text-gray-600"
+      >
         <FaArrowLeft className="mr-2" /> Back
       </button>
 
@@ -26,12 +37,18 @@ export default function ClientDetails() {
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
         <StatBox label="Total Miners" value={client.owned?.length || 0} />
-        <StatBox label="Online" value={client.owned?.filter((m) => m.status === "Online").length} />
+        <StatBox
+          label="Online"
+          value={client.owned?.filter((m) => m.status === "Online").length}
+        />
         <StatBox
           label="In Repair"
           value={client.owned?.filter((m) => m.status === "Repair").length}
         />
-        <StatBox label="In Warranty" value={client.owned?.filter((m) => m.warranty).length} />
+        <StatBox
+          label="In Warranty"
+          value={client.owned?.filter((m) => m.warranty).length}
+        />
       </div>
 
       <div className="bg-gray-100 p-4 rounded-lg mb-6">
@@ -45,17 +62,23 @@ export default function ClientDetails() {
 
       {client.owned?.length ? (
         client.owned.map((miner) => (
-          <div key={miner._id} className="border rounded-lg mb-3">
+          <div key={miner._id} className="shadow-lg rounded-lg mb-3">
             <div
               onClick={() => toggleMiner(miner._id)}
               className="p-3 flex justify-between items-center cursor-pointer"
             >
               <div>
                 <p className="font-medium">SN: {miner.serialNumber}</p>
-                <p className="text-xs text-gray-500">{miner.workerName || "Worker Not Assigned"}</p>
+                <p className="text-xs text-gray-500">
+                  {miner.workerName || "Worker Not Assigned"}
+                </p>
               </div>
 
-              {expandedMiner === miner._id ? <FaChevronUp /> : <FaChevronDown />}
+              {expandedMiner === miner._id ? (
+                <FaChevronUp />
+              ) : (
+                <FaChevronDown />
+              )}
             </div>
 
             {expandedMiner === miner._id && (
