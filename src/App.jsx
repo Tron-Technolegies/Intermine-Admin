@@ -22,11 +22,13 @@ import VerifyOtpPage from "./pages/auth/VerifyOtpPage";
 import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
 import ErrorPage from "./pages/error/ErrorPage";
 import SingleMinerPage from "./pages/myminers/SingleMinerPage";
+import { adminLoader } from "./loaders/adminLoader";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <HomeLayout />,
+    loader: adminLoader,
     errorElement: <ErrorPage />,
     children: [
       { index: true, element: <Dashboard /> },

@@ -73,14 +73,14 @@ export default function AgreementTable({
               >
                 Status
               </TableCell>
-              <TableCell
+              {/* <TableCell
                 sx={{
                   textAlign: "center",
                   fontWeight: "bold",
                 }}
               >
                 Actions
-              </TableCell>
+              </TableCell> */}
             </TableRow>
           </TableHead>
           <TableBody sx={{ background: "#eff6ff" }}>
@@ -134,7 +134,7 @@ export default function AgreementTable({
                   >
                     {item.signed ? "Signed" : "Pending"}
                   </TableCell>
-                  <TableCell
+                  {/* <TableCell
                     component="th"
                     scope="row"
                     sx={{ textAlign: "center" }}
@@ -152,7 +152,7 @@ export default function AgreementTable({
                         />
                       )}
                     </div>
-                  </TableCell>
+                  </TableCell> */}
                 </TableRow>
               );
             })}

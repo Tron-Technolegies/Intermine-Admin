@@ -79,7 +79,7 @@ export default function AddClientModal({ onClose }) {
   return (
     <div
       className="fixed inset-0 bg-black/30 flex justify-center items-center z-50"
-      onClick={onClose}
+      // onClick={onClose}
     >
       <div
         className="relative bg-white rounded-2xl p-6 w-[420px] shadow-lg max-h-[90vh] overflow-y-auto"

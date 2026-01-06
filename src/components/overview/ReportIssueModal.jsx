@@ -22,9 +22,9 @@ export default function ReportIssueModal({ onClose, currentMiner }) {
   const [issueObject, setIssueObject] = useState(null);
   const [issue, setIssue] = useState("");
   const [user, setUser] = useState("");
-  const handleOutsideClick = (e) => {
-    if (e.target.id === "overlay") onClose();
-  };
+  // const handleOutsideClick = (e) => {
+  //   if (e.target.id === "overlay") onClose();
+  // };
 
   useEffect(() => {
     if (data?.length > 0) {
@@ -70,7 +70,7 @@ export default function ReportIssueModal({ onClose, currentMiner }) {
   return (
     <div
       id="overlay"
-      onClick={handleOutsideClick}
+      // onClick={handleOutsideClick}
       className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50"
     >
       <div className="bg-white rounded-xl w-[92%] sm:w-96 max-h-[70vh] overflow-y-auto p-5 shadow-xl relative">

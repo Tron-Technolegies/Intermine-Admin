@@ -50,7 +50,6 @@ export default function EditMinerModal({ minerData, onClose }) {
 
     // Only allowed fields + serviceProvider for backend
     data.location = loc;
-    data.serviceProvider = "Dahab";
 
     updateMiner.mutate(data);
   };
@@ -64,14 +63,9 @@ export default function EditMinerModal({ minerData, onClose }) {
     }
   }, [minerData, locations]);
 
-  const handleOutsideClick = (e) => {
-    if (e.target.id === "overlay") onClose();
-  };
-
   return (
     <div
       id="overlay"
-      onClick={handleOutsideClick}
       className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50"
     >
       <div className="bg-white rounded-xl w-[92%] sm:w-96 max-h-[75vh] overflow-y-auto p-5 shadow-xl relative">
@@ -166,16 +160,6 @@ export default function EditMinerModal({ minerData, onClose }) {
             ))}
           </select>
 
-          {/* WARRANTY */}
-          <label className="text-xs">Warranty</label>
-          <input
-            name="warranty"
-            defaultValue={minerData?.warranty}
-            className="border p-2 rounded-md"
-            placeholder="Warranty (years)"
-            required
-          />
-
           {/* POOL ADDRESS */}
           <label className="text-xs">Pool Address</label>
           <input
@@ -186,7 +170,7 @@ export default function EditMinerModal({ minerData, onClose }) {
           />
 
           {/* CONNECTION DATE */}
-          <label className="text-xs">Connection Date</label>
+          <label className="text-xs">Buying Date</label>
           <input
             type="date"
             name="connectionDate"
@@ -221,6 +205,13 @@ export default function EditMinerModal({ minerData, onClose }) {
             defaultValue={minerData?.macAddress}
             className="border p-2 rounded-md"
             placeholder="MAC Address"
+          />
+
+          <label className="text-xs">Service Provider</label>
+          <input
+            name="serviceProvider"
+            defaultValue={minerData?.serviceProvider}
+            className="w-full border p-2 rounded-md"
           />
 
           <button

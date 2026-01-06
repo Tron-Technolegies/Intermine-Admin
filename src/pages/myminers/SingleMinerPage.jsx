@@ -4,7 +4,7 @@ import { useGetSingleMiner } from "../../hooks/adminMiner/useGetSingleMiner";
 import Loading from "../../components/Loading";
 import { BiChip } from "react-icons/bi";
 import { FaBolt, FaMapMarkerAlt, FaTools, FaUser } from "react-icons/fa";
-import { CiCalendar } from "react-icons/ci";
+import { CiCalendar, CiCalendarDate } from "react-icons/ci";
 import { MdHistory } from "react-icons/md";
 import EditMinerModal from "../../components/miners/EditMinerModal";
 import MinersHistoryModal from "../../components/miners/MinersHistoryModal";
@@ -135,9 +135,19 @@ export default function SingleMinerPage() {
 
         {/* ---------- WARRANTY & HISTORY ---------- */}
         <div className="flex justify-between items-center">
-          <div className="flex items-center gap-2 text-gray-600">
-            <CiCalendar size={18} />
-            <span>Warranty: {data.warranty} Years</span>
+          <div>
+            <div className="flex items-center gap-2 text-gray-600">
+              <CiCalendarDate size={18} />
+              <span>
+                Purchased On:{" "}
+                {data.connectionDate &&
+                  new Date(data.connectionDate).toLocaleDateString()}
+              </span>
+            </div>
+            <div className="flex items-center gap-2 text-gray-600">
+              <CiCalendar size={18} />
+              <span>Warranty: {data.warranty} Years</span>
+            </div>
           </div>
 
           <button
