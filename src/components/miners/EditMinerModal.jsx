@@ -2,21 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../../api/api";
 import { toast } from "react-toastify";
+import { useGetUserDropdowns } from "../../hooks/useDropdowns";
 
 export default function EditMinerModal({ minerData, onClose }) {
   const [loc, setLoc] = useState("");
   const queryClient = useQueryClient();
 
   // ====== Fetch Clients ======
-  const { data: clients } = useQuery({
-    queryKey: ["clients"],
-    queryFn: async () => {
-      const res = await api.get("/api/v1/admin/user/all", {
-        params: { query: "", currentPage: 1, status: "ALL" },
-      });
-      return res.data.clients;
-    },
-  });
+  const { data: clients, isLoading } = useGetUserDropdowns({ search: "" });
 
   // ====== Fetch Mining Farms ======
   const { data: locations } = useQuery({
@@ -35,6 +28,7 @@ export default function EditMinerModal({ minerData, onClose }) {
       api.patch(`/api/v1/admin/miner/${minerData._id}`, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["miners"] });
+      queryClient.invalidateQueries({ queryKey: ["single-miner"] });
       toast.success("Miner updated successfully!");
       onClose();
     },
@@ -83,14 +77,14 @@ export default function EditMinerModal({ minerData, onClose }) {
           <label className="text-xs">Client</label>
           <select
             name="client"
-            defaultValue={minerData?.client?._id}
+            defaultValue={minerData && minerData.client?._id}
             className="border p-2 rounded-md"
             required
           >
             <option value="">Select Client</option>
             {clients?.map((c) => (
               <option key={c._id} value={c._id}>
-                {c.firstName} {c.lastName}
+                {c.clientName}
               </option>
             ))}
           </select>
@@ -205,6 +199,15 @@ export default function EditMinerModal({ minerData, onClose }) {
             defaultValue={minerData?.macAddress}
             className="border p-2 rounded-md"
             placeholder="MAC Address"
+          />
+
+          {/* coins */}
+          <label className="text-xs">Coins</label>
+          <input
+            name="coins"
+            defaultValue={minerData?.coins}
+            className="border p-2 rounded-md"
+            placeholder="Coins"
           />
 
           <label className="text-xs">Service Provider</label>

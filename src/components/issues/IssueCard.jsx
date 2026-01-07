@@ -44,7 +44,15 @@ export default function IssueCard({
         <div className="flex items-center gap-3">
           <h3 className="text-lg font-semibold text-black">{issue.title}</h3>
 
-          <span className="text-xs bg-[#F2D56A] text-black font-medium px-3 py-1 rounded-full">
+          <span
+            className={`text-xs  ${
+              status === "Resolved"
+                ? "bg-green-600"
+                : status === "Warranty"
+                ? "bg-blue-600"
+                : "bg-[#F2D56A]"
+            } text-black font-medium px-3 py-1 rounded-full`}
+          >
             {status}
           </span>
         </div>

@@ -10,6 +10,7 @@ export default function useIssueActions() {
       api.patch(`/api/v1/admin/issue/update-status/${id}`, { status }),
     onSuccess: () => {
       queryClient.invalidateQueries(["issues"]);
+      queryClient.invalidateQueries({ queryKey: ["miners"] });
     },
   });
 

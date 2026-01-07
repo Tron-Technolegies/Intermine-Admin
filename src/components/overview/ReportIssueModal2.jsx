@@ -1,27 +1,12 @@
-import { useEffect, useState } from "react";
-import {
-  useGetMinerDropdown,
-  useGetUserDropdowns,
-} from "../../hooks/useDropdowns";
-import useIssueTypes from "../../hooks/useIssueTypes";
+import React, { useState } from "react";
 import Switch from "@mui/material/Switch";
 import { useReportIssue } from "../../hooks/useReportIssue";
+import useIssueTypes from "../../hooks/useIssueTypes";
 
-export default function ReportIssueModal({ onClose, currentMiner }) {
-  const [searchClient, setSearchClient] = useState("");
-  const [searchWorker, setSearchWorker] = useState("");
-  const [checked, setChecked] = useState(false);
-  const [worker, setWorker] = useState("");
-
-  const { isLoading: minerLoading, data: miners } = useGetMinerDropdown({
-    search: searchWorker,
-  });
-  const { isLoading: clientLoading, data: clients } = useGetUserDropdowns({
-    search: searchClient,
-  });
-
-  const { isLoading: issueLoading, data: issues } = useIssueTypes();
+export default function ReportIssueModal2({ onClose, currentMiner }) {
   const { isPending, mutate } = useReportIssue();
+  const { isLoading: issueLoading, data: issues } = useIssueTypes();
+  const [checked, setChecked] = useState(false);
 
   const handleChange = (event) => {
     setChecked(event.target.checked);
@@ -32,14 +17,12 @@ export default function ReportIssueModal({ onClose, currentMiner }) {
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData);
     data.status = checked ? "online" : "offline";
+    data.miner = currentMiner?._id;
+    data.user = currentMiner?.client?._id;
+    console.log(data);
     mutate({ data });
     onClose();
   }
-
-  useEffect(() => {
-    setSearchWorker(worker);
-  }, [worker]);
-
   return (
     <div
       id="overlay"
@@ -56,60 +39,26 @@ export default function ReportIssueModal({ onClose, currentMiner }) {
           ✕
         </button>
         <form className="my-5 flex flex-col gap-2" onSubmit={handleSubmit}>
-          <label className="text-xs">Search Client</label>
-          <input
-            type="search"
-            value={searchClient}
-            onChange={(e) => setSearchClient(e.target.value)}
-            className="p-2 rounded-md shadow bg-gray-100 outline-none"
-          />
           <label className="text-xs">Client</label>
-          <select
-            name="user"
-            className="p-2 rounded-md shadow bg-gray-100 outline-none"
-            required
-          >
-            {!clientLoading &&
-              clients?.map((x) => (
-                <option key={x._id} value={x._id} className="rounded-md">
-                  {x.clientName}
-                </option>
-              ))}
-          </select>
-          <label className="text-xs">Search Worker</label>
           <input
-            type="search"
-            value={searchWorker}
-            onChange={(e) => setSearchWorker(e.target.value)}
+            value={currentMiner?.client?.clientName}
+            required
             className="p-2 rounded-md shadow bg-gray-100 outline-none"
           />
+
           <label className="text-xs">Worker Id</label>
-          <select
+          <input
+            value={currentMiner?.workerId}
             required
-            className="p-2 rounded-md shadow bg-gray-100 outline-none"
             name="workerAddress"
-            onChange={(e) => setWorker(e.target.value)}
-          >
-            {!minerLoading &&
-              miners?.map((x) => (
-                <option key={x._id} value={x.workerId}>
-                  {x.workerId}
-                </option>
-              ))}
-          </select>
+            className="p-2 rounded-md shadow bg-gray-100 outline-none"
+          />
           <label className="text-xs">Miner Details</label>
-          <select
-            name="miner"
+          <input
+            value={currentMiner?.model}
             required
             className="p-2 rounded-md shadow bg-gray-100 outline-none"
-          >
-            {!minerLoading &&
-              miners?.map((x) => (
-                <option key={x._id} value={x._id}>
-                  {x.model}
-                </option>
-              ))}
-          </select>
+          />
           <label className="text-xs">Issue</label>
           <select
             name="issue"

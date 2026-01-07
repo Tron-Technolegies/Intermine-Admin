@@ -3,21 +3,13 @@ import { IoClose } from "react-icons/io5";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../../api/api";
 import { toast } from "react-toastify";
+import { useGetUserDropdowns } from "../../hooks/useDropdowns";
 
 export default function AddMinerModal({ onClose }) {
   const queryClient = useQueryClient();
-  const { data: clients, isLoading: loadingClients } = useQuery({
-    queryKey: ["clients"],
-    queryFn: async () => {
-      const res = await api.get("api/v1/admin/user/all", {
-        params: {
-          query: "",
-          currentPage: 1,
-          status: "ALL",
-        },
-      });
-      return res.data.clients;
-    },
+
+  const { isLoading: loadingClients, data: clients } = useGetUserDropdowns({
+    search: "",
   });
 
   const { data: locations, isLoading: loadingLocations } = useQuery({
@@ -91,7 +83,7 @@ export default function AddMinerModal({ onClose }) {
             {!loadingClients &&
               clients?.map((c) => (
                 <option key={c._id} value={c._id}>
-                  {c.firstName} {c.lastName}
+                  {c.clientName}
                 </option>
               ))}
           </select>
@@ -215,7 +207,14 @@ export default function AddMinerModal({ onClose }) {
             placeholder="MAC Address"
             className="w-full border p-2 rounded-md"
           />
+          {/* COINS */}
 
+          <label className="text-xs">Coins</label>
+          <input
+            name="coins"
+            placeholder="Enter the coins"
+            className="w-full border p-2 rounded-md"
+          />
           {/* CONNECTION DATE */}
           <label className="text-xs">Buying Date</label>
           <input

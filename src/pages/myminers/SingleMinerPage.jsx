@@ -8,7 +8,7 @@ import { CiCalendar, CiCalendarDate } from "react-icons/ci";
 import { MdHistory } from "react-icons/md";
 import EditMinerModal from "../../components/miners/EditMinerModal";
 import MinersHistoryModal from "../../components/miners/MinersHistoryModal";
-import ReportIssueModal from "../../components/overview/ReportIssueModal";
+import ReportIssueModal2 from "../../components/overview/ReportIssueModal2";
 
 const getStatusColor = (status) => {
   switch (status) {
@@ -189,7 +189,7 @@ export default function SingleMinerPage() {
         />
       )}
       {showReport && (
-        <ReportIssueModal
+        <ReportIssueModal2
           onClose={() => setShowReport(false)}
           currentMiner={data}
         />

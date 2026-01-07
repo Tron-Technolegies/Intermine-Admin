@@ -126,7 +126,7 @@ export default function MinerTable({ miners }) {
                     className={`px-2 py-1 rounded-full text-white ${
                       item.status === "online"
                         ? "bg-green-600"
-                        : item.endDate === "offline"
+                        : item.status === "offline"
                         ? "bg-red-600"
                         : "bg-yellow-600"
                     }`}
