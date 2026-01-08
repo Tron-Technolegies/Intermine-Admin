@@ -5,10 +5,12 @@ import Loading from "../../components/Loading";
 import { BiChip } from "react-icons/bi";
 import { FaBolt, FaMapMarkerAlt, FaTools, FaUser } from "react-icons/fa";
 import { CiCalendar, CiCalendarDate } from "react-icons/ci";
+import { LuQrCode } from "react-icons/lu";
 import { MdHistory } from "react-icons/md";
 import EditMinerModal from "../../components/miners/EditMinerModal";
 import MinersHistoryModal from "../../components/miners/MinersHistoryModal";
 import ReportIssueModal2 from "../../components/overview/ReportIssueModal2";
+import { diffInMonths, monthsFromNow } from "../../utils/monthCalculation";
 
 const getStatusColor = (status) => {
   switch (status) {
@@ -113,7 +115,7 @@ export default function SingleMinerPage() {
         )}
 
         {/* ---------- METRICS BLOCK ---------- */}
-        <div className="flex justify-between sm:justify-start sm:gap-16 py-4 border-t border-b border-gray-100 mb-4">
+        <div className="flex justify-between md:flex-row flex-col md:justify-start gap-5 md:gap-16 py-4 border-t border-b border-gray-100 mb-4">
           {/* Hashrate */}
           <div className="flex items-center gap-2">
             <BiChip size={20} />
@@ -131,10 +133,17 @@ export default function SingleMinerPage() {
               <div className="text-xs text-gray-500">Power</div>
             </div>
           </div>
+          <div className="flex items-center gap-2">
+            <LuQrCode size={20} />
+            <div>
+              <div className="text-lg font-semibold">{data.poolAddress}</div>
+              <div className="text-xs text-gray-500">Pool Address</div>
+            </div>
+          </div>
         </div>
 
         {/* ---------- WARRANTY & HISTORY ---------- */}
-        <div className="flex justify-between items-center">
+        <div className="flex md:flex-row flex-col justify-between gap-3 md:items-center">
           <div>
             <div className="flex items-center gap-2 text-gray-600">
               <CiCalendarDate size={18} />
@@ -146,25 +155,43 @@ export default function SingleMinerPage() {
             </div>
             <div className="flex items-center gap-2 text-gray-600">
               <CiCalendar size={18} />
-              <span>Warranty: {data.warranty} Years</span>
+              {data.warrantyStartDate ? (
+                <span>
+                  Total Warranty:{" "}
+                  {diffInMonths(data.warrantyStartDate, data.warrantyEndDate)}{" "}
+                  months
+                </span>
+              ) : (
+                <span>Total Warranty: {data.warranty * 12} months</span>
+              )}
             </div>
+            {data.warrantyEndDate && (
+              <div className="flex items-center gap-2 text-gray-600">
+                <CiCalendar size={18} />
+
+                <span>
+                  Remaining Warranty: {monthsFromNow(data.warrantyEndDate)}{" "}
+                  months
+                </span>
+              </div>
+            )}
           </div>
 
           <button
             onClick={() => {
               setShowHistory(true);
             }}
-            className="bg-[#3893D0] text-white px-4 py-2 rounded-lg flex items-center gap-1 cursor-pointer"
+            className="bg-[#3893D0] text-white px-4 py-2 rounded-lg flex justify-center items-center gap-1 cursor-pointer"
           >
             <MdHistory size={18} /> History
           </button>
         </div>
 
         {/* ---------- ACTION BUTTONS ---------- */}
-        <div className="flex gap-3 mt-4">
+        <div className="flex md:flex-row flex-col gap-3 mt-4">
           <button
             onClick={() => handleEditClick(data)}
-            className="flex-1 bg-[#787878] text-white rounded-xl py-2 font-medium cursor-pointer"
+            className="flex-1 bg-[#787878] text-white rounded-lg py-2 font-medium cursor-pointer"
           >
             Edit
           </button>

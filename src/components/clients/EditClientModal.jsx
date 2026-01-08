@@ -1,62 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { IoClose } from "react-icons/io5";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import api from "../../api/api";
-import { toast } from "react-toastify";
 
-export default function AddClientModal({ onClose }) {
-  const queryClient = useQueryClient();
-  const [agreement, setAgreement] = useState(false);
-
-  const createClientMutation = useMutation({
-    mutationFn: async ({ data }) => api.post("/api/v1/auth/register", data),
-
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["clients"] });
-      toast.success("Client registered successfully");
-      setTimeout(() => onClose(), 700);
-    },
-
-    onError: (err) => {
-      toast.error(err.response?.data?.error || "Registration failed");
-    },
-  });
-
-  const bulkUpload = useMutation({
-    mutationFn: (formData) =>
-      api.post("api/v1/admin/user/bulk", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      }),
-
-    onSuccess: () => {
-      toast.success("Bulk Upload Successful!");
-      setTimeout(() => onClose(), 600);
-    },
-
-    onError: (err) => {
-      toast.error(err.response?.data?.error || "Bulk upload failed");
-    },
-  });
-
-  const handleCSVUpload = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const fd = new FormData();
-    fd.append("file", file);
-
-    bulkUpload.mutate(fd);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    const formData = new FormData(e.target);
-    const data = Object.fromEntries(formData);
-    data.isAgreement = agreement;
-    createClientMutation.mutate({ data });
-  };
-
+export default function EditClientModal({ onClose }) {
   return (
     <div
       className="fixed inset-0 bg-black/30 flex justify-center items-center z-50"
@@ -77,32 +22,8 @@ export default function AddClientModal({ onClose }) {
         <h2 className="text-xl font-semibold text-gray-900 mb-1">
           Add New Client
         </h2>
-        <p className="text-sm text-gray-500 mb-3">
-          Create a new client or upload CSV file.
-        </p>
 
-        <div className="mb-4">
-          <input
-            type="file"
-            accept=".csv"
-            id="csvUpload"
-            className="hidden"
-            onChange={handleCSVUpload}
-          />
-
-          <button
-            type="button"
-            onClick={() => document.getElementById("csvUpload").click()}
-            className="w-full bg-[#3893D0] text-white py-2 rounded-md"
-          >
-            {bulkUpload.isPending ? "Uploading..." : "Upload CSV File"}
-          </button>
-        </div>
-
-        {/* Divider */}
-        <div className="text-center text-xs text-gray-400 my-3">OR</div>
-
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+        <form className="flex flex-col gap-3">
           <div>
             <label className="text-sm text-gray-700">Client Name</label>
             <input
@@ -165,8 +86,8 @@ export default function AddClientModal({ onClose }) {
             <input
               type="checkbox"
               name="isAgreement"
-              checked={agreement}
-              onChange={(e) => setAgreement(e.target.checked)}
+              //   checked={agreement}
+              //   onChange={(e) => setAgreement(e.target.checked)}
               className="accent-blue-600"
             />
             <label className="text-sm text-gray-700">
@@ -176,10 +97,10 @@ export default function AddClientModal({ onClose }) {
 
           <button
             type="submit"
-            disabled={createClientMutation.isPending}
+            // disabled={createClientMutation.isPending}
             className="bg-[#1C2340] hover:bg-[#141A32] text-white mt-4 py-2 rounded-md"
           >
-            {createClientMutation.isPending ? "Creating..." : "Add Client"}
+            {/* {createClientMutation.isPending ? "Creating..." : "Add Client"} */}
           </button>
         </form>
       </div>
