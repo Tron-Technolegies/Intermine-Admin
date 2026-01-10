@@ -15,7 +15,11 @@ export default function useIssueActions() {
       toast.success("Issue Status updated");
     },
     onError: (error) => {
-      toast.error(error?.response?.data?.error || "something went wrong");
+      toast.error(
+        error.response.data.error ||
+          error.response.data.message ||
+          "something went wrong"
+      );
     },
   });
 
@@ -27,7 +31,11 @@ export default function useIssueActions() {
       toast.success("Response send successfully");
     },
     onError: (error) => {
-      toast.error(error?.response?.data?.error || "something went wrong");
+      toast.error(
+        error.response.data.error ||
+          error.response.data.message ||
+          "something went wrong"
+      );
     },
   });
 
@@ -45,7 +53,11 @@ export default function useIssueActions() {
       toast.success("Successfully reminded");
     },
     onError: (error) => {
-      toast.error(error?.response?.data?.error || "something went wrong");
+      toast.error(
+        error.response.data.error ||
+          error.response.data.message ||
+          "something went wrong"
+      );
     },
   });
 

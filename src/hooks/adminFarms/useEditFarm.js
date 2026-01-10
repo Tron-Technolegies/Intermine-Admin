@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../../api/api";
+import { toast } from "react-toastify";
 
 export default function useEditFarm() {
   const queryClient = useQueryClient();
@@ -17,10 +18,15 @@ export default function useEditFarm() {
     onSuccess: () => {
       console.log("Farm updated successfully!");
       queryClient.invalidateQueries(["miningFarms"]); // refresh farms list
+      toast.success("Farm updated successfully");
     },
 
-    onError: (err) => {
-      console.error("Failed to edit farm:", err.response?.data || err.message);
+    onError: (error) => {
+      toast.error(
+        error.response.data.error ||
+          error.response.data.message ||
+          "something went wrong"
+      );
     },
   });
 }

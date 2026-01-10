@@ -1,9 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useGetSingleMiner } from "../../hooks/adminMiner/useGetSingleMiner";
 import Loading from "../../components/Loading";
 import { BiChip } from "react-icons/bi";
-import { FaBolt, FaMapMarkerAlt, FaTools, FaUser } from "react-icons/fa";
+import {
+  FaBolt,
+  FaMapMarkerAlt,
+  FaTools,
+  FaUser,
+  FaBitcoin,
+} from "react-icons/fa";
 import { CiCalendar, CiCalendarDate } from "react-icons/ci";
 import { LuQrCode } from "react-icons/lu";
 import { MdHistory } from "react-icons/md";
@@ -31,6 +37,20 @@ export default function SingleMinerPage() {
   const [editForm, setEditForm] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [showReport, setShowReport] = useState(false);
+  const [watchers, setWatchers] = useState([]);
+
+  useEffect(() => {
+    if (data) {
+      const coinSet = new Set(
+        data.coins?.split(",")?.map((item) => item.trim().toUpperCase())
+      );
+      const filteredLinks =
+        data.client?.watcherLinks?.filter((item) =>
+          coinSet.has(item.coin?.trim()?.toUpperCase())
+        ) || [];
+      setWatchers(filteredLinks);
+    }
+  }, [data]);
 
   const handleEditClick = (miner) => {
     setEditForm(true);
@@ -114,6 +134,25 @@ export default function SingleMinerPage() {
           <div className="text-sm">Track - {data.trackingLink}</div>
         )}
 
+        {/* watcher links */}
+        <div className="bg-gray-100 p-4 rounded-lg my-5 flex flex-col gap-2">
+          <h2 className="mb-2 text-sm">Watcher Links</h2>
+
+          {watchers.length > 0 ? (
+            watchers.map((item) => (
+              <a
+                href={item.link}
+                target="_blank"
+                className="text-sm underline text-blue-500 "
+              >
+                Visit <span className="font-semibold text-lg">{item.coin}</span>{" "}
+                watcher links
+              </a>
+            ))
+          ) : (
+            <p>No watcher links</p>
+          )}
+        </div>
         {/* ---------- METRICS BLOCK ---------- */}
         <div className="flex justify-between md:flex-row flex-col md:justify-start gap-5 md:gap-16 py-4 border-t border-b border-gray-100 mb-4">
           {/* Hashrate */}
@@ -138,6 +177,13 @@ export default function SingleMinerPage() {
             <div>
               <div className="text-lg font-semibold">{data.poolAddress}</div>
               <div className="text-xs text-gray-500">Pool Address</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <FaBitcoin size={20} />
+            <div>
+              <div className="text-lg font-semibold">{data.coins}</div>
+              <div className="text-xs text-gray-500">Coins</div>
             </div>
           </div>
         </div>

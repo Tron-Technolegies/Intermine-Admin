@@ -14,7 +14,11 @@ export default function useAgreementActions() {
       toast.success("Mining Agreement sent Successfully");
     },
     onError: (error) => {
-      toast.error(error.response.data.error || "something went wrong");
+      toast.error(
+        error.response.data.error ||
+          error.response.data.message ||
+          "something went wrong"
+      );
     },
   });
 

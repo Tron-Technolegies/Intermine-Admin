@@ -39,11 +39,11 @@ export default function ClientDetails() {
         <StatBox label="Total Miners" value={client.owned?.length || 0} />
         <StatBox
           label="Online"
-          value={client.owned?.filter((m) => m.status === "Online").length}
+          value={client.owned?.filter((m) => m.status === "online").length}
         />
         <StatBox
           label="In Repair"
-          value={client.owned?.filter((m) => m.status === "Repair").length}
+          value={client.owned?.filter((m) => m.status === "offline").length}
         />
         <StatBox
           label="In Warranty"
@@ -58,6 +58,24 @@ export default function ClientDetails() {
         </p>
       </div>
 
+      <div className="bg-gray-100 p-4 rounded-lg mb-6 flex flex-col gap-2">
+        <h2 className="font-semibold mb-2">Watcher Links</h2>
+        {client.watcherLinks?.length > 0 &&
+          client.watcherLinks?.map((item) => (
+            <a
+              href={item.link}
+              className="text-sm text-blue-500 underline w-fit"
+              target="_blank"
+            >
+              Visit <span className="text-lg font-semibold">{item.coin}</span>{" "}
+              Watcher Link
+            </a>
+          ))}
+        {client.watcherLinks?.length < 1 && (
+          <p className="text-sm">No watcher links assigned</p>
+        )}
+      </div>
+
       <h2 className="text-lg font-semibold mb-3">Miners</h2>
 
       {client.owned?.length ? (
@@ -67,10 +85,11 @@ export default function ClientDetails() {
               onClick={() => toggleMiner(miner._id)}
               className="p-3 flex justify-between items-center cursor-pointer"
             >
-              <div>
+              <div className="flex flex-col gap-2">
+                <p className="text-xl">{miner.model}</p>
                 <p className="font-medium">SN: {miner.serialNumber}</p>
                 <p className="text-xs text-gray-500">
-                  {miner.workerName || "Worker Not Assigned"}
+                  {miner.workerId || "Worker Not Assigned"}
                 </p>
               </div>
 
@@ -82,7 +101,7 @@ export default function ClientDetails() {
             </div>
 
             {expandedMiner === miner._id && (
-              <div className="p-3 bg-gray-50 border-t">
+              <div className="p-3 bg-gray-50">
                 <p>Hashrate: {miner.hashRate}</p>
                 <p>Power: {miner.power}</p>
                 <p>

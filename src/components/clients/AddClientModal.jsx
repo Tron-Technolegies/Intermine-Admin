@@ -7,6 +7,20 @@ import { toast } from "react-toastify";
 export default function AddClientModal({ onClose }) {
   const queryClient = useQueryClient();
   const [agreement, setAgreement] = useState(false);
+  const [watchers, setWatchers] = useState([]);
+
+  //functions for Watchers
+  function addWatchers() {
+    setWatchers([...watchers, { link: "", coin: "" }]);
+  }
+  function updateWatchers(index, field, value) {
+    const updated = [...watchers];
+    updated[index][field] = value;
+    setWatchers(updated);
+  }
+  function removeWatchers(index) {
+    setWatchers(watchers.filter((_, i) => i !== index));
+  }
 
   const createClientMutation = useMutation({
     mutationFn: async ({ data }) => api.post("/api/v1/auth/register", data),
@@ -52,6 +66,7 @@ export default function AddClientModal({ onClose }) {
     e.preventDefault();
 
     const formData = new FormData(e.target);
+    formData.append("watcher", JSON.stringify(watchers));
     const data = Object.fromEntries(formData);
     data.isAgreement = agreement;
     createClientMutation.mutate({ data });
@@ -159,6 +174,46 @@ export default function AddClientModal({ onClose }) {
               required
               className="w-full border border-gray-300 rounded-md p-2 mt-1 focus:ring-blue-500"
             />
+          </div>
+          {/* watcher links */}
+          <div className="mb-2 flex flex-col">
+            <label className="text-sm text-gray-700">Watcher Links</label>
+            {watchers?.map((item, index) => (
+              <div key={index} className="flex flex-col gap-2 my-1 mb-4">
+                <input
+                  type="text"
+                  value={item.link}
+                  onChange={(e) =>
+                    updateWatchers(index, "link", e.target.value)
+                  }
+                  placeholder="Enter the watcher link"
+                  className="w-full py-1 px-3 rounded-lg bg-white border  outline-none text-gray-900 h-11"
+                />
+                <input
+                  type="text"
+                  value={item.coin}
+                  onChange={(e) =>
+                    updateWatchers(index, "coin", e.target.value)
+                  }
+                  placeholder="Enter the specific coin"
+                  className="w-full py-1 px-3 rounded-lg bg-white border  outline-none text-gray-900 h-11"
+                />
+                <button
+                  type="button"
+                  className="px-2 py-2 rounded-md bg-red-700 text-white"
+                  onClick={() => removeWatchers(index)}
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+            <button
+              type="button"
+              className="px-2 mt-3 py-2 rounded-md bg-indigo-500 text-white"
+              onClick={() => addWatchers()}
+            >
+              Add New Watcher
+            </button>
           </div>
 
           <div className="flex items-center gap-2 mt-2">

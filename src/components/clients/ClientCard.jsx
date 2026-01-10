@@ -7,6 +7,7 @@ import {
   FaFileContract,
 } from "react-icons/fa";
 import { GoCpu } from "react-icons/go";
+import { BsBuildingsFill } from "react-icons/bs";
 import useAgreementActions from "../../hooks/adminAgreement/useAgreementActions";
 import EditClientModal from "./EditClientModal";
 
@@ -52,6 +53,12 @@ export default function ClientCard({ client, onViewDetails }) {
               <FaEnvelope className="text-gray-400" />
               <span>{client.email}</span>
             </div>
+            {client.companyName && (
+              <div className="flex items-center gap-2">
+                <BsBuildingsFill className="text-gray-400" />
+                <span>{client.companyName}</span>
+              </div>
+            )}
             <div className="flex items-center gap-2">
               <FaMapMarkerAlt className="text-gray-400" />
               <span>{client.address?.street}</span>
@@ -76,7 +83,10 @@ export default function ClientCard({ client, onViewDetails }) {
               <FaBolt className="text-gray-500" />
               <div>
                 <span className="font-semibold">
-                  {client.owned?.reduce((item, sum) => sum + item.power, 0)}
+                  {client.owned?.reduce(
+                    (sum, item) => sum + (item.power || 0),
+                    0
+                  )}
                 </span>
                 <p className="text-xs text-gray-500">Consumption</p>
               </div>
@@ -129,7 +139,9 @@ export default function ClientCard({ client, onViewDetails }) {
           </div>
         </div>
       )}
-      {openEdit && <EditClientModal onClose={() => setOpenEdit(false)} />}
+      {openEdit && (
+        <EditClientModal onClose={() => setOpenEdit(false)} client={client} />
+      )}
     </div>
   );
 }
