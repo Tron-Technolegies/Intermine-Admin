@@ -10,12 +10,15 @@ export default function ChatHistoryModal({ issueId, onClose }) {
 
         {isLoading && <p>Loading messages...</p>}
 
-        {!isLoading && data?.length === 0 && <p className="text-gray-500">No messages found</p>}
+        {!isLoading && data?.length === 0 && (
+          <p className="text-gray-500">No messages found</p>
+        )}
 
         <div className="space-y-3 max-h-80 overflow-y-auto pr-2">
           {data?.map((msg) => (
             <div key={msg._id} className="p-3 bg-gray-100 rounded-lg border">
               <p className="text-sm">{msg.message}</p>
+              <p className="text-xs font-semibold text-end">{msg.sendBy}</p>
               <p className="text-[10px] text-gray-500 mt-1">
                 {new Date(msg.sendOn).toLocaleString()}
               </p>
