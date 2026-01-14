@@ -27,3 +27,11 @@ export function monthsFromNow(endISO) {
 
   return months;
 }
+
+export const getDaysSince = (date) => {
+  const start = new Date(date);
+  const now = new Date();
+
+  const diffMs = now.getTime() - start.getTime();
+  return Math.floor(diffMs / (1000 * 60 * 60 * 24));
+};

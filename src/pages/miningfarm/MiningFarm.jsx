@@ -69,7 +69,8 @@ export default function MiningFarm() {
             farms?.map((farm) => (
               <div
                 key={farm._id}
-                className="bg-white rounded-lg px-3 py-2 flex items-center gap-3 shadow md:min-w-[180px]"
+                className="bg-white rounded-lg px-3 py-2 flex cursor-pointer items-center gap-3 shadow md:min-w-[180px]"
+                onClick={() => setSelectedFarm(farm.farm)}
               >
                 <p className="font-semibold">
                   {farm.farm} ({farm.capacity})
@@ -77,14 +78,16 @@ export default function MiningFarm() {
 
                 <FaPen
                   className="text-gray-600 cursor-pointer hover:text-black"
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation();
                     setEditFarm(farm);
                     setOpenAdd(true);
                   }}
                 />
                 <AiOutlineDelete
-                  className="text-red-700 text-lg "
-                  onClick={() => {
+                  className="text-red-700 text-lg cursor-pointer "
+                  onClick={(e) => {
+                    e.stopPropagation();
                     setDeleteFarm(farm);
                     handleClickOpen();
                   }}
@@ -148,6 +151,8 @@ export default function MiningFarm() {
             page={page}
             totalPages={totalPages}
             setPage={setPage}
+            totalCapacity={minersData?.totalCapacity}
+            currentCapacity={minersData?.currentCapacity}
           />
         )}
       </div>

@@ -28,8 +28,6 @@ export default function IssueCard({
     setSaving(false);
   };
 
-  const isDahab = issue.serviceProvider === "Dahab";
-
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -91,7 +89,7 @@ export default function IssueCard({
           <div className="flex md:flex-row flex-col gap-3 md:items-center">
             <button
               onClick={onRespond}
-              className="px-4 py-1.5 text-sm rounded-lg border border-gray-300 text-gray-700"
+              className="px-4 py-1.5 text-sm rounded-lg cursor-pointer border border-gray-300 text-gray-700"
             >
               Send Response
             </button>
@@ -109,7 +107,7 @@ export default function IssueCard({
 
               <button
                 onClick={handleSave}
-                className="px-4 py-1.5 text-sm rounded-lg bg-blue-600 text-white"
+                className="px-4 py-1.5 text-sm cursor-pointer rounded-lg bg-blue-600 text-white"
               >
                 {saving ? "Saving..." : "Save"}
               </button>
@@ -121,7 +119,7 @@ export default function IssueCard({
             {/* Chat History */}
             <button
               onClick={() => onChatOpen(issue.id)}
-              className="bg-gray-200 w-full md:w-fit px-4 py-2 rounded-full flex items-center gap-1 text-gray-700 justify-center"
+              className="bg-gray-200 cursor-pointer w-full md:w-fit px-4 py-2 rounded-full flex items-center gap-1 text-gray-700 justify-center"
             >
               <BiMessageDetail />
               Messages
@@ -165,7 +163,7 @@ export default function IssueCard({
             {issue?.reminderHistory?.length < 1 && (
               <p className="p-2">No Reminders sent </p>
             )}
-            {issue.serviceProvider === "Dahab" && (
+            {issue.serviceProvider?.trim()?.toLowerCase() === "dahab" && (
               <button
                 onClick={() => {
                   onReminder(issue.id);

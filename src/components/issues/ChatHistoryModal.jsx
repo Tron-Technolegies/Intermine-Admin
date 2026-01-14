@@ -28,7 +28,7 @@ export default function ChatHistoryModal({ issueId, onClose }) {
 
         <button
           onClick={onClose}
-          className="mt-5 bg-gray-700 text-white w-full py-2 rounded-lg hover:bg-gray-800"
+          className="mt-5 bg-gray-700 cursor-pointer text-white w-full py-2 rounded-lg hover:bg-gray-800"
         >
           Close
         </button>

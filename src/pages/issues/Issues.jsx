@@ -12,7 +12,7 @@ import ChatHistoryModal from "../../components/issues/ChatHistoryModal";
 import SearchFilterBar from "../../components/SearchFilterBar";
 
 export default function Issues() {
-  const [selectedType, setSelectedType] = useState("All");
+  const [selectedType, setSelectedType] = useState("Default");
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
 
@@ -158,6 +158,7 @@ export default function Issues() {
               }
             />
           ))}
+        {issues.length < 1 && <p>No Issues Found</p>}
       </div>
       {/* PAGINATION */}
       <div className="flex justify-center gap-4 mt-4">
