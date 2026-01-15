@@ -1,35 +1,29 @@
 import React, { useContext, useState, useEffect } from "react";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useLoaderData, useNavigate } from "react-router-dom";
 import { useGetUserInfo } from "../../hooks/useGetUserInfo";
 import { UserContext } from "../../UserContext";
 import Loading from "../Loading";
 
 export default function HomeLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { isLoading, data, error, isSuccess } = useGetUserInfo();
+  const user = useLoaderData();
+  const { isLoading, data } = useGetUserInfo();
   const { setUser } = useContext(UserContext);
   const navigate = useNavigate();
 
-  //  Handle error redirect
   useEffect(() => {
-    if (error) {
-      navigate("/login");
+    if (user) {
+      setUser(user);
     }
-  }, [error, navigate]);
+  }, [user]);
 
-  //  Handle success redirect + store user
   useEffect(() => {
-    if (isSuccess && data) {
+    if (data) {
       setUser(data);
-
-      // If not admin, redirect
-      if (data.role !== "Admin") {
-        navigate("/login");
-      }
     }
-  }, [isSuccess, data, navigate, setUser]);
+  }, [data]);
 
   if (isLoading) {
     return <Loading />;

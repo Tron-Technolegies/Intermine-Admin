@@ -1,8 +1,20 @@
 import React, { useState } from "react";
-import { FaEnvelope, FaMapMarkerAlt, FaCalendarAlt, FaBolt, FaFileContract } from "react-icons/fa";
+import {
+  FaEnvelope,
+  FaMapMarkerAlt,
+  FaCalendarAlt,
+  FaBolt,
+  FaFileContract,
+} from "react-icons/fa";
+import { GoCpu } from "react-icons/go";
+import { BsBuildingsFill } from "react-icons/bs";
+import useAgreementActions from "../../hooks/adminAgreement/useAgreementActions";
+import EditClientModal from "./EditClientModal";
 
 export default function ClientCard({ client, onViewDetails }) {
   const [expanded, setExpanded] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
+  const { sendAgreement } = useAgreementActions();
 
   return (
     <div
@@ -14,11 +26,13 @@ export default function ClientCard({ client, onViewDetails }) {
       {/* Header Section (Always Visible) */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900">{client.name}</h3>
-          <p className="text-sm text-gray-600">{client.id}</p>
+          <h3 className="text-lg font-semibold text-gray-900">
+            {client.clientName}
+          </h3>
+          <p className="text-sm text-gray-600">{client.clientId}</p>
         </div>
 
-        <span
+        {/* <span
           className={`px-3 py-1 text-xs rounded-full font-medium ${
             client.status === "Active"
               ? "bg-green-100 text-green-700"
@@ -28,7 +42,7 @@ export default function ClientCard({ client, onViewDetails }) {
           }`}
         >
           {client.status}
-        </span>
+        </span> */}
       </div>
 
       {/* Expanded Section */}
@@ -39,25 +53,41 @@ export default function ClientCard({ client, onViewDetails }) {
               <FaEnvelope className="text-gray-400" />
               <span>{client.email}</span>
             </div>
+            {client.companyName && (
+              <div className="flex items-center gap-2">
+                <BsBuildingsFill className="text-gray-400" />
+                <span>{client.companyName}</span>
+              </div>
+            )}
             <div className="flex items-center gap-2">
               <FaMapMarkerAlt className="text-gray-400" />
-              <span>{client.location}</span>
+              <span>{client.address?.street}</span>
             </div>
             <div className="flex items-center gap-2">
               <FaCalendarAlt className="text-gray-400" />
-              <span>Joined {client.joined}</span>
+              <span>
+                Joined {new Date(client.createdAt).toLocaleDateString()}
+              </span>
             </div>
           </div>
 
-          <div className="flex justify-between items-center border-t border-[#DADADA] pt-3 text-sm text-gray-700">
-            <div>
-              <span className="font-semibold">{client.miners}</span>
-              <p className="text-xs text-gray-500">Miners</p>
+          <div className="flex md:flex-row flex-col gap-2 justify-between md:items-center border-t border-[#DADADA] pt-3 text-sm text-gray-700">
+            <div className="flex items-center gap-1">
+              <GoCpu className="text-gray-500" />
+              <div>
+                <span className="font-semibold">{client.owned?.length}</span>
+                <p className="text-xs text-gray-500">Miners</p>
+              </div>
             </div>
             <div className="flex items-center gap-1">
               <FaBolt className="text-gray-500" />
               <div>
-                <span className="font-semibold">{client.consumption}</span>
+                <span className="font-semibold">
+                  {client.owned?.reduce(
+                    (sum, item) => sum + (item.power || 0),
+                    0
+                  )}
+                </span>
                 <p className="text-xs text-gray-500">Consumption</p>
               </div>
             </div>
@@ -65,17 +95,29 @@ export default function ClientCard({ client, onViewDetails }) {
               <FaFileContract className="text-gray-500" />
               <p className="text-xs text-gray-500">
                 Agreement{" "}
-                {client.agreement ? (
+                {client.miningAgreement ? (
                   <span className="text-green-600 font-bold">✔</span>
                 ) : (
                   <span className="text-red-500 font-bold">✘</span>
                 )}
               </p>
+              {!client.miningAgreement && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    sendAgreement.mutate({ user: client._id, type: "Mining" });
+                  }}
+                  disabled={sendAgreement.isPending}
+                  className="px-2 bg-[#FFA800] hover:bg-[#e69c00] text-white rounded-lg font-medium py-2 transition-colors"
+                >
+                  {sendAgreement.isPending ? "Sending..." : "Send Agreement"}
+                </button>
+              )}
             </div>
           </div>
 
           {/* Action Buttons */}
-          <div className="flex gap-3 mt-4">
+          <div className="flex md:flex-row flex-col gap-3 mt-4">
             <button
               onClick={(e) => {
                 e.stopPropagation();
@@ -86,13 +128,19 @@ export default function ClientCard({ client, onViewDetails }) {
               View Details
             </button>
             <button
-              onClick={(e) => e.stopPropagation()}
-              className="flex-1 bg-[#FFA800] hover:bg-[#e69c00] text-white rounded-lg font-medium py-2 transition-colors"
+              onClick={(e) => {
+                e.stopPropagation();
+                setOpenEdit(true);
+              }}
+              className="flex-1 bg-[#787878] hover:bg-[#5f5f5f] text-white rounded-lg font-medium py-2 transition-colors"
             >
-              Send Agreement
+              Edit User
             </button>
           </div>
         </div>
+      )}
+      {openEdit && (
+        <EditClientModal onClose={() => setOpenEdit(false)} client={client} />
       )}
     </div>
   );

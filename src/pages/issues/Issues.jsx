@@ -12,7 +12,7 @@ import ChatHistoryModal from "../../components/issues/ChatHistoryModal";
 import SearchFilterBar from "../../components/SearchFilterBar";
 
 export default function Issues() {
-  const [selectedType, setSelectedType] = useState("All");
+  const [selectedType, setSelectedType] = useState("Default");
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
 
@@ -28,7 +28,13 @@ export default function Issues() {
     "All",
     ...(issueTypesData?.map((t) => t.issueType) || []),
   ];
-  const statusOptions = ["ALL", "Pending", "Warranty", "Resolved"];
+  const statusOptions = [
+    "Default",
+    "Pending",
+    "Warranty",
+    "Repair Center",
+    "Resolved",
+  ];
 
   // Fetch issues list
   const { data: issuesData, isLoading } = useIssues(
@@ -100,9 +106,9 @@ export default function Issues() {
           {issueTypesData?.map((item) => (
             <div
               key={item._id}
-              className="flex justify-between items-center bg-white border rounded-xl px-3 py-2 shadow-sm"
+              className="flex justify-between items-center gap-2 bg-white rounded-xl px-3 py-2 shadow-md"
             >
-              <span className="text-gray-800">{item.issueType}</span>
+              <span className="text-gray-800 text-sm">{item.issueType}</span>
               <button
                 onClick={() => {
                   setEditTypeData(item);
@@ -152,6 +158,7 @@ export default function Issues() {
               }
             />
           ))}
+        {issues.length < 1 && <p>No Issues Found</p>}
       </div>
       {/* PAGINATION */}
       <div className="flex justify-center gap-4 mt-4">

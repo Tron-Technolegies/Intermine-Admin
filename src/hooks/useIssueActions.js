@@ -1,6 +1,7 @@
 // hooks/useIssueActions.js
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../api/api";
+import { toast } from "react-toastify";
 
 export default function useIssueActions() {
   const queryClient = useQueryClient();
@@ -10,6 +11,15 @@ export default function useIssueActions() {
       api.patch(`/api/v1/admin/issue/update-status/${id}`, { status }),
     onSuccess: () => {
       queryClient.invalidateQueries(["issues"]);
+      queryClient.invalidateQueries({ queryKey: ["miners"] });
+      toast.success("Issue Status updated");
+    },
+    onError: (error) => {
+      toast.error(
+        error.response.data.error ||
+          error.response.data.message ||
+          "something went wrong"
+      );
     },
   });
 
@@ -18,6 +28,14 @@ export default function useIssueActions() {
       api.patch("/api/v1/admin/issue/send-response", { issueId, message }),
     onSuccess: () => {
       queryClient.invalidateQueries(["issueMessages"]);
+      toast.success("Response send successfully");
+    },
+    onError: (error) => {
+      toast.error(
+        error.response.data.error ||
+          error.response.data.message ||
+          "something went wrong"
+      );
     },
   });
 
@@ -32,6 +50,14 @@ export default function useIssueActions() {
       }),
     onSuccess: () => {
       queryClient.invalidateQueries(["issues"]);
+      toast.success("Successfully reminded");
+    },
+    onError: (error) => {
+      toast.error(
+        error.response.data.error ||
+          error.response.data.message ||
+          "something went wrong"
+      );
     },
   });
 

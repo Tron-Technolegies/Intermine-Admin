@@ -14,8 +14,6 @@ export const useGetUserInfo = () => {
       setUser(data);
       return data;
     },
-
-    retry: false,
   });
   return { isLoading, data, error, isSuccess };
 };

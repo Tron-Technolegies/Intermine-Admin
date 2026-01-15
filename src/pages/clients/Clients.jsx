@@ -41,17 +41,7 @@ export default function Clients() {
         {data?.clients?.map((client) => (
           <ClientCard
             key={client._id}
-            client={{
-              id: client.clientId,
-              name: client.clientName,
-              email: client.email,
-              location: client.address?.street || "N/A",
-              joined: new Date(client.createdAt).toLocaleDateString(),
-              miners: `${client.owned?.length || 0}`,
-              consumption: client.owned?.power || "0W",
-              agreement: client.miningAgreement ? true : false,
-              status: client.status || "Active",
-            }}
+            client={client}
             onViewDetails={() => navigate(`/clients/${client._id}`)}
           />
         ))}

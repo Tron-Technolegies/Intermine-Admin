@@ -17,7 +17,7 @@ export default function Login() {
 
     onSuccess: () => {
       toast.success("Login Successful!", { autoClose: 800 });
-      setTimeout(() => navigate("/", { replace: true }), 800);
+      navigate("/");
     },
 
     onError: (err) => {
@@ -48,12 +48,18 @@ export default function Login() {
 
       <div className="w-full md:w-1/3 flex flex-col justify-center items-center px-6 sm:px-10 py-10 md:py-0">
         <div className="md:hidden flex justify-center mb-36 items-center mt-16">
-          <img src="/logo-mobile.png" alt="Mobile Logo" className="w-36 sm:w-44" />
+          <img
+            src="/logo-mobile.png"
+            alt="Mobile Logo"
+            className="w-36 sm:w-44"
+          />
         </div>
 
         <div className="w-full max-w-sm sm:max-w-md">
           <div className="text-center md:text-left mb-6">
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-1">Hello Again!</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-1">
+              Hello Again!
+            </h1>
             <p className="text-gray-500 text-sm sm:text-base">Welcome Back</p>
           </div>
 

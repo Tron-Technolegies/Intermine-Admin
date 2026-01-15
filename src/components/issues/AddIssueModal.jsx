@@ -23,9 +23,9 @@ export default function AddIssueModal({ onClose }) {
   });
 
   // Close on outside click
-  const handleOutsideClick = (e) => {
-    if (e.target.id === "overlay") onClose();
-  };
+  // const handleOutsideClick = (e) => {
+  //   if (e.target.id === "overlay") onClose();
+  // };
 
   // Submit form
   const handleSubmit = (e) => {
@@ -38,7 +38,7 @@ export default function AddIssueModal({ onClose }) {
   return (
     <div
       id="overlay"
-      onClick={handleOutsideClick}
+      // onClick={handleOutsideClick}
       className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50"
     >
       <div className="bg-white rounded-xl w-[92%] sm:w-96 max-h-[70vh] overflow-y-auto p-5 shadow-xl relative">
@@ -50,9 +50,12 @@ export default function AddIssueModal({ onClose }) {
           <IoClose size={18} />
         </button>
 
-        <h2 className="text-xl font-semibold text-gray-900 mb-1">Add New Issue Type</h2>
+        <h2 className="text-xl font-semibold text-gray-900 mb-1">
+          Add New Issue Type
+        </h2>
         <p className="text-sm text-gray-500 mb-5">
-          Create a new issue type that will appear in the client report issue dropdown.
+          Create a new issue type that will appear in the client report issue
+          dropdown.
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-3 p-2">

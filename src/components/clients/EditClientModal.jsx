@@ -1,13 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IoClose } from "react-icons/io5";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import api from "../../api/api";
-import { toast } from "react-toastify";
+import { RiDeleteBin7Fill } from "react-icons/ri";
+import { useEditClient } from "../../hooks/useClients";
 
-export default function AddClientModal({ onClose }) {
-  const queryClient = useQueryClient();
-  const [agreement, setAgreement] = useState(false);
+export default function EditClientModal({ onClose, client }) {
   const [watchers, setWatchers] = useState([]);
+  const { isPending, mutate } = useEditClient();
 
   //functions for Watchers
   function addWatchers() {
@@ -22,55 +20,21 @@ export default function AddClientModal({ onClose }) {
     setWatchers(watchers.filter((_, i) => i !== index));
   }
 
-  const createClientMutation = useMutation({
-    mutationFn: async ({ data }) => api.post("/api/v1/auth/register", data),
-
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["clients"] });
-      toast.success("Client registered successfully");
-      setTimeout(() => onClose(), 700);
-    },
-
-    onError: (err) => {
-      toast.error(err.response?.data?.error || "Registration failed");
-    },
-  });
-
-  const bulkUpload = useMutation({
-    mutationFn: (formData) =>
-      api.post("api/v1/admin/user/bulk", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      }),
-
-    onSuccess: () => {
-      toast.success("Bulk Upload Successful!");
-      setTimeout(() => onClose(), 600);
-    },
-
-    onError: (err) => {
-      toast.error(err.response?.data?.error || "Bulk upload failed");
-    },
-  });
-
-  const handleCSVUpload = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const fd = new FormData();
-    fd.append("file", file);
-
-    bulkUpload.mutate(fd);
-  };
-
-  const handleSubmit = (e) => {
+  function handleSubmit(e) {
     e.preventDefault();
-
     const formData = new FormData(e.target);
     formData.append("watcher", JSON.stringify(watchers));
+    formData.append("userId", client?._id);
     const data = Object.fromEntries(formData);
-    data.isAgreement = agreement;
-    createClientMutation.mutate({ data });
-  };
+    mutate({ data });
+    onClose();
+  }
+
+  useEffect(() => {
+    if (client) {
+      setWatchers(client.watcherLinks);
+    }
+  }, [client]);
 
   return (
     <div
@@ -90,39 +54,16 @@ export default function AddClientModal({ onClose }) {
         </button>
 
         <h2 className="text-xl font-semibold text-gray-900 mb-1">
-          Add New Client
+          Edit Client
         </h2>
-        <p className="text-sm text-gray-500 mb-3">
-          Create a new client or upload CSV file.
-        </p>
 
-        <div className="mb-4">
-          <input
-            type="file"
-            accept=".csv"
-            id="csvUpload"
-            className="hidden"
-            onChange={handleCSVUpload}
-          />
-
-          <button
-            type="button"
-            onClick={() => document.getElementById("csvUpload").click()}
-            className="w-full bg-[#3893D0] text-white py-2 rounded-md"
-          >
-            {bulkUpload.isPending ? "Uploading..." : "Upload CSV File"}
-          </button>
-        </div>
-
-        {/* Divider */}
-        <div className="text-center text-xs text-gray-400 my-3">OR</div>
-
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+        <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
           <div>
             <label className="text-sm text-gray-700">Client Name</label>
             <input
               type="text"
               name="name"
+              defaultValue={client?.clientName}
               required
               className="w-full border border-gray-300 rounded-md p-2 mt-1 focus:ring-blue-500"
             />
@@ -133,6 +74,7 @@ export default function AddClientModal({ onClose }) {
             <input
               type="text"
               name="clientId"
+              defaultValue={client?.clientId}
               required
               className="w-full border border-gray-300 rounded-md p-2 mt-1 focus:ring-blue-500"
             />
@@ -142,6 +84,7 @@ export default function AddClientModal({ onClose }) {
             <input
               type="text"
               name="companyName"
+              defaultValue={client?.companyName}
               className="w-full border border-gray-300 rounded-md p-2 mt-1 focus:ring-blue-500"
             />
           </div>
@@ -151,16 +94,7 @@ export default function AddClientModal({ onClose }) {
             <input
               type="email"
               name="email"
-              required
-              className="w-full border border-gray-300 rounded-md p-2 mt-1 focus:ring-blue-500"
-            />
-          </div>
-
-          <div>
-            <label className="text-sm text-gray-700">Password</label>
-            <input
-              type="password"
-              name="password"
+              defaultValue={client?.email}
               required
               className="w-full border border-gray-300 rounded-md p-2 mt-1 focus:ring-blue-500"
             />
@@ -171,6 +105,7 @@ export default function AddClientModal({ onClose }) {
             <input
               type="text"
               name="address"
+              defaultValue={client?.address?.street}
               required
               className="w-full border border-gray-300 rounded-md p-2 mt-1 focus:ring-blue-500"
             />
@@ -216,25 +151,12 @@ export default function AddClientModal({ onClose }) {
             </button>
           </div>
 
-          <div className="flex items-center gap-2 mt-2">
-            <input
-              type="checkbox"
-              name="isAgreement"
-              checked={agreement}
-              onChange={(e) => setAgreement(e.target.checked)}
-              className="accent-blue-600"
-            />
-            <label className="text-sm text-gray-700">
-              Include Mining Agreement
-            </label>
-          </div>
-
           <button
             type="submit"
-            disabled={createClientMutation.isPending}
+            disabled={isPending}
             className="bg-[#1C2340] hover:bg-[#141A32] text-white mt-4 py-2 rounded-md"
           >
-            {createClientMutation.isPending ? "Creating..." : "Add Client"}
+            Edit Client
           </button>
         </form>
       </div>

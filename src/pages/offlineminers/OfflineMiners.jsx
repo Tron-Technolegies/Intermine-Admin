@@ -16,6 +16,8 @@ import {
   CircularProgress,
   Typography,
 } from "@mui/material";
+import { getDaysSince } from "../../utils/monthCalculation";
+import { Link } from "react-router-dom";
 
 export default function OfflineMiners() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -127,15 +129,15 @@ export default function OfflineMiners() {
                     "Issue",
                     "Mining Farm",
                     "Provider",
-                    "Message",
+                    "Action",
                   ].map((head) => (
                     <TableCell
                       key={head}
                       className="bg-gray-50 text-gray-600 font-semibold"
+                      align="center"
                       sx={{
                         fontWeight: "bold",
                         color: "#4b5563",
-                        whiteSpace: "nowrap",
                       }}
                     >
                       {head}
@@ -147,53 +149,56 @@ export default function OfflineMiners() {
               <TableBody>
                 {miners.map((m) => (
                   <TableRow hover key={m._id}>
-                    <TableCell>{m.serialNumber}</TableCell>
+                    <TableCell align="center">{m.serialNumber}</TableCell>
 
-                    <TableCell sx={{ whiteSpace: "nowrap" }}>
+                    <TableCell align="center">
                       {m.client?.clientName}{" "}
                       <span className="text-xs text-gray-400">
                         ({m.client?.clientId})
                       </span>
                     </TableCell>
 
-                    <TableCell sx={{ whiteSpace: "nowrap" }}>
-                      {m.model}
+                    <TableCell align="center">{m.model}</TableCell>
+
+                    <TableCell align="center">
+                      <div className="flex gap-2 items-center justify-center">
+                        <p
+                          className={`${getStatusBadge(
+                            m.status
+                          )} p-2 rounded-md text-xs `}
+                        >
+                          {m.status}
+                        </p>
+                        {m.offlineReason !== "farm maintenance" && (
+                          <p>
+                            {getDaysSince(
+                              m.offlineHistory?.[m.offlineHistory.length - 1]
+                                ?.date
+                            )}{" "}
+                            days
+                          </p>
+                        )}
+                      </div>
                     </TableCell>
 
-                    <TableCell>
-                      <span
-                        className={`${getStatusBadge(
-                          m.status
-                        )} px-3 py-1 rounded-full text-xs whitespace-nowrap`}
-                      >
-                        {m.status}
-                      </span>
-                    </TableCell>
-
-                    <TableCell sx={{ whiteSpace: "nowrap" }}>
+                    <TableCell align="center">
                       {m.currentIssue?.issue?.issueType || "-"}
                     </TableCell>
 
-                    <TableCell sx={{ whiteSpace: "nowrap" }}>
-                      {m.location}
-                    </TableCell>
+                    <TableCell align="center">{m.location}</TableCell>
 
-                    <TableCell sx={{ whiteSpace: "nowrap" }}>
-                      {m.serviceProvider}
-                    </TableCell>
+                    <TableCell align="center">{m.serviceProvider}</TableCell>
 
-                    <TableCell sx={{ minWidth: 200 }}>
-                      {m.currentIssue ? (
-                        <>
-                          {m.currentIssue.status}
-                          <span className="text-[10px] text-gray-400 block whitespace-nowrap">
-                            {new Date(
-                              m.currentIssue.updatedAt
-                            ).toLocaleTimeString()}
-                          </span>
-                        </>
+                    <TableCell align="center">
+                      {m.offlineReason === "farm maintenance" ? (
+                        <p>Farm is down</p>
                       ) : (
-                        "-"
+                        <Link
+                          to={`/issues/${m.currentIssue?._id}`}
+                          className="p-2 rounded-md bg-indigo-500 text-white cursor-pointer"
+                        >
+                          Details
+                        </Link>
                       )}
                     </TableCell>
                   </TableRow>

@@ -12,17 +12,25 @@ export default function FarmTable({
   page,
   totalPages,
   setPage,
+  totalCapacity,
+  currentCapacity,
 }) {
   if (isLoading) return <Loading />;
 
   if (!miners || miners.length === 0)
     return <p className="text-center mt-4 text-gray-500">No miners found</p>;
 
-  // Calculate power usage
-  const totalUsed = miners.reduce((sum, m) => sum + (m.power || 0), 0);
-
   return (
     <div className="bg-white rounded-xl shadow my-6">
+      {/* POWER STATS */}
+      <div className="bg-[#EAF4FF] w-full text-[15px]">
+        <div className="flex justify-between px-6 py-3 font-medium border-b border-blue-200">
+          <span>Total Power Used</span>{" "}
+          <span>
+            {currentCapacity} KW / {totalCapacity} KW
+          </span>
+        </div>
+      </div>
       {/* TABLE */}
       <TableContainer component={Paper} sx={{ marginTop: 3, maxWidth: "90vw" }}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -35,6 +43,14 @@ export default function FarmTable({
                 }}
               >
                 Miner Model
+              </TableCell>
+              <TableCell
+                sx={{
+                  textAlign: "center",
+                  fontWeight: "bold",
+                }}
+              >
+                Client
               </TableCell>
               <TableCell
                 sx={{
@@ -59,6 +75,14 @@ export default function FarmTable({
                 }}
               >
                 Worker Id
+              </TableCell>
+              <TableCell
+                sx={{
+                  textAlign: "center",
+                  fontWeight: "bold",
+                }}
+              >
+                Location
               </TableCell>
               <TableCell
                 sx={{
@@ -99,6 +123,13 @@ export default function FarmTable({
                     scope="row"
                     sx={{ textAlign: "center" }}
                   >
+                    {item.clientName}
+                  </TableCell>
+                  <TableCell
+                    component="th"
+                    scope="row"
+                    sx={{ textAlign: "center" }}
+                  >
                     {item.serialNumber}
                   </TableCell>
                   <TableCell
@@ -114,6 +145,13 @@ export default function FarmTable({
                     sx={{ textAlign: "center" }}
                   >
                     {item.workerId}
+                  </TableCell>
+                  <TableCell
+                    component="th"
+                    scope="row"
+                    sx={{ textAlign: "center" }}
+                  >
+                    {item.location}
                   </TableCell>
                   <TableCell
                     component="th"
@@ -141,13 +179,6 @@ export default function FarmTable({
           </TableBody>
         </Table>
       </TableContainer>
-
-      {/* POWER STATS */}
-      <div className="bg-[#EAF4FF] w-full text-[15px]">
-        <div className="flex justify-between px-6 py-3 font-medium border-b border-blue-200">
-          <span>Total Power Used</span> <span>{totalUsed}</span>
-        </div>
-      </div>
 
       {/* PAGINATION */}
       <div className="flex justify-center gap-3 py-4">

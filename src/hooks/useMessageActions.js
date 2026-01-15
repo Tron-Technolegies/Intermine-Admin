@@ -15,7 +15,10 @@ export const editPendingMessage = async (record, message) => {
     toast.success("Message updated!");
     return res.data;
   } catch (error) {
-    const msg = error?.response?.data?.error || "Error editing message.";
+    const msg =
+      error.response.data.error ||
+      error.response.data.message ||
+      "something went wrong";
     toast.error(msg);
     throw error;
   }
@@ -36,7 +39,10 @@ export const releasePendingMessage = async (record) => {
     toast.success("Message released!");
     return res.data;
   } catch (error) {
-    const msg = error?.response?.data?.error || "Error releasing message.";
+    const msg =
+      error.response.data.error ||
+      error.response.data.message ||
+      "something went wrong";
     toast.error(msg);
     throw error;
   }
@@ -57,7 +63,10 @@ export const cancelPendingMessage = async (record) => {
     toast.success("Message cancelled!");
     return res.data;
   } catch (error) {
-    const msg = error?.response?.data?.error || "Error cancelling message.";
+    const msg =
+      error.response.data.error ||
+      error.response.data.message ||
+      "something went wrong";
     toast.error(msg);
     throw error;
   }

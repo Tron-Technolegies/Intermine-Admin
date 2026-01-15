@@ -1,23 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IoClose } from "react-icons/io5";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../../api/api";
 import { toast } from "react-toastify";
+import { useGetUserDropdowns } from "../../hooks/useDropdowns";
 
 export default function AddMinerModal({ onClose }) {
   const queryClient = useQueryClient();
-  const { data: clients, isLoading: loadingClients } = useQuery({
-    queryKey: ["clients"],
-    queryFn: async () => {
-      const res = await api.get("api/v1/admin/user/all", {
-        params: {
-          query: "",
-          currentPage: 1,
-          status: "ALL",
-        },
-      });
-      return res.data.clients;
-    },
+
+  const { isLoading: loadingClients, data: clients } = useGetUserDropdowns({
+    search: "",
   });
 
   const { data: locations, isLoading: loadingLocations } = useQuery({
@@ -52,14 +44,9 @@ export default function AddMinerModal({ onClose }) {
     },
   });
 
-  const handleOutsideClick = (e) => {
-    if (e.target.id === "overlay") onClose();
-  };
-
   return (
     <div
       id="overlay"
-      onClick={handleOutsideClick}
       className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50"
     >
       <div className="bg-white rounded-xl w-[92%] sm:w-96 max-h-[70vh] overflow-y-auto p-5 shadow-xl relative">
@@ -96,7 +83,7 @@ export default function AddMinerModal({ onClose }) {
             {!loadingClients &&
               clients?.map((c) => (
                 <option key={c._id} value={c._id}>
-                  {c.firstName} {c.lastName}
+                  {c.clientName}
                 </option>
               ))}
           </select>
@@ -159,9 +146,18 @@ export default function AddMinerModal({ onClose }) {
           </div>
 
           {/* WARRANTY */}
-          <label className="text-xs">Warranty</label>
+          <label className="text-xs">Warranty Start</label>
           <input
-            name="warranty"
+            name="warrantyStart"
+            type="date"
+            required
+            placeholder="Warranty Period"
+            className="w-full border p-2 rounded-md"
+          />
+          <label className="text-xs">Warranty End</label>
+          <input
+            name="warrantyEnd"
+            type="date"
             required
             placeholder="Warranty Period"
             className="w-full border p-2 rounded-md"
@@ -172,7 +168,6 @@ export default function AddMinerModal({ onClose }) {
             name="warrantyType"
             className="w-full border p-2 rounded-md"
           >
-            <option value="">Select Warranty Type</option>
             <option value="Manufacturer">Manufacturer</option>
             <option value="Intermine">Intermine</option>
           </select>
@@ -212,9 +207,16 @@ export default function AddMinerModal({ onClose }) {
             placeholder="MAC Address"
             className="w-full border p-2 rounded-md"
           />
+          {/* COINS */}
 
+          <label className="text-xs">Coins</label>
+          <input
+            name="coins"
+            placeholder="Enter the coins"
+            className="w-full border p-2 rounded-md"
+          />
           {/* CONNECTION DATE */}
-          <label className="text-xs">Connection Date</label>
+          <label className="text-xs">Buying Date</label>
           <input
             type="date"
             name="connectionDate"
@@ -222,10 +224,8 @@ export default function AddMinerModal({ onClose }) {
           />
           <label className="text-xs">Service Provider</label>
           <input
-            value={"Dahab"}
             name="serviceProvider"
             className="w-full border p-2 rounded-md"
-            required
           />
           {/* ADD BTN */}
           <button

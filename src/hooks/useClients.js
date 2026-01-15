@@ -1,5 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../api/api";
+import { toast } from "react-toastify";
 
 export default function useClients(page = 1, query = "", status = "ALL") {
   return useQuery({
@@ -13,3 +14,27 @@ export default function useClients(page = 1, query = "", status = "ALL") {
     refetchOnWindowFocus: false,
   });
 }
+
+export const useEditClient = () => {
+  const queryClient = useQueryClient();
+  const { isPending, mutate } = useMutation({
+    mutationFn: async ({ data }) => {
+      await api.patch("/api/v1/admin/user", data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["clients"] });
+      queryClient.invalidateQueries({ queryKey: ["clientDetails"] });
+      toast.success("client updated successfully");
+    },
+    onError: (error) => {
+      console.log(error);
+
+      toast.error(
+        error.response.data.error ||
+          error.response.data.message ||
+          "something went wrong"
+      );
+    },
+  });
+  return { isPending, mutate };
+};

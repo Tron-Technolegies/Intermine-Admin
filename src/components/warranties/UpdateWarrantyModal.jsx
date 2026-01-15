@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { IoClose } from "react-icons/io5";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../../api/api";
+import { toast } from "react-toastify";
 
 export default function UpdateWarrantyModal({ item, onClose }) {
   const queryClient = useQueryClient();
@@ -21,7 +22,12 @@ export default function UpdateWarrantyModal({ item, onClose }) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["warranty"]);
+      queryClient.invalidateQueries({ queryKey: ["single-miner"] });
+      toast.success("Warranty updated successfully");
       onClose();
+    },
+    onError: (error) => {
+      toast.error(error.response.data.error);
     },
   });
 
@@ -31,7 +37,9 @@ export default function UpdateWarrantyModal({ item, onClose }) {
         <div className="flex justify-between items-start mb-4">
           <div>
             <h2 className="font-semibold text-lg">Update Warranty</h2>
-            <p className="text-gray-500 text-sm">Update warranty for {item.miner?.model}</p>
+            <p className="text-gray-500 text-sm">
+              Update warranty for {item.miner?.model}
+            </p>
           </div>
           <button onClick={onClose}>
             <IoClose size={22} />

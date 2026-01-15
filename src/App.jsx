@@ -22,11 +22,14 @@ import VerifyOtpPage from "./pages/auth/VerifyOtpPage";
 import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
 import ErrorPage from "./pages/error/ErrorPage";
 import SingleMinerPage from "./pages/myminers/SingleMinerPage";
+import { adminLoader } from "./loaders/adminLoader";
+import IssueSingle from "./pages/issues/IssueSingle";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <HomeLayout />,
+    loader: adminLoader,
     errorElement: <ErrorPage />,
     children: [
       { index: true, element: <Dashboard /> },
@@ -35,6 +38,7 @@ const router = createBrowserRouter([
       { path: "clients", element: <Clients /> },
       { path: "clients/:id", element: <ClientDetails /> },
       { path: "issues", element: <Issues /> },
+      { path: "issues/:id", element: <IssueSingle /> },
       { path: "offline-miners", element: <OfflineMiners /> },
       { path: "agreements", element: <Agreements /> },
       { path: "warranties", element: <Warranty /> },

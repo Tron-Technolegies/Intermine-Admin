@@ -16,3 +16,14 @@ export default function useIssues(selectedType, searchTerm, currentPage) {
     },
   });
 }
+
+export const useGetSingleIssue = ({ id }) => {
+  const { isLoading, isError, data } = useQuery({
+    queryKey: ["single-issue", id],
+    queryFn: async () => {
+      const { data } = await api.get(`/api/v1/admin/issue/${id}`);
+      return data;
+    },
+  });
+  return { data, isError, isLoading };
+};

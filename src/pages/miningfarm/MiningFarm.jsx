@@ -4,6 +4,7 @@ import AddFarmModal from "../../components/miningfarms/AddFarmModal";
 import FarmTable from "../../components/miningfarms/FarmTable";
 import SearchFilterBar from "../../components/SearchFilterBar";
 import { FaPen } from "react-icons/fa";
+import { GrAnnounce } from "react-icons/gr";
 import { AiOutlineDelete } from "react-icons/ai";
 import useFarms from "../../hooks/adminFarms/useFarms";
 import useFarmMiners from "../../hooks/adminFarms/useFarmsMiners";
@@ -15,12 +16,15 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { useDeleteFarm } from "../../hooks/adminFarms/useDeleteFarm";
 import Loading from "../../components/Loading";
+import { AddAnnouncementModal } from "../../components/miningfarms/AddAnnouncementModal";
+import FarmPreview from "../../components/miningfarms/FarmPreview";
 
 export default function MiningFarm() {
   const [openAdd, setOpenAdd] = useState(false);
   const [editFarm, setEditFarm] = useState(null);
   const [deleteFarm, setDeleteFarm] = useState(null);
   const [open, setOpen] = useState(false);
+  const [openAnnouncement, setOpenAnnouncement] = useState(false);
 
   const [selectedFarm, setSelectedFarm] = useState("ALL");
   const [search, setSearch] = useState("");
@@ -49,6 +53,14 @@ export default function MiningFarm() {
     setOpen(false);
   };
 
+  const hadleAnnouncementOpen = () => {
+    setOpenAnnouncement(true);
+  };
+
+  const handleAnnouncementClose = () => {
+    setOpenAnnouncement(false);
+  };
+
   return (
     <div className="min-h-screen">
       <PageHeader
@@ -58,7 +70,19 @@ export default function MiningFarm() {
         onButtonClick={() => setOpenAdd(true)}
         ModalComponent={AddFarmModal}
       />
-
+      <button
+        onClick={hadleAnnouncementOpen}
+        className="my-5 p-2 text-sm bg-blue-900 cursor-pointer text-white rounded-md flex gap-2 items-center"
+      >
+        Add Announcement <GrAnnounce size={18} />
+      </button>
+      {openAnnouncement && (
+        <AddAnnouncementModal
+          open={openAnnouncement}
+          handleClose={handleAnnouncementClose}
+          farms={farms}
+        />
+      )}
       {/* FARM CARDS */}
       <div className="bg-[#F5F5F5] my-4 rounded-lg p-4 flex flex-col gap-3">
         <p className="text-2xl font-bold">Our Farms</p>
@@ -69,7 +93,8 @@ export default function MiningFarm() {
             farms?.map((farm) => (
               <div
                 key={farm._id}
-                className="bg-white rounded-lg px-3 py-2 flex items-center gap-3 shadow md:min-w-[180px]"
+                className="bg-white rounded-lg px-3 py-2 flex cursor-pointer items-center gap-3 shadow md:min-w-[180px]"
+                onClick={() => setSelectedFarm(farm.farm)}
               >
                 <p className="font-semibold">
                   {farm.farm} ({farm.capacity})
@@ -77,14 +102,16 @@ export default function MiningFarm() {
 
                 <FaPen
                   className="text-gray-600 cursor-pointer hover:text-black"
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation();
                     setEditFarm(farm);
                     setOpenAdd(true);
                   }}
                 />
                 <AiOutlineDelete
-                  className="text-red-700 text-lg "
-                  onClick={() => {
+                  className="text-red-700 text-lg cursor-pointer "
+                  onClick={(e) => {
+                    e.stopPropagation();
                     setDeleteFarm(farm);
                     handleClickOpen();
                   }}
@@ -92,6 +119,12 @@ export default function MiningFarm() {
               </div>
             ))}
         </div>
+        {selectedFarm !== "ALL" && (
+          <FarmPreview
+            farm={farms?.find((item) => item.farm === selectedFarm)}
+          />
+        )}
+
         {isPending && <Loading />}
         {/* //Delete Popup */}
         <Dialog
@@ -148,6 +181,8 @@ export default function MiningFarm() {
             page={page}
             totalPages={totalPages}
             setPage={setPage}
+            totalCapacity={minersData?.totalCapacity}
+            currentCapacity={minersData?.currentCapacity}
           />
         )}
       </div>
