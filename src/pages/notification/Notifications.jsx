@@ -134,16 +134,23 @@ export default function Notifications() {
                 <div>
                   <p className="font-semibold text-gray-900">{n.problem}</p>
 
-                  <p className="text-gray-600 text-sm mt-1">
-                    Client:{" "}
-                    <span className="font-medium">{n.client?.clientName}</span>
-                  </p>
+                  {n.client && (
+                    <p className="text-gray-600 text-sm mt-1">
+                      Client:{" "}
+                      <span className="font-medium">
+                        {n.client?.clientName}
+                      </span>
+                    </p>
+                  )}
 
-                  <p className="text-gray-600 text-sm">
-                    Miner: <span className="font-medium">{n.miner?.model}</span>
-                    &nbsp;• Worker ID:{" "}
-                    <span className="font-medium">{n.miner?.workerId}</span>
-                  </p>
+                  {n.miner && (
+                    <p className="text-gray-600 text-sm">
+                      Miner:{" "}
+                      <span className="font-medium">{n.miner?.model}</span>
+                      &nbsp;• Worker ID:{" "}
+                      <span className="font-medium">{n.miner?.workerId}</span>
+                    </p>
+                  )}
 
                   <p className="text-gray-500 text-xs mt-1">
                     {new Date(n.createdAt).toLocaleString()}
@@ -153,21 +160,18 @@ export default function Notifications() {
                 {/* RIGHT SIDE STATUS + BUTTON */}
                 <div className="flex flex-col items-end gap-2">
                   {/* Status icon */}
-                  {isRead ? (
+                  {isRead && (
                     <FaCheckCircle className="text-green-600" size={22} />
-                  ) : (
-                    <FiBell className="text-red-500" size={22} />
                   )}
 
-                  {/* Mark as Read Button */}
-                  {!isRead && (
+                  {/* {!isRead && (
                     <button
                       onClick={() => handleMarkOne(n._id)}
                       className="text-sm bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
                     >
                       Mark as Read
                     </button>
-                  )}
+                  )} */}
                 </div>
               </div>
             );

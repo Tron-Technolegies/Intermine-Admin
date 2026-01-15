@@ -50,6 +50,14 @@ export default function FarmTable({
                   fontWeight: "bold",
                 }}
               >
+                Client
+              </TableCell>
+              <TableCell
+                sx={{
+                  textAlign: "center",
+                  fontWeight: "bold",
+                }}
+              >
                 Sl No
               </TableCell>
               <TableCell
@@ -109,6 +117,13 @@ export default function FarmTable({
                     sx={{ textAlign: "center" }}
                   >
                     {item.model}
+                  </TableCell>
+                  <TableCell
+                    component="th"
+                    scope="row"
+                    sx={{ textAlign: "center" }}
+                  >
+                    {item.clientName}
                   </TableCell>
                   <TableCell
                     component="th"

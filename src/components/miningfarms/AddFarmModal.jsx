@@ -8,6 +8,7 @@ export default function AddFarmModal({ onClose, editFarm }) {
 
   const [name, setName] = useState("");
   const [capacity, setCapacity] = useState("");
+  const [serviceProvider, setServiceProvider] = useState("");
 
   const addFarm = useAddFarm();
   const updateFarm = useEditFarm();
@@ -17,6 +18,7 @@ export default function AddFarmModal({ onClose, editFarm }) {
     if (isEdit) {
       setName(editFarm.farm);
       setCapacity(editFarm.capacity);
+      setServiceProvider(editFarm.serviceProvider);
     }
   }, [editFarm]);
 
@@ -26,6 +28,7 @@ export default function AddFarmModal({ onClose, editFarm }) {
         farmId: editFarm._id,
         farm: name,
         capacity,
+        serviceProvider,
       });
     } else {
       await addFarm.mutateAsync({
@@ -44,7 +47,9 @@ export default function AddFarmModal({ onClose, editFarm }) {
           <IoClose size={22} />
         </button>
 
-        <p className="text-xl font-semibold mb-3">{isEdit ? "Edit Farm" : "Add Farm"}</p>
+        <p className="text-xl font-semibold mb-3">
+          {isEdit ? "Edit Farm" : "Add Farm"}
+        </p>
 
         <input
           type="text"
@@ -61,8 +66,18 @@ export default function AddFarmModal({ onClose, editFarm }) {
           className="border rounded w-full p-2 mb-3"
           onChange={(e) => setCapacity(e.target.value)}
         />
+        <input
+          type="text"
+          placeholder="Service provider"
+          value={serviceProvider}
+          className="border rounded w-full p-2 mb-3"
+          onChange={(e) => setServiceProvider(e.target.value)}
+        />
 
-        <button onClick={handleSubmit} className="w-full bg-[#2B347A] text-white p-2 rounded-lg">
+        <button
+          onClick={handleSubmit}
+          className="w-full bg-[#2B347A] text-white p-2 rounded-lg"
+        >
           {isEdit
             ? updateFarm.isPending
               ? "Updating..."

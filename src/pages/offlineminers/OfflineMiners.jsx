@@ -169,12 +169,15 @@ export default function OfflineMiners() {
                         >
                           {m.status}
                         </p>
-                        <p>
-                          {getDaysSince(
-                            m.offlineHistory?.[m.offlineHistory.length - 1].date
-                          )}{" "}
-                          days
-                        </p>
+                        {m.offlineReason !== "farm maintenance" && (
+                          <p>
+                            {getDaysSince(
+                              m.offlineHistory?.[m.offlineHistory.length - 1]
+                                ?.date
+                            )}{" "}
+                            days
+                          </p>
+                        )}
                       </div>
                     </TableCell>
 
@@ -187,12 +190,16 @@ export default function OfflineMiners() {
                     <TableCell align="center">{m.serviceProvider}</TableCell>
 
                     <TableCell align="center">
-                      <Link
-                        to={`/issues/${m.currentIssue._id}`}
-                        className="p-2 rounded-md bg-indigo-500 text-white cursor-pointer"
-                      >
-                        Details
-                      </Link>
+                      {m.offlineReason === "farm maintenance" ? (
+                        <p>Farm is down</p>
+                      ) : (
+                        <Link
+                          to={`/issues/${m.currentIssue?._id}`}
+                          className="p-2 rounded-md bg-indigo-500 text-white cursor-pointer"
+                        >
+                          Details
+                        </Link>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}

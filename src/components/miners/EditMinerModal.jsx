@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../../api/api";
 import { toast } from "react-toastify";
 import { useGetUserDropdowns } from "../../hooks/useDropdowns";
+import Loading from "../Loading";
 
 export default function EditMinerModal({ minerData, onClose }) {
   const [loc, setLoc] = useState("");
@@ -71,160 +72,163 @@ export default function EditMinerModal({ minerData, onClose }) {
         </button>
 
         <h2 className="text-xl font-semibold mb-2">Edit Miner</h2>
+        {isLoading ? (
+          <Loading />
+        ) : (
+          <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+            {/* CLIENT */}
+            <label className="text-xs">Client</label>
+            <select
+              name="client"
+              defaultValue={minerData && minerData.client?._id}
+              className="border p-2 rounded-md"
+              required
+            >
+              <option value="">Select Client</option>
+              {clients?.map((c) => (
+                <option key={c._id} value={c._id}>
+                  {c.clientName}
+                </option>
+              ))}
+            </select>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-2">
-          {/* CLIENT */}
-          <label className="text-xs">Client</label>
-          <select
-            name="client"
-            defaultValue={minerData && minerData.client?._id}
-            className="border p-2 rounded-md"
-            required
-          >
-            <option value="">Select Client</option>
-            {clients?.map((c) => (
-              <option key={c._id} value={c._id}>
-                {c.clientName}
-              </option>
-            ))}
-          </select>
+            {/* WORKER ID */}
+            <label className="text-xs">Worker Id</label>
+            <input
+              name="workerId"
+              className="border p-2 rounded-md"
+              placeholder="Worker ID"
+              defaultValue={minerData?.workerId}
+            />
 
-          {/* WORKER ID */}
-          <label className="text-xs">Worker Id</label>
-          <input
-            name="workerId"
-            className="border p-2 rounded-md"
-            placeholder="Worker ID"
-            defaultValue={minerData?.workerId}
-          />
+            {/* SERIAL NUMBER */}
+            <label className="text-xs">Serial Number</label>
+            <input
+              name="serialNumber"
+              className="border p-2 rounded-md"
+              placeholder="Serial Number"
+              defaultValue={minerData?.serialNumber}
+            />
 
-          {/* SERIAL NUMBER */}
-          <label className="text-xs">Serial Number</label>
-          <input
-            name="serialNumber"
-            className="border p-2 rounded-md"
-            placeholder="Serial Number"
-            defaultValue={minerData?.serialNumber}
-          />
+            {/* MODEL */}
+            <label className="text-xs">Model</label>
+            <input
+              name="model"
+              className="border p-2 rounded-md"
+              placeholder="Model"
+              defaultValue={minerData?.model}
+              required
+            />
 
-          {/* MODEL */}
-          <label className="text-xs">Model</label>
-          <input
-            name="model"
-            className="border p-2 rounded-md"
-            placeholder="Model"
-            defaultValue={minerData?.model}
-            required
-          />
+            {/* STATUS */}
+            <label className="text-xs">Status</label>
+            <select
+              name="status"
+              defaultValue={minerData?.status}
+              className="border p-2 rounded-md"
+              required
+            >
+              <option value="online">Online</option>
+              <option value="offline">Offline</option>
+              <option value="In Transit">In Transit</option>
+            </select>
+            {/* Tracking */}
+            <label className="text-xs">Tracking Link</label>
+            <input
+              name="tracking"
+              className="border p-2 rounded-md"
+              placeholder="Enter Tracking Id"
+              defaultValue={minerData?.trackingLink}
+            />
 
-          {/* STATUS */}
-          <label className="text-xs">Status</label>
-          <select
-            name="status"
-            defaultValue={minerData?.status}
-            className="border p-2 rounded-md"
-            required
-          >
-            <option value="online">Online</option>
-            <option value="offline">Offline</option>
-            <option value="In Transit">In Transit</option>
-          </select>
-          {/* Tracking */}
-          <label className="text-xs">Tracking Link</label>
-          <input
-            name="tracking"
-            className="border p-2 rounded-md"
-            placeholder="Enter Tracking Id"
-            defaultValue={minerData?.trackingLink}
-          />
+            {/* LOCATION */}
+            <label className="text-xs">Mining Location</label>
+            <select
+              name="location"
+              value={loc}
+              onChange={(e) => setLoc(e.target.value)}
+              className="border p-2 rounded-md"
+            >
+              <option value="">Select Mining Farm</option>
+              {locations?.map((farm) => (
+                <option key={farm._id} value={farm._id}>
+                  {farm.farm}
+                </option>
+              ))}
+            </select>
 
-          {/* LOCATION */}
-          <label className="text-xs">Mining Location</label>
-          <select
-            name="location"
-            value={loc}
-            onChange={(e) => setLoc(e.target.value)}
-            className="border p-2 rounded-md"
-          >
-            <option value="">Select Mining Farm</option>
-            {locations?.map((farm) => (
-              <option key={farm._id} value={farm._id}>
-                {farm.farm}
-              </option>
-            ))}
-          </select>
+            {/* POOL ADDRESS */}
+            <label className="text-xs">Pool Address</label>
+            <input
+              name="poolAddress"
+              defaultValue={minerData?.poolAddress}
+              className="border p-2 rounded-md"
+              placeholder="Pool Address"
+            />
 
-          {/* POOL ADDRESS */}
-          <label className="text-xs">Pool Address</label>
-          <input
-            name="poolAddress"
-            defaultValue={minerData?.poolAddress}
-            className="border p-2 rounded-md"
-            placeholder="Pool Address"
-          />
+            {/* CONNECTION DATE */}
+            <label className="text-xs">Buying Date</label>
+            <input
+              type="date"
+              name="connectionDate"
+              defaultValue={minerData?.connectionDate?.slice(0, 10)}
+              className="border p-2 rounded-md"
+            />
 
-          {/* CONNECTION DATE */}
-          <label className="text-xs">Buying Date</label>
-          <input
-            type="date"
-            name="connectionDate"
-            defaultValue={minerData?.connectionDate?.slice(0, 10)}
-            className="border p-2 rounded-md"
-          />
+            {/* HASH RATE */}
+            <label className="text-xs">Hashrate</label>
+            <input
+              name="hashRate"
+              defaultValue={minerData?.hashRate}
+              className="border p-2 rounded-md"
+              placeholder="Hash Rate"
+              required
+            />
 
-          {/* HASH RATE */}
-          <label className="text-xs">Hashrate</label>
-          <input
-            name="hashRate"
-            defaultValue={minerData?.hashRate}
-            className="border p-2 rounded-md"
-            placeholder="Hash Rate"
-            required
-          />
+            {/* POWER */}
+            <label className="text-xs">Power</label>
+            <input
+              name="power"
+              defaultValue={minerData?.power}
+              className="border p-2 rounded-md"
+              placeholder="Power (W)"
+              required
+            />
 
-          {/* POWER */}
-          <label className="text-xs">Power</label>
-          <input
-            name="power"
-            defaultValue={minerData?.power}
-            className="border p-2 rounded-md"
-            placeholder="Power (W)"
-            required
-          />
+            {/* MAC ADDRESS */}
+            <label className="text-xs">Mac Address</label>
+            <input
+              name="macAddress"
+              defaultValue={minerData?.macAddress}
+              className="border p-2 rounded-md"
+              placeholder="MAC Address"
+            />
 
-          {/* MAC ADDRESS */}
-          <label className="text-xs">Mac Address</label>
-          <input
-            name="macAddress"
-            defaultValue={minerData?.macAddress}
-            className="border p-2 rounded-md"
-            placeholder="MAC Address"
-          />
+            {/* coins */}
+            <label className="text-xs">Coins</label>
+            <input
+              name="coins"
+              defaultValue={minerData?.coins}
+              className="border p-2 rounded-md"
+              placeholder="Coins"
+            />
 
-          {/* coins */}
-          <label className="text-xs">Coins</label>
-          <input
-            name="coins"
-            defaultValue={minerData?.coins}
-            className="border p-2 rounded-md"
-            placeholder="Coins"
-          />
+            <label className="text-xs">Service Provider</label>
+            <input
+              name="serviceProvider"
+              defaultValue={minerData?.serviceProvider}
+              className="w-full border p-2 rounded-md"
+            />
 
-          <label className="text-xs">Service Provider</label>
-          <input
-            name="serviceProvider"
-            defaultValue={minerData?.serviceProvider}
-            className="w-full border p-2 rounded-md"
-          />
-
-          <button
-            type="submit"
-            disabled={updateMiner.isPending}
-            className="bg-blue-900 text-white py-2 rounded-md"
-          >
-            {updateMiner.isPending ? "Saving..." : "Save Changes"}
-          </button>
-        </form>
+            <button
+              type="submit"
+              disabled={updateMiner.isPending}
+              className="bg-blue-900 text-white py-2 rounded-md"
+            >
+              {updateMiner.isPending ? "Saving..." : "Save Changes"}
+            </button>
+          </form>
+        )}
       </div>
     </div>
   );

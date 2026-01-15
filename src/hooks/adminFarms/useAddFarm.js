@@ -6,10 +6,11 @@ export default function useAddFarm() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ farm, capacity }) => {
+    mutationFn: async ({ farm, capacity, serviceProvider }) => {
       return api.post("/api/v1/mining-farms", {
         farm,
         capacity,
+        serviceProvider,
       });
     },
 

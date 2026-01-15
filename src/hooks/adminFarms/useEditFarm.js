@@ -6,11 +6,12 @@ export default function useEditFarm() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ farmId, farm, capacity }) => {
+    mutationFn: async ({ farmId, farm, capacity, serviceProvider }) => {
       const res = await api.patch("/api/v1/mining-farms", {
         farmId,
         farm,
         capacity,
+        serviceProvider,
       });
       return res.data;
     },
