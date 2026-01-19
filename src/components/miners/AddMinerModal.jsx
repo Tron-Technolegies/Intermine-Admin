@@ -181,7 +181,7 @@ export default function AddMinerModal({ onClose }) {
           />
 
           {/* HASH RATE (required) */}
-          <label className="text-xs">Hashrate</label>
+          <label className="text-xs">Hashrate (TH/s)</label>
           <input
             name="hashRate"
             type="number"
@@ -191,7 +191,7 @@ export default function AddMinerModal({ onClose }) {
           />
 
           {/* POWER (required) */}
-          <label className="text-xs">Power</label>
+          <label className="text-xs">Power (KiloWatts)</label>
           <input
             name="power"
             type="number"

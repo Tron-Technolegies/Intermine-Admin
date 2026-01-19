@@ -13,50 +13,25 @@ export default function Notifications() {
   const [showUnseen, setShowUnseen] = useState(false);
   const [page, setPage] = useState(1);
 
-  const status = showUnseen ? "UNREAD" : "ALL";
+  const status = showUnseen ? "unread" : "ALL";
 
   const { data, isLoading } = useAdminNotifications(
     page,
     debouncedSearch,
-    status
+    status,
   );
-  const { markAll, markOne } = useNotificationActions();
-
-  // Wrap mutate with toast feedback
-  const handleMarkAll = () => {
-    markAll.mutate(undefined, {
-      onSuccess: () => toast.success("All notifications marked as seen"),
-      onError: (err) =>
-        toast.error(
-          err?.response?.data?.message || "Failed to mark all as seen"
-        ),
-    });
-  };
-
-  const handleMarkOne = (id) => {
-    markOne.mutate(id, {
-      onSuccess: () => toast.success("Marked as read"),
-      onError: (err) =>
-        toast.error(
-          err?.response?.data?.message || "Failed to mark notification"
-        ),
-    });
-  };
-
-  const notifications = data?.notifications || [];
-  const totalPages = data?.totalPages || 1;
+  const { markAll, clearSingle } = useNotificationActions();
 
   useEffect(() => {
     const handler = setTimeout(() => {
-      setDebouncedSearch((prev) => {
-        return search;
-      });
+      setDebouncedSearch(search);
     }, 800);
 
     return () => {
       clearTimeout(handler);
     };
   }, [search]);
+
   return (
     <div>
       <PageHeader
@@ -84,7 +59,6 @@ export default function Notifications() {
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
-                setPage(1);
               }}
               className="w-full bg-white pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg"
             />
@@ -109,27 +83,30 @@ export default function Notifications() {
 
           {/* Mark all as seen */}
           <button
-            onClick={handleMarkAll}
-            className="bg-[#707579] text-white px-5 py-2 rounded-lg hover:bg-black"
+            onClick={async () => {
+              await markAll.mutateAsync();
+            }}
+            disabled={markAll.isPending}
+            className="bg-[#707579] text-white cursor-pointer px-5 py-2 rounded-lg hover:bg-black"
           >
-            Mark all as seen
+            {markAll.isPending ? "......." : " Mark all as seen"}
           </button>
         </div>
 
         <div className="flex flex-col gap-4">
           {isLoading && <p>Loading notifications...</p>}
 
-          {!isLoading && notifications.length === 0 && (
+          {!isLoading && data?.notifications.length === 0 && (
             <p className="text-gray-500">No notifications found.</p>
           )}
 
-          {notifications.map((n) => {
+          {data?.notifications.map((n) => {
             const isRead = n.status === "read";
 
             return (
               <div
                 key={n._id}
-                className="bg-white rounded-lg p-4 shadow flex justify-between items-center border border-gray-200"
+                className="bg-white rounded-lg p-4 shadow flex gap-5 justify-between items-center border border-gray-200"
               >
                 <div>
                   <p className="font-semibold text-gray-900">{n.problem}</p>
@@ -158,20 +135,23 @@ export default function Notifications() {
                 </div>
 
                 {/* RIGHT SIDE STATUS + BUTTON */}
-                <div className="flex flex-col items-end gap-2">
+                <div className="flex flex-col w-full items-end gap-2">
                   {/* Status icon */}
                   {isRead && (
                     <FaCheckCircle className="text-green-600" size={22} />
                   )}
 
-                  {/* {!isRead && (
+                  {!isRead && (
                     <button
-                      onClick={() => handleMarkOne(n._id)}
-                      className="text-sm bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+                      onClick={async () => {
+                        await clearSingle.mutateAsync(n._id);
+                      }}
+                      disabled={clearSingle.isPending}
+                      className="text-sm bg-blue-500 min-w-fit text-white cursor-pointer px-3 py-1 rounded hover:bg-blue-600"
                     >
-                      Mark as Read
+                      {clearSingle.isPending ? "......." : " Mark as Read"}
                     </button>
-                  )} */}
+                  )}
                 </div>
               </div>
             );
@@ -188,11 +168,11 @@ export default function Notifications() {
           </button>
 
           <span className="py-2">
-            Page {page} / {totalPages}
+            Page {page} / {data?.totalPages}
           </span>
 
           <button
-            disabled={page === totalPages}
+            disabled={page === data?.totalPages}
             onClick={() => setPage((p) => p + 1)}
             className="px-4 py-2 border rounded disabled:opacity-40"
           >

@@ -4,6 +4,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
+import PieDiagram from "./PieDiagram";
 
 const style = {
   position: "absolute",
@@ -35,6 +36,7 @@ export default function FarmPreview({ farm }) {
       </p>
       <div className="flex justify-between">
         <p className="text-blue-700 font-semibold text-xl">{farm?.farm}</p>
+
         <p>
           Capacity:{" "}
           <span className="font-semibold text-xl">
@@ -42,6 +44,18 @@ export default function FarmPreview({ farm }) {
           </span>
         </p>
       </div>
+      <PieDiagram
+        content={[
+          {
+            label: "Current",
+            value: ((farm?.current / farm?.capacity) * 100).toFixed(2),
+          },
+          {
+            label: "Remaining",
+            value: (100 - (farm?.current / farm?.capacity) * 100).toFixed(2),
+          },
+        ]}
+      />
       <p className="flex gap-3 items-center">
         <GoCpu size={30} />
         <span className="text-2xl">{farm?.miners?.length}</span>

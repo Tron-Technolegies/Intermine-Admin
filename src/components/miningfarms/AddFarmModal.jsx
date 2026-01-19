@@ -61,7 +61,7 @@ export default function AddFarmModal({ onClose, editFarm }) {
 
         <input
           type="text"
-          placeholder="Capacity (70KWH)"
+          placeholder="Capacity (KW)"
           value={capacity}
           className="border rounded w-full p-2 mb-3"
           onChange={(e) => setCapacity(e.target.value)}
@@ -83,8 +83,8 @@ export default function AddFarmModal({ onClose, editFarm }) {
               ? "Updating..."
               : "Update Farm"
             : addFarm.isPending
-            ? "Adding..."
-            : "Add Farm"}
+              ? "Adding..."
+              : "Add Farm"}
         </button>
       </div>
     </div>

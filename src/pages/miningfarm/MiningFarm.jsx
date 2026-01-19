@@ -18,6 +18,7 @@ import { useDeleteFarm } from "../../hooks/adminFarms/useDeleteFarm";
 import Loading from "../../components/Loading";
 import { AddAnnouncementModal } from "../../components/miningfarms/AddAnnouncementModal";
 import FarmPreview from "../../components/miningfarms/FarmPreview";
+import AllFarmPreview from "../../components/miningfarms/AllFarmPreview";
 
 export default function MiningFarm() {
   const [openAdd, setOpenAdd] = useState(false);
@@ -38,7 +39,7 @@ export default function MiningFarm() {
   const { data: minersData, isLoading: loadingMiners } = useFarmMiners(
     selectedFarm,
     page,
-    search
+    search,
   );
 
   const farmMiners = minersData?.miners || [];
@@ -93,10 +94,10 @@ export default function MiningFarm() {
             farms?.map((farm) => (
               <div
                 key={farm._id}
-                className="bg-white rounded-lg px-3 py-2 flex cursor-pointer items-center gap-3 shadow md:min-w-[180px]"
+                className="bg-white rounded-xl px-3 py-2 flex cursor-pointer items-center gap-3 shadow-md md:min-w-[180px]"
                 onClick={() => setSelectedFarm(farm.farm)}
               >
-                <p className="font-semibold">
+                <p className="text-sm">
                   {farm.farm} ({farm.capacity})
                 </p>
 
@@ -124,6 +125,7 @@ export default function MiningFarm() {
             farm={farms?.find((item) => item.farm === selectedFarm)}
           />
         )}
+        {selectedFarm === "ALL" && <AllFarmPreview farms={minersData} />}
 
         {isPending && <Loading />}
         {/* //Delete Popup */}

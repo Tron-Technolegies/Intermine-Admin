@@ -42,11 +42,11 @@ export default function SingleMinerPage() {
   useEffect(() => {
     if (data) {
       const coinSet = new Set(
-        data.coins?.split(",")?.map((item) => item.trim().toUpperCase())
+        data.coins?.split(",")?.map((item) => item.trim().toUpperCase()),
       );
       const filteredLinks =
         data.client?.watcherLinks?.filter((item) =>
-          coinSet.has(item.coin?.trim()?.toUpperCase())
+          coinSet.has(item.coin?.trim()?.toUpperCase()),
         ) || [];
       setWatchers(filteredLinks);
     }
@@ -94,14 +94,14 @@ export default function SingleMinerPage() {
 
           <span
             className={`${getStatusColor(
-              data.status
+              data.status,
             )} px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap`}
           >
             {data.status === "online"
               ? "Online"
               : data.status === "offline"
-              ? "Offline"
-              : "In Transit"}
+                ? "Offline"
+                : "In Transit"}
           </span>
         </div>
 
@@ -255,10 +255,10 @@ export default function SingleMinerPage() {
       )}
       {showHistory && (
         <MinersHistoryModal
-          minerId={data._id}
-          onClose={() => {
-            setShowHistory(false);
-          }}
+          open={showHistory}
+          history1={data.issueHistory}
+          history2={data.changeHistory}
+          handleClose={() => setShowHistory(false)}
         />
       )}
       {showReport && (

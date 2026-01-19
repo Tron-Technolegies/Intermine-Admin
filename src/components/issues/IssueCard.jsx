@@ -24,7 +24,7 @@ export default function IssueCard({
 
   const handleSave = async () => {
     setSaving(true);
-    await onStatusUpdate(issue.id, status);
+    await onStatusUpdate(issue._id, status);
     setSaving(false);
   };
 
@@ -40,24 +40,33 @@ export default function IssueCard({
       {/* Top: title + status */}
       <div className="flex md:flex-row flex-col-reverse gap-2 md:gap-0 justify-between items-start">
         <div className="flex items-center gap-3">
-          <h3 className=" font-semibold text-black">{issue.title}</h3>
-
+          {issue.type === "repair" ? (
+            <h3 className=" font-semibold text-black">
+              {issue.issue?.issueType}
+            </h3>
+          ) : (
+            <p className="font-semibold text-blue-700">
+              Request for Pool Change
+            </p>
+          )}
           <span
             className={`text-xs  ${
               status === "Resolved"
                 ? "bg-green-600"
                 : status === "Warranty"
-                ? "bg-blue-600"
-                : "bg-[#F2D56A]"
+                  ? "bg-blue-600"
+                  : "bg-[#F2D56A]"
             } text-black font-medium px-3 py-1 rounded-full`}
           >
             {status}
           </span>
         </div>
 
-        <p className="text-xs text-gray-500">Last update: {issue.lastUpdate}</p>
+        <p className="text-xs text-gray-500">
+          Last update: {new Date(issue.updatedAt).toLocaleString()}
+        </p>
       </div>
-      <p className="font-semibold">{issue?.model}</p>
+      <p className="font-semibold">{issue.miner?.model}</p>
       {/* Description */}
       <p className="text-gray-600 text-sm -mt-2">{issue.description}</p>
 
@@ -66,20 +75,47 @@ export default function IssueCard({
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-3 text-sm text-gray-700">
             <FaUser className="text-gray-500" />
-            <span className="font-medium">{issue.user}</span>
-            <span className="text-gray-400 text-xs">{issue.clientId}</span>
+            <span className="font-medium">{issue.user?.clientName}</span>
+            <span className="text-gray-400 text-xs">
+              {issue.user?.clientId}
+            </span>
           </div>
 
           <div className="flex items-center gap-2 text-xs text-gray-500">
             <CiClock2 className="text-gray-500 text-lg" />
-            Created {issue.created}
+            Created {new Date(issue.createdAt).toLocaleString()}
           </div>
         </div>
 
-        <div className="flex items-center gap-2 mt-3 sm:mt-0 text-sm font-medium text-black">
-          <LuCpu className="text-xl" />
-          <span>{issue.serial}</span>
-        </div>
+        {issue.type === "change" && (
+          <div className=" flex flex-col gap-2 mb-2">
+            <div className="flex items-center gap-2 mt-3 sm:mt-0 text-sm text-gray-500">
+              Current Worker ID:
+              <span className="text-blue-700 font-semibold">
+                {issue.miner?.workerId}
+              </span>
+            </div>
+            <div className="flex items-center gap-2 mt-3 sm:mt-0 text-sm text-gray-500">
+              Requested Worker ID:
+              <span className="text-blue-700 font-semibold">
+                {issue.changeRequest?.worker}
+              </span>
+            </div>
+            <div className="flex items-center gap-2 mt-3 sm:mt-0 text-sm text-gray-500">
+              Requested Pool Address:
+              <span className="text-blue-700 font-semibold">
+                {issue.changeRequest?.pool}
+              </span>
+            </div>
+          </div>
+        )}
+
+        {issue.type === "repair" && (
+          <div className="flex items-center gap-2 mt-3 sm:mt-0 text-sm font-medium text-black">
+            <LuCpu className="text-xl" />
+            <span>{issue.miner?.workerId}</span>
+          </div>
+        )}
       </div>
 
       {/* Bottom Actions */}
@@ -118,7 +154,7 @@ export default function IssueCard({
           <div className="flex md:flex-row flex-col md:items-center  gap-4">
             {/* Chat History */}
             <button
-              onClick={() => onChatOpen(issue.id)}
+              onClick={() => onChatOpen(issue._id)}
               className="bg-gray-200 cursor-pointer w-full md:w-fit px-4 py-2 rounded-full flex items-center gap-1 text-gray-700 justify-center"
             >
               <BiMessageDetail />
@@ -163,10 +199,11 @@ export default function IssueCard({
             {issue?.reminderHistory?.length < 1 && (
               <p className="p-2">No Reminders sent </p>
             )}
-            {issue.serviceProvider?.trim()?.toLowerCase() === "dahab" && (
+            {issue.miner?.serviceProvider?.trim()?.toLowerCase() ===
+              "dahab" && (
               <button
                 onClick={() => {
-                  onReminder(issue.id);
+                  onReminder(issue._id);
                   handleClose();
                 }}
                 className="bg-[#3B8BEA] cursor-pointer text-white w-full md:w-fit px-5 py-2 rounded-full flex items-center justify-center gap-1"

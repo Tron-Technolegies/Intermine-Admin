@@ -40,7 +40,7 @@ export default function Issues() {
   const { data: issuesData, isLoading } = useIssues(
     selectedType,
     searchTerm,
-    page
+    page,
   );
   const issues = issuesData?.issues || [];
 
@@ -129,28 +129,17 @@ export default function Issues() {
           issues.map((issue) => (
             <IssueCard
               key={issue._id}
-              issue={{
-                id: issue._id,
-                title: issue.issue?.issueType,
-                description: issue.description,
-                status: issue.status,
-                user: issue.user?.clientName,
-                clientId: issue.user?.clientId,
-                serial: issue.miner?.workerId,
-                created: new Date(issue.createdAt).toLocaleString(),
-                lastUpdate: new Date(issue.updatedAt).toLocaleString(),
-                minerServiceProvider: issue.miner?.serviceProvider,
-                serviceProvider: issue.miner?.serviceProvider,
-                model: issue.miner?.model,
-                reminderHistory: issue.reminderHistory,
-              }}
+              issue={issue}
               onRespond={() => setShowRespondModal(issue)}
               onChatOpen={(id) => setShowChatModal(id)}
               onStatusUpdate={handleStatusUpdate}
               onReminder={() =>
                 handleReminder({
                   id: issue._id,
-                  issue: issue.issue?.issueType,
+                  issue:
+                    issue.type === "repair"
+                      ? issue.issue?.issueType
+                      : `Request for Pool Change with New Worker Id ${issue.changeRequest?.worker} and new Pool Address ${issue.changeRequest?.pool}`,
                   model: issue.miner?.model,
                   serviceProvider: issue.miner?.serviceProvider,
                   serialNumber: issue.miner?.workerId,

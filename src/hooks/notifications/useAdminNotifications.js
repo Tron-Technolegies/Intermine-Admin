@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import api from "../../api/api";
 
-export default function useAdminNotifications(page, search, status = "ALL") {
+export default function useAdminNotifications(page, search, status) {
   return useQuery({
     queryKey: ["adminNotifications", page, search, status],
     queryFn: async () => {
@@ -17,3 +17,14 @@ export default function useAdminNotifications(page, search, status = "ALL") {
     keepPreviousData: true,
   });
 }
+
+export const useGetTotalUnreadNotifications = () => {
+  const { isLoading, isError, data } = useQuery({
+    queryKey: ["unread-notifications"],
+    queryFn: async () => {
+      const { data } = await api.get(`/api/v1/notification/admin/unread`);
+      return data;
+    },
+  });
+  return { isError, isLoading, data };
+};

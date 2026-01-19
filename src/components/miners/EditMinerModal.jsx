@@ -52,7 +52,7 @@ export default function EditMinerModal({ minerData, onClose }) {
   useEffect(() => {
     if (minerData && locations) {
       const location = locations.find(
-        (item) => item.farm === minerData.location
+        (item) => item.farm === minerData.location,
       );
       if (location) setLoc(location._id);
     }
@@ -176,7 +176,7 @@ export default function EditMinerModal({ minerData, onClose }) {
             />
 
             {/* HASH RATE */}
-            <label className="text-xs">Hashrate</label>
+            <label className="text-xs">Hashrate (TH/s)</label>
             <input
               name="hashRate"
               defaultValue={minerData?.hashRate}
@@ -186,7 +186,7 @@ export default function EditMinerModal({ minerData, onClose }) {
             />
 
             {/* POWER */}
-            <label className="text-xs">Power</label>
+            <label className="text-xs">Power (KiloWatts)</label>
             <input
               name="power"
               defaultValue={minerData?.power}
