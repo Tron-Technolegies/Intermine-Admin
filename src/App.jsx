@@ -24,6 +24,7 @@ import ErrorPage from "./pages/error/ErrorPage";
 import SingleMinerPage from "./pages/myminers/SingleMinerPage";
 import { adminLoader } from "./loaders/adminLoader";
 import IssueSingle from "./pages/issues/IssueSingle";
+import ServiceProvider from "./pages/serviceProvider/ServiceProvider";
 
 const router = createBrowserRouter([
   {
@@ -42,6 +43,7 @@ const router = createBrowserRouter([
       { path: "offline-miners", element: <OfflineMiners /> },
       { path: "agreements", element: <Agreements /> },
       { path: "warranties", element: <Warranty /> },
+      { path: "service-provider", element: <ServiceProvider /> },
       { path: "farms", element: <MiningFarm /> },
       { path: "notifications", element: <Notifications /> },
       { path: "messages", element: <PendingMessages /> },

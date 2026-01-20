@@ -4,6 +4,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../../api/api";
 import { toast } from "react-toastify";
 import { useGetUserDropdowns } from "../../hooks/useDropdowns";
+import { useGetServiceProviders } from "../../hooks/useServiceProvider";
+import Loading from "../Loading";
 
 export default function AddMinerModal({ onClose }) {
   const queryClient = useQueryClient();
@@ -11,6 +13,8 @@ export default function AddMinerModal({ onClose }) {
   const { isLoading: loadingClients, data: clients } = useGetUserDropdowns({
     search: "",
   });
+  const { isLoading: serviceProviderLoading, data: serviceProviders } =
+    useGetServiceProviders();
 
   const { data: locations, isLoading: loadingLocations } = useQuery({
     queryKey: ["locations"],
@@ -222,11 +226,25 @@ export default function AddMinerModal({ onClose }) {
             name="connectionDate"
             className="w-full border p-2 rounded-md"
           />
-          <label className="text-xs">Service Provider</label>
-          <input
-            name="serviceProvider"
-            className="w-full border p-2 rounded-md"
-          />
+          {serviceProviderLoading ? (
+            <Loading />
+          ) : (
+            <>
+              <label className="text-xs">Service Provider</label>
+              <select
+                name="serviceProvider"
+                className="w-full border p-2 rounded-md"
+              >
+                <option value={""}>Choose Provider</option>
+                {serviceProviders.map((item) => (
+                  <option key={item._id} value={item.name}>
+                    {item.name}
+                  </option>
+                ))}
+              </select>
+            </>
+          )}
+
           {/* ADD BTN */}
           <button
             type="submit"

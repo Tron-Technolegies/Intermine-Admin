@@ -20,7 +20,7 @@ export default function PageHeader({
         <>
           <button
             onClick={() => setShowModal(true)}
-            className="bg-[#3893D0] hover:bg-[#2c7cb5] text-white rounded-xl px-4 py-1 transition-all flex items-center gap-2"
+            className="bg-[#3893D0] cursor-pointer hover:bg-[#2c7cb5] text-white rounded-xl px-4 py-1 transition-all flex items-center gap-2"
           >
             {ButtonIcon ? (
               <ButtonIcon size={18} />

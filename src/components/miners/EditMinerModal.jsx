@@ -4,6 +4,7 @@ import api from "../../api/api";
 import { toast } from "react-toastify";
 import { useGetUserDropdowns } from "../../hooks/useDropdowns";
 import Loading from "../Loading";
+import { useGetServiceProviders } from "../../hooks/useServiceProvider";
 
 export default function EditMinerModal({ minerData, onClose }) {
   const [loc, setLoc] = useState("");
@@ -11,6 +12,9 @@ export default function EditMinerModal({ minerData, onClose }) {
 
   // ====== Fetch Clients ======
   const { data: clients, isLoading } = useGetUserDropdowns({ search: "" });
+
+  const { isLoading: serviceLoading, data: serviceProviders } =
+    useGetServiceProviders();
 
   // ====== Fetch Mining Farms ======
   const { data: locations } = useQuery({
@@ -212,13 +216,25 @@ export default function EditMinerModal({ minerData, onClose }) {
               className="border p-2 rounded-md"
               placeholder="Coins"
             />
-
-            <label className="text-xs">Service Provider</label>
-            <input
-              name="serviceProvider"
-              defaultValue={minerData?.serviceProvider}
-              className="w-full border p-2 rounded-md"
-            />
+            {serviceLoading ? (
+              <Loading />
+            ) : (
+              <>
+                <label className="text-xs">Service Provider</label>
+                <select
+                  name="serviceProvider"
+                  defaultValue={minerData?.serviceProvider}
+                  className="w-full border p-2 rounded-md"
+                >
+                  <option value={""}>Choose Provider</option>
+                  {serviceProviders.map((item) => (
+                    <option key={item._id} value={item.name}>
+                      {item.name}
+                    </option>
+                  ))}
+                </select>
+              </>
+            )}
 
             <button
               type="submit"

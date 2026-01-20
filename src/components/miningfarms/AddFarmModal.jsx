@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { IoClose } from "react-icons/io5";
 import useAddFarm from "../../hooks/adminFarms/useAddFarm";
 import useEditFarm from "../../hooks/adminFarms/useEditFarm";
+import { useGetServiceProviders } from "../../hooks/useServiceProvider";
+import Loading from "../Loading";
 
 export default function AddFarmModal({ onClose, editFarm }) {
   const isEdit = Boolean(editFarm);
@@ -9,6 +11,7 @@ export default function AddFarmModal({ onClose, editFarm }) {
   const [name, setName] = useState("");
   const [capacity, setCapacity] = useState("");
   const [serviceProvider, setServiceProvider] = useState("");
+  const { isLoading, data } = useGetServiceProviders();
 
   const addFarm = useAddFarm();
   const updateFarm = useEditFarm();
@@ -66,13 +69,24 @@ export default function AddFarmModal({ onClose, editFarm }) {
           className="border rounded w-full p-2 mb-3"
           onChange={(e) => setCapacity(e.target.value)}
         />
-        <input
-          type="text"
-          placeholder="Service provider"
-          value={serviceProvider}
-          className="border rounded w-full p-2 mb-3"
-          onChange={(e) => setServiceProvider(e.target.value)}
-        />
+        {isLoading ? (
+          <Loading />
+        ) : (
+          <select
+            type="text"
+            placeholder="Service provider"
+            value={serviceProvider}
+            className="border rounded w-full p-2 mb-3"
+            onChange={(e) => setServiceProvider(e.target.value)}
+          >
+            <option value={""}>Choose Provider</option>
+            {data.map((item) => (
+              <option value={item.name} key={item._id}>
+                {item.name}
+              </option>
+            ))}
+          </select>
+        )}
 
         <button
           onClick={handleSubmit}
