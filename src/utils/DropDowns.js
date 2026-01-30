@@ -1,4 +1,8 @@
 export const coolingTypes = ["Air Cooled", "Hydro", "Immersion"];
+export const farmTypes = ["Air Cooled", "Hydro", "Immersion"];
+export const farmCountry = ["Ethiopia", "UAE", "Oman", "Paraguay"];
+export const farmStatus = ["Offline", "Active", "Planned", "In-Building"];
+export const farmContract = ["CapEx", "B2B Hosting"];
 export const algorithm = [
   "Amoveo",
   "BCD",

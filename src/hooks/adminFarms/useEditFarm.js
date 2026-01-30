@@ -6,13 +6,8 @@ export default function useEditFarm() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ farmId, farm, capacity, serviceProvider }) => {
-      const res = await api.patch("/api/v1/mining-farms", {
-        farmId,
-        farm,
-        capacity,
-        serviceProvider,
-      });
+    mutationFn: async (data) => {
+      const res = await api.patch("/api/v1/mining-farms", data);
       return res.data;
     },
 
@@ -26,7 +21,7 @@ export default function useEditFarm() {
       toast.error(
         error.response.data.error ||
           error.response.data.message ||
-          "something went wrong"
+          "something went wrong",
       );
     },
   });
