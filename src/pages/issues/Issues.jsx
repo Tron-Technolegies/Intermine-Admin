@@ -73,7 +73,7 @@ export default function Issues() {
       <PageHeader
         title="Issues"
         subtitle="Track and manage reported issues from users"
-        buttonText="Report Issue"
+        buttonText="Issue Ticket"
         ModalComponent={ReportIssueModal}
       />
       <SearchFilterBar

@@ -35,11 +35,13 @@ export default function RecentIssues() {
           className="text-sm text-white bg-[#787878] font-medium rounded-xl px-2 py-2"
           onClick={() => setShowReportModal(true)}
         >
-          Report an Issue
+          Issue Ticket
         </button>
       </div>
 
-      <p className="text-sm text-gray-500 mb-3">Latest reported issues that need attention</p>
+      <p className="text-sm text-gray-500 mb-3">
+        Latest reported issues that need attention
+      </p>
 
       <div className="space-y-2">
         {issues.map((issue) => (
@@ -48,7 +50,9 @@ export default function RecentIssues() {
             className="bg-white border border-gray-100 rounded-md px-3 py-2 flex justify-between items-center text-sm"
           >
             <div>
-              <p className="font-medium text-gray-800">{issue.user?.clientName}</p>
+              <p className="font-medium text-gray-800">
+                {issue.user?.clientName}
+              </p>
               <p className="text-gray-500">{issue.issue?.issueType}</p>
             </div>
 
@@ -73,7 +77,9 @@ export default function RecentIssues() {
       </Link>
 
       {/* Modal */}
-      {showReportModal && <ReportIssueModal onClose={() => setShowReportModal(false)} />}
+      {showReportModal && (
+        <ReportIssueModal onClose={() => setShowReportModal(false)} />
+      )}
     </div>
   );
 }

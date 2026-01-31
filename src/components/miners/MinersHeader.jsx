@@ -29,7 +29,7 @@ export default function MinersHeader() {
           onClick={() => setAddForm(true)}
           className="bg-[#3893D0] hover:bg-[#2c7cb5] cursor-pointer text-white rounded-xl px-4 py-1 transition-all"
         >
-          + Add Miner
+          + Connect New
         </button>
       </div>
 

@@ -6,38 +6,43 @@ import {
 import useIssueTypes from "../../hooks/useIssueTypes";
 import Switch from "@mui/material/Switch";
 import { useReportIssue } from "../../hooks/useReportIssue";
+import { useGetClientMiners } from "../../hooks/useIssues";
 
 export default function ReportIssueModal({ onClose, currentMiner }) {
   const [searchClient, setSearchClient] = useState("");
-  const [searchWorker, setSearchWorker] = useState("");
-  const [checked, setChecked] = useState(false);
-  const [worker, setWorker] = useState("");
 
-  const { isLoading: minerLoading, data: miners } = useGetMinerDropdown({
-    search: searchWorker,
-  });
+  const [checked, setChecked] = useState(false);
+  const [inform, setInform] = useState(false);
+  const [clientId, setClientId] = useState("");
+  const [worker, setWorker] = useState("");
+  const [machine, setMachine] = useState(null);
+
   const { isLoading: clientLoading, data: clients } = useGetUserDropdowns({
     search: searchClient,
   });
+  const { isLoading: clientMinerLoading, data: clientMiners } =
+    useGetClientMiners({ clientId });
 
   const { isLoading: issueLoading, data: issues } = useIssueTypes();
   const { isPending, mutate } = useReportIssue();
-
-  const handleChange = (event) => {
-    setChecked(event.target.checked);
-  };
 
   function handleSubmit(e) {
     e.preventDefault();
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData);
     data.status = checked ? "online" : "offline";
+    data.inform = inform ? "inform" : "not-inform";
+    data.miner = machine._id;
+
     mutate({ data });
     onClose();
   }
 
   useEffect(() => {
-    setSearchWorker(worker);
+    if (worker) {
+      const newMac = clientMiners.find((item) => item.workerId === worker);
+      if (newMac) setMachine(newMac);
+    }
   }, [worker]);
 
   return (
@@ -68,7 +73,9 @@ export default function ReportIssueModal({ onClose, currentMiner }) {
             name="user"
             className="p-2 rounded-md shadow bg-gray-100 outline-none"
             required
+            onChange={(e) => setClientId(e.target.value)}
           >
+            <option value={""}>select client</option>
             {!clientLoading &&
               clients?.map((x) => (
                 <option key={x._id} value={x._id} className="rounded-md">
@@ -76,13 +83,6 @@ export default function ReportIssueModal({ onClose, currentMiner }) {
                 </option>
               ))}
           </select>
-          <label className="text-xs">Search Worker</label>
-          <input
-            type="search"
-            value={searchWorker}
-            onChange={(e) => setSearchWorker(e.target.value)}
-            className="p-2 rounded-md shadow bg-gray-100 outline-none"
-          />
           <label className="text-xs">Worker Id</label>
           <select
             required
@@ -90,26 +90,37 @@ export default function ReportIssueModal({ onClose, currentMiner }) {
             name="workerAddress"
             onChange={(e) => setWorker(e.target.value)}
           >
-            {!minerLoading &&
-              miners?.map((x) => (
+            <option value={""}>select Worker</option>
+            {!clientMinerLoading &&
+              clientMiners?.map((x) => (
                 <option key={x._id} value={x.workerId}>
                   {x.workerId}
                 </option>
               ))}
           </select>
-          <label className="text-xs">Miner Details</label>
-          <select
+          <label className="text-xs">Machine Model</label>
+          <input
             name="miner"
             required
+            disabled
+            value={machine?.model}
+            className="p-2 rounded-md shadow bg-gray-100 outline-none"
+          />
+
+          {/* <select
+            name="miner"
+            required
+            value={machine}
+            onChange={(e) => setMachine(e.target.value)}
             className="p-2 rounded-md shadow bg-gray-100 outline-none"
           >
-            {!minerLoading &&
-              miners?.map((x) => (
+            {!clientMinerLoading &&
+              clientMiners?.map((x) => (
                 <option key={x._id} value={x._id}>
-                  {x.model}
+                  {`${x.manufacturer} ${x.name} (${x.hashRate}TH/s, ${x.power}W)`}
                 </option>
               ))}
-          </select>
+          </select> */}
           <label className="text-xs">Issue</label>
           <select
             name="issue"
@@ -130,10 +141,18 @@ export default function ReportIssueModal({ onClose, currentMiner }) {
             className="p-2 rounded-md shadow bg-gray-100 outline-none"
           ></textarea>
           <label className="text-xs">
-            Offline{" "}
+            {checked ? "Online" : "Offline"}
             <Switch
               checked={checked}
-              onChange={handleChange}
+              onChange={(e) => setChecked(e.target.checked)}
+              slotProps={{ input: { "aria-label": "controlled" } }}
+            />
+          </label>
+          <label className="text-xs">
+            Inform Client
+            <Switch
+              checked={inform}
+              onChange={(e) => setInform(e.target.checked)}
               slotProps={{ input: { "aria-label": "controlled" } }}
             />
           </label>
@@ -142,7 +161,7 @@ export default function ReportIssueModal({ onClose, currentMiner }) {
             disabled={isPending}
             className="p-2 rounded-md bg-indigo-700 text-white cursor-pointer"
           >
-            {isPending ? "Reporting...." : "Report Issue"}
+            {isPending ? "Creating...." : "Create Issue Ticket"}
           </button>
         </form>
       </div>

@@ -207,8 +207,10 @@ export default function SingleMinerPage() {
                   {diffInMonths(data.warrantyStartDate, data.warrantyEndDate)}{" "}
                   months
                 </span>
-              ) : (
+              ) : data.warranty ? (
                 <span>Total Warranty: {data.warranty * 12} months</span>
+              ) : (
+                <span>Total Warranty: Not Available</span>
               )}
             </div>
             {data.warrantyEndDate && (
