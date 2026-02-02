@@ -42,7 +42,13 @@ export default function ReportIssueModal({ onClose, currentMiner }) {
     if (worker) {
       const newMac = clientMiners.find((item) => item.workerId === worker);
       if (newMac) setMachine(newMac);
+    } else {
+      setMachine(null);
     }
+
+    return () => {
+      setMachine(null);
+    };
   }, [worker]);
 
   return (

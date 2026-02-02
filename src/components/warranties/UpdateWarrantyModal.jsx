@@ -54,8 +54,8 @@ export default function UpdateWarrantyModal({ item, onClose }) {
               onChange={(e) => setType(e.target.value)}
               className="border w-full px-3 py-2 rounded"
             >
-              <option>Manufacturer</option>
-              <option>Intermine</option>
+              <option value={"Manufacturer"}>Manufacturer</option>
+              <option value={"Intermine"}>Intermine</option>
             </select>
           </div>
 
