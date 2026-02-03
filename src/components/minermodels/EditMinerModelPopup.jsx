@@ -3,7 +3,11 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { algorithm, coolingTypes } from "../../utils/DropDowns";
-import { useAddMinerModel } from "../../hooks/adminMiner/useGetSingleMiner";
+import {
+  useEditMinerModel,
+  useGetSingleMinerModel,
+} from "../../hooks/adminMiner/useMinerModels";
+import Loading from "../Loading";
 
 const style = {
   position: "absolute",
@@ -17,17 +21,23 @@ const style = {
   boxShadow: 24,
   p: 4,
 };
-export default function MinerModelPopup({ open, handleClose }) {
-  const { isPending, mutateAsync } = useAddMinerModel();
+
+export default function EditMinerModelPopup({ open, handleClose, id }) {
+  const { isError, isLoading, data } = useGetSingleMinerModel({ id });
+  const { isPending, mutateAsync } = useEditMinerModel();
 
   async function handleSubmit(e) {
     e.preventDefault();
     const formdata = new FormData(e.target);
     const data = Object.fromEntries(formdata);
-    await mutateAsync(data);
+    await mutateAsync({ data, id });
     handleClose();
   }
-  return (
+  return isLoading ? (
+    <Loading />
+  ) : isError ? (
+    <p>Something Went Wrong</p>
+  ) : (
     <Modal
       open={open}
       onClose={handleClose}
@@ -36,13 +46,14 @@ export default function MinerModelPopup({ open, handleClose }) {
     >
       <Box sx={style}>
         <Typography id="modal-modal-title" variant="h6" component="h2">
-          Add a New Miner Model
+          Edit Miner Model
         </Typography>
         <form className="flex flex-col gap-2 mt-5" onSubmit={handleSubmit}>
           <label className="text-xs font-medium">Manufacturer</label>
           <input
             type="text"
             name="manufacturer"
+            defaultValue={data.manufacturer}
             className="p-2 rounded-md text-sm shadow-md outline-none bg-neutral-100"
             placeholder=""
             required
@@ -51,6 +62,7 @@ export default function MinerModelPopup({ open, handleClose }) {
           <input
             type="text"
             name="name"
+            defaultValue={data.name}
             className="p-2 rounded-md text-sm shadow-md outline-none bg-neutral-100"
             placeholder=""
             required
@@ -59,6 +71,7 @@ export default function MinerModelPopup({ open, handleClose }) {
           <input
             type="number"
             name="hashrate"
+            defaultValue={data.hashRate}
             className="p-2 rounded-md text-sm shadow-md outline-none bg-neutral-100"
             placeholder=""
             required
@@ -67,6 +80,7 @@ export default function MinerModelPopup({ open, handleClose }) {
           <input
             type="number"
             name="power"
+            defaultValue={data.power}
             className="p-2 rounded-md text-sm shadow-md outline-none bg-neutral-100"
             placeholder=""
             required
@@ -75,6 +89,7 @@ export default function MinerModelPopup({ open, handleClose }) {
           <select
             type="text"
             name="coolingType"
+            defaultValue={data.coolingType}
             className="p-2 rounded-md text-sm shadow-md outline-none bg-neutral-100"
             placeholder=""
             required
@@ -89,6 +104,7 @@ export default function MinerModelPopup({ open, handleClose }) {
           <select
             type="text"
             name="algorithm"
+            defaultValue={data.algorithm}
             className="p-2 rounded-md text-sm shadow-md outline-none bg-neutral-100"
             placeholder=""
             required
@@ -103,6 +119,7 @@ export default function MinerModelPopup({ open, handleClose }) {
           <input
             type="text"
             name="coins"
+            defaultValue={data.coins}
             className="p-2 rounded-md text-sm shadow-md outline-none bg-neutral-100"
             placeholder=""
             required
@@ -112,7 +129,7 @@ export default function MinerModelPopup({ open, handleClose }) {
             disabled={isPending}
             className="p-2 bg-blue-900 hover:bg-blue-800 cursor-pointer text-white rounded-md mt-2"
           >
-            {isPending ? "Adding...." : "Add New Model"}
+            {isPending ? "Updating...." : "Update Model"}
           </button>
         </form>
       </Box>

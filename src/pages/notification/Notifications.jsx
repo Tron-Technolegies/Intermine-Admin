@@ -46,7 +46,7 @@ export default function Notifications() {
         </p>
 
         {/* Search + Toggle + Button */}
-        <div className="flex items-center gap-4 mb-5">
+        <div className="flex md:flex-row flex-col md:items-center gap-4 mb-5">
           {/* Search */}
           <div className="relative flex-1">
             <FiSearch

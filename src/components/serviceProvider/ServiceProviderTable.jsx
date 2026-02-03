@@ -27,7 +27,7 @@ export default function ServiceProviderTable() {
   ) : isError ? (
     <p>There is something wrong</p>
   ) : (
-    <>
+    <div className="max-w-[90vw]">
       <TableContainer component={Paper} sx={{ marginTop: 3 }}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
@@ -122,6 +122,6 @@ export default function ServiceProviderTable() {
         handleClose={handleClose}
         id={selectedId}
       />
-    </>
+    </div>
   );
 }

@@ -63,8 +63,8 @@ export default function IssueSingle() {
                 data.status === "Resolved"
                   ? "bg-green-600"
                   : status === "Warranty"
-                  ? "bg-blue-600"
-                  : "bg-[#F2D56A]"
+                    ? "bg-blue-600"
+                    : "bg-[#F2D56A]"
               } text-black font-medium px-3 py-1 rounded-full`}
             >
               {data.status}
@@ -197,7 +197,7 @@ export default function IssueSingle() {
               {data?.reminderHistory?.length < 1 && (
                 <p className="p-2">No Reminders sent </p>
               )}
-              {data.serviceProvider?.trim()?.toLowerCase() === "dahab" && (
+              {data.serviceProvider?.toLowerCase() === "dahab miners" && (
                 <button
                   onClick={async () => {
                     await sendReminder.mutateAsync({

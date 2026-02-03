@@ -38,6 +38,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
         <nav className="flex flex-col gap-5 p-4 mt-4 ">
           <NavLink
             to="/"
+            onClick={() => setSidebarOpen(false)}
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2 rounded-md font-medium transition ${
                 isActive || location.pathname === "/"
@@ -52,6 +53,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
           <NavLink
             to="/miners"
+            onClick={() => setSidebarOpen(false)}
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2 rounded-md font-medium transition  ${
                 isActive
@@ -63,9 +65,24 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
             <FiCpu className="w-5 h-5" />
             <span className="inline">Miners</span>
           </NavLink>
+          <NavLink
+            to="/miner-models"
+            onClick={() => setSidebarOpen(false)}
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-3 py-2 rounded-md font-medium transition  ${
+                isActive
+                  ? "bg-[#2B347A] text-white"
+                  : "text-black hover:bg-[#2B347A] hover:text-white"
+              }`
+            }
+          >
+            <FiCpu className="w-5 h-5" />
+            <span className="inline">Miner Models</span>
+          </NavLink>
 
           <NavLink
             to="/clients"
+            onClick={() => setSidebarOpen(false)}
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2 rounded-md font-medium transition  ${
                 isActive
@@ -80,6 +97,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
           <NavLink
             to="/issues"
+            onClick={() => setSidebarOpen(false)}
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2 rounded-md font-medium transition ${
                 isActive
@@ -94,6 +112,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
           <NavLink
             to="/offline-miners"
+            onClick={() => setSidebarOpen(false)}
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2 rounded-md font-medium transition ${
                 isActive
@@ -108,6 +127,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
           <NavLink
             to="/agreements"
+            onClick={() => setSidebarOpen(false)}
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2 rounded-md font-medium transition ${
                 isActive
@@ -122,6 +142,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
           <NavLink
             to="/warranties"
+            onClick={() => setSidebarOpen(false)}
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2 rounded-md font-medium transition ${
                 isActive
@@ -135,6 +156,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
           </NavLink>
           <NavLink
             to="/service-provider"
+            onClick={() => setSidebarOpen(false)}
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2 rounded-md font-medium transition ${
                 isActive
@@ -149,6 +171,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
           <NavLink
             to="/farms"
+            onClick={() => setSidebarOpen(false)}
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2 rounded-md font-medium transition ${
                 isActive
@@ -163,6 +186,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
           <NavLink
             to="/notifications"
+            onClick={() => setSidebarOpen(false)}
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2 rounded-md font-medium transition  ${
                 isActive
@@ -177,6 +201,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
           <NavLink
             to="/messages"
+            onClick={() => setSidebarOpen(false)}
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2 rounded-md font-medium transition ${
                 isActive
@@ -191,6 +216,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
           <NavLink
             to="/settings"
+            onClick={() => setSidebarOpen(false)}
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2 rounded-md font-medium transition  ${
                 isActive

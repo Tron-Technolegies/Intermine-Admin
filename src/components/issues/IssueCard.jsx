@@ -199,8 +199,7 @@ export default function IssueCard({
             {issue?.reminderHistory?.length < 1 && (
               <p className="p-2">No Reminders sent </p>
             )}
-            {issue.miner?.serviceProvider?.trim()?.toLowerCase() ===
-              "dahab" && (
+            {issue.miner?.serviceProvider?.toLowerCase() === "dahab miners" && (
               <button
                 onClick={() => {
                   onReminder(issue._id);

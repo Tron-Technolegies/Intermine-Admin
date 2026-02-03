@@ -15,9 +15,9 @@ export const useGetSingleMiner = ({ id }) => {
 
 export const useGetMinerModels = () => {
   const { isLoading, isError, data } = useQuery({
-    queryKey: ["miner-models"],
+    queryKey: ["miner-models-dropdown"],
     queryFn: async () => {
-      const { data } = await api.get(`/api/v1/admin/miner/model`);
+      const { data } = await api.get(`/api/v1/admin/miner/model-dropdown`);
       return data;
     },
   });
@@ -31,7 +31,9 @@ export const useAddMinerModel = () => {
       await api.post(`/api/v1/admin/miner/model`, data);
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["miner-models-dropdown"] });
       queryClient.invalidateQueries({ queryKey: ["miner-models"] });
+      queryClient.invalidateQueries({ queryKey: ["single-miner-model"] });
       toast.success("New miner model added successfully");
     },
     onError: (error) => {
