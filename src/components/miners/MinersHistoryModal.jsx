@@ -206,7 +206,10 @@ export default function MinersHistoryModal({
                       scope="row"
                       sx={{ textAlign: "center" }}
                     >
-                      <Link className="p-2 bg-gray-600 text-white rounded-md">
+                      <Link
+                        to={`/miners/miner-issue/${item._id}`}
+                        className="p-2 bg-gray-600 text-white rounded-md"
+                      >
                         Details
                       </Link>
                     </TableCell>

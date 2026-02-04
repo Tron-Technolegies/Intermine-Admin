@@ -78,7 +78,7 @@ export default function MinerModelTable() {
                   fontWeight: "bold",
                 }}
               >
-                Power (W)
+                Power (KW)
               </TableCell>
               <TableCell
                 sx={{

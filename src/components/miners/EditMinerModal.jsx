@@ -142,7 +142,7 @@ export default function EditMinerModal({ minerData, onClose }) {
               >
                 {minerModels.map((item) => (
                   <option key={item._id} value={item._id}>
-                    {`${item.manufacturer} ${item.name} (${item.hashRate}TH/s, ${item.power}W)`}
+                    {`${item.manufacturer} ${item.name} (${item.hashRate}TH/s, ${item.power}KW)`}
                   </option>
                 ))}
               </select>

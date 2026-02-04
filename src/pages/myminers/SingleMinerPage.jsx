@@ -170,7 +170,7 @@ export default function SingleMinerPage() {
           <div className="flex items-center gap-2">
             <FaBolt size={20} />
             <div>
-              <div className="text-lg font-semibold">{data.power}W</div>
+              <div className="text-lg font-semibold">{data.power} KW</div>
               <div className="text-xs text-gray-500">Power</div>
             </div>
           </div>

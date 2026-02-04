@@ -17,8 +17,8 @@ export default function ChatHistoryModal({ issueId, onClose }) {
         <div className="space-y-3 max-h-80 overflow-y-auto pr-2">
           {data?.map((msg) => (
             <div key={msg._id} className="p-3 bg-gray-100 rounded-lg border">
-              <p className="text-sm">{msg.message}</p>
-              <p className="text-xs font-semibold text-end">{msg.sendBy}</p>
+              <p className="text-sm italic">"{msg.message}"</p>
+              <p className="text-xs font-medium text-end">{msg.sendBy}</p>
               <p className="text-[10px] text-gray-500 mt-1">
                 {new Date(msg.sendOn).toLocaleString()}
               </p>

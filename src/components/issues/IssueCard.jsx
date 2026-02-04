@@ -10,6 +10,8 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { BiMessageDetail } from "react-icons/bi";
+import { MdHistory } from "react-icons/md";
+import StatusHistoryModal from "./StatusHistoryModal";
 
 export default function IssueCard({
   issue,
@@ -21,6 +23,7 @@ export default function IssueCard({
   const [status, setStatus] = useState(issue.status);
   const [saving, setSaving] = useState(false);
   const [open, setOpen] = useState(false);
+  const [openStatusHistory, setOpenStatusHistory] = useState(false);
 
   const handleSave = async () => {
     setSaving(true);
@@ -37,9 +40,10 @@ export default function IssueCard({
   };
   return (
     <div className="bg-[#F9F9F9] border border-[#E6E6E6] rounded-2xl px-7 py-7 flex flex-col gap-2 shadow-sm">
+      <p className="font-bold text-sm">ID: XXX-{issue._id.slice(15)}</p>
       {/* Top: title + status */}
       <div className="flex md:flex-row flex-col-reverse gap-2 md:gap-0 justify-between items-start">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col gap-2 w-full">
           {issue.type === "repair" ? (
             <h3 className=" font-semibold text-black">
               {issue.issue?.issueType}
@@ -49,26 +53,35 @@ export default function IssueCard({
               Request for Pool Change
             </p>
           )}
-          <span
-            className={`text-xs  ${
-              status === "Resolved"
-                ? "bg-green-600"
-                : status === "Warranty"
-                  ? "bg-blue-600"
-                  : "bg-[#F2D56A]"
-            } text-black font-medium px-3 py-1 rounded-full`}
-          >
-            {status}
-          </span>
+          {/* Description */}
+          <p className="text-gray-600 text-sm -mt-2">{issue.description}</p>
         </div>
 
-        <p className="text-xs text-gray-500">
+        <p className="text-xs flex flex-col items-end w-full gap-2 text-gray-500">
+          <div className="flex gap-3 items-center">
+            <p
+              className={` text-xs w-fit self-end  ${
+                issue.status === "Resolved"
+                  ? "bg-green-600"
+                  : issue.status === "Warranty"
+                    ? "bg-blue-600"
+                    : "bg-[#F2D56A]"
+              } text-black font-medium px-3 py-1 rounded-full`}
+            >
+              {issue.status}
+            </p>
+            <MdHistory
+              size={24}
+              className="cursor-pointer"
+              onClick={() => setOpenStatusHistory(true)}
+            />
+          </div>
           Last update: {new Date(issue.updatedAt).toLocaleString()}
         </p>
       </div>
-      <p className="font-semibold">{issue.miner?.model}</p>
-      {/* Description */}
-      <p className="text-gray-600 text-sm -mt-2">{issue.description}</p>
+      <p className="font-semibold">
+        {issue.miner?.model} (SI No: {issue.miner?.serialNumber})
+      </p>
 
       {/* Client + Created + Serial */}
       <div className="flex md:flex-row flex-col justify-between md:items-center">
@@ -83,8 +96,15 @@ export default function IssueCard({
 
           <div className="flex items-center gap-2 text-xs text-gray-500">
             <CiClock2 className="text-gray-500 text-lg" />
-            Created {new Date(issue.createdAt).toLocaleString()}
+            Created {new Date(issue.createdAt).toLocaleString()} by{" "}
+            {issue?.statusHistory[0]?.changedBy}
           </div>
+          {issue.resolvedOn && (
+            <div className="flex items-center gap-2 text-xs text-gray-500">
+              <CiClock2 className="text-gray-500 text-lg" />
+              Resolved {new Date(issue.resolvedOn).toLocaleString()}
+            </div>
+          )}
         </div>
 
         {issue.type === "change" && (
@@ -213,6 +233,11 @@ export default function IssueCard({
           </DialogContentText>
         </DialogContent>
       </Dialog>
+      <StatusHistoryModal
+        open={openStatusHistory}
+        handleClose={() => setOpenStatusHistory(false)}
+        statusHistory={issue.statusHistory}
+      />
     </div>
   );
 }

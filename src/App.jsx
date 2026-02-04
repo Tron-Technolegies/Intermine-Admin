@@ -26,6 +26,7 @@ import { adminLoader } from "./loaders/adminLoader";
 import IssueSingle from "./pages/issues/IssueSingle";
 import ServiceProvider from "./pages/serviceProvider/ServiceProvider";
 import MinerModelPage from "./pages/minerModels/MinerModelPage";
+import SingleMinerIssue from "./pages/myminers/SingleMinerIssue";
 
 const router = createBrowserRouter([
   {
@@ -37,6 +38,7 @@ const router = createBrowserRouter([
       { index: true, element: <Dashboard /> },
       { path: "miners", element: <MinersPage /> },
       { path: "miner-models", element: <MinerModelPage /> },
+      { path: "miners/miner-issue/:id", element: <SingleMinerIssue /> },
       { path: "miners/:id", element: <SingleMinerPage /> },
       { path: "clients", element: <Clients /> },
       { path: "clients/:id", element: <ClientDetails /> },
