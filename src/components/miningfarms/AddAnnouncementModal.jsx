@@ -15,15 +15,18 @@ const style = {
   p: 4,
 };
 
-export const AddAnnouncementModal = ({ open, handleClose, farms }) => {
+export const AddAnnouncementModal = ({ open, handleClose, farm }) => {
   const { isPending, mutateAsync } = useAddAnnouncement();
 
   async function handleSubmit(e) {
     e.preventDefault();
     const formdata = new FormData(e.target);
+    formdata.append("farmId", farm._id);
     const data = Object.fromEntries(formdata);
-    await mutateAsync(data);
-    handleClose();
+    console.log(data);
+
+    // await mutateAsync(data);
+    // handleClose();
   }
   return (
     <Modal
@@ -38,18 +41,13 @@ export const AddAnnouncementModal = ({ open, handleClose, farms }) => {
         </Typography>
         <form className="mt-5 flex flex-col gap-2" onSubmit={handleSubmit}>
           <label className="text-xs font-semibold">Farm</label>
-          <select
+          <input
             name="farmId"
             required
+            disabled
+            value={farm?.farm}
             className="p-2 rounded-md outline-none shadow-md bg-neutral-100"
-          >
-            {farms?.length > 0 &&
-              farms.map((item) => (
-                <option key={item._id} value={item._id}>
-                  {item.farm}
-                </option>
-              ))}
-          </select>
+          ></input>
           <label className="text-xs font-semibold">Message</label>
           <textarea
             required

@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 
 export const useDeleteFarm = () => {
   const queryClient = useQueryClient();
-  const { isPending, mutate: deleteFarm } = useMutation({
+  const { isPending, mutateAsync: deleteFarm } = useMutation({
     mutationFn: async ({ id }) => {
       await api.delete(`/api/v1/mining-farms/${id}`);
     },
@@ -16,7 +16,7 @@ export const useDeleteFarm = () => {
       toast.error(
         error.response.data.error ||
           error.response.data.message ||
-          error.message
+          error.message,
       );
     },
   });
