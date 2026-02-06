@@ -1,21 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import api from "../../api/api";
 
-export default function useFarmMiners(location, page = 1, search = "") {
-  return useQuery({
-    queryKey: ["farmMiners", location, page, search],
+export const useGetFarmMiners = ({ farmId }) => {
+  const { isError, isLoading, data, error } = useQuery({
+    queryKey: ["farm-miners", farmId],
     queryFn: async () => {
-      const res = await api.get("/api/v1/admin/miner/farms", {
-        params: {
-          currentPage: page,
-          location: location || "ALL",
-          query: search,
-        },
-      });
-
-      return res.data;
+      const { data } = await api.get(`/api/v1/mining-farms/miners/${farmId}`);
+      return data;
     },
-    // enabled: !!location,
-    refetchOnWindowFocus: false,
   });
-}
+  return { isError, isLoading, data, error };
+};

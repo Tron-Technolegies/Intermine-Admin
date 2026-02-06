@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import PageHeader from "../../components/PageHeader";
 import AddFarmModal from "../../components/miningfarms/AddFarmModal";
-import useFarmMiners from "../../hooks/adminFarms/useFarmsMiners";
 import AllFarmPreview from "../../components/miningfarms/AllFarmPreview";
 import useFarms from "../../hooks/adminFarms/useFarms";
 import Loading from "../../components/Loading";
@@ -21,6 +20,8 @@ import EditFarmModel from "../../components/miningfarms/EditFarmModel";
 import DeleteFarmModal from "../../components/miningfarms/DeleteFarmModal";
 import DowntimeHistoryModal from "../../components/miningfarms/DowntimeHistoryModal";
 import { AddAnnouncementModal } from "../../components/miningfarms/AddAnnouncementModal";
+import MinerDetailsPopup from "../../components/miningfarms/MinerDetailsPopup";
+import FarmStatusPopup from "../../components/miningfarms/FarmStatusPopup";
 
 export default function MiningFarm() {
   const [openAdd, setOpenAdd] = useState(false);
@@ -28,6 +29,8 @@ export default function MiningFarm() {
   const [openDelete, setOpenDelete] = useState(false);
   const [openDowntimes, setOpenDowntimes] = useState(false);
   const [openAnnouncement, setOpenAnnouncement] = useState(false);
+  const [openMiners, setOpenMiners] = useState(false);
+  const [farmStatus, setFarmStatus] = useState(false);
   const { isLoading, isError, data: allFarms } = useFarms();
   const [selected, setSelected] = useState(null);
   const [expanded, setExpanded] = useState(false);
@@ -116,7 +119,13 @@ export default function MiningFarm() {
                         </p>
                       </div>
                       <div className="flex gap-2 h-fit">
-                        <button className="bg-blue-500 text-white flex justify-center items-center gap-1 hover:bg-blue-700">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setOpenMiners(true);
+                          }}
+                          className="bg-blue-500 text-white flex justify-center items-center gap-1 hover:bg-blue-700"
+                        >
                           <FaMicrochip />
                           Miners
                         </button>
@@ -187,7 +196,13 @@ export default function MiningFarm() {
                         <GrAnnounce />
                         Announcement
                       </button>
-                      <button className="w-full text-white bg-neutral-500 hover:bg-neutral-700 flex justify-center items-center gap-2">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setFarmStatus(true);
+                        }}
+                        className="w-full text-white bg-neutral-500 hover:bg-neutral-700 flex justify-center items-center gap-2"
+                      >
                         <GrStatusGood />
                         Farm Status
                       </button>
@@ -236,6 +251,16 @@ export default function MiningFarm() {
       <AddAnnouncementModal
         open={openAnnouncement}
         handleClose={() => setOpenAnnouncement(false)}
+        farm={selected}
+      />
+      <MinerDetailsPopup
+        open={openMiners}
+        handleClose={() => setOpenMiners(false)}
+        farm={selected}
+      />
+      <FarmStatusPopup
+        open={farmStatus}
+        handleClose={() => setFarmStatus(false)}
         farm={selected}
       />
     </div>

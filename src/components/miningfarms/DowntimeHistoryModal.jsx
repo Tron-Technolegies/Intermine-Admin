@@ -12,7 +12,7 @@ const style = {
   width: 400,
   bgcolor: "background.paper",
   boxShadow: 24,
-  maxHeight: 600,
+  maxHeight: 500,
   overflowY: "scroll",
   p: 4,
 };
@@ -37,8 +37,8 @@ export default function DowntimeHistoryModal({ open, handleClose, farm }) {
                   {item.announcement?.message}
                 </p>
                 <div className="mt-2 text-sm">
-                  <p>Started On: {new Date(item?.startAt).toLocaleString()}</p>
-                  <p>Ended On: {new Date(item?.endAt).toLocaleString()}</p>
+                  <p>Started On: {new Date(item?.startAt)?.toLocaleString()}</p>
+                  <p>Ended On: {new Date(item?.endAt)?.toLocaleString()}</p>
                 </div>
               </div>
             ))}
