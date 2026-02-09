@@ -42,12 +42,12 @@ export default function IssueSingle() {
     <p>Something went wrong</p>
   ) : (
     <>
-      <Link
+      {/* <Link
         to={"/offline-miners"}
         className="p-2 bg-indigo-500 text-white my-10 rounded-md"
       >
         Go Back
-      </Link>
+      </Link> */}
       <div className="bg-[#F9F9F9] border border-[#E6E6E6] mt-10 rounded-2xl px-7 py-7 flex flex-col gap-2 shadow-sm">
         {/* Top: title + status */}
         <div className="flex md:flex-row flex-col-reverse gap-2 md:gap-0 justify-between items-start">

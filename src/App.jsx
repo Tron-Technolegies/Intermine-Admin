@@ -65,7 +65,7 @@ const router = createBrowserRouter([
 export default function App() {
   return (
     <>
-      <ToastContainer position="top-right" autoClose={2000} theme="colored" />
+      <ToastContainer position="top-right" autoClose={2000} theme="dark" />
       <RouterProvider router={router} />
     </>
   );

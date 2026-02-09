@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 
 import useAdminNotifications from "../../hooks/notifications/useAdminNotifications";
 import useNotificationActions from "../../hooks/notifications/useNotificationActions";
+import { Link } from "react-router-dom";
 
 export default function Notifications() {
   const [search, setSearch] = useState("");
@@ -104,7 +105,8 @@ export default function Notifications() {
             const isRead = n.status === "read";
 
             return (
-              <div
+              <Link
+                to={n.isIssue && `/issues/${n.issue}`}
                 key={n._id}
                 className="bg-white rounded-lg p-4 shadow flex gap-5 justify-between items-center border border-gray-200"
               >
@@ -153,7 +155,7 @@ export default function Notifications() {
                     </button>
                   )}
                 </div>
-              </div>
+              </Link>
             );
           })}
         </div>

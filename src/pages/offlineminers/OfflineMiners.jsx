@@ -164,16 +164,16 @@ export default function OfflineMiners() {
                       <div className="flex gap-2 items-center justify-center">
                         <p
                           className={`${getStatusBadge(
-                            m.status
+                            m.status,
                           )} p-2 rounded-md text-xs `}
                         >
                           {m.status}
                         </p>
-                        {m.offlineReason !== "farm maintenance" && (
+                        {m.offlineReason === "issue" && (
                           <p>
                             {getDaysSince(
                               m.offlineHistory?.[m.offlineHistory.length - 1]
-                                ?.date
+                                ?.date,
                             )}{" "}
                             days
                           </p>
@@ -192,13 +192,15 @@ export default function OfflineMiners() {
                     <TableCell align="center">
                       {m.offlineReason === "farm maintenance" ? (
                         <p>Farm is down</p>
-                      ) : (
+                      ) : m.currentIssue ? (
                         <Link
                           to={`/issues/${m.currentIssue?._id}`}
                           className="p-2 rounded-md bg-indigo-500 text-white cursor-pointer"
                         >
                           Details
                         </Link>
+                      ) : (
+                        "Manually Turned Offline"
                       )}
                     </TableCell>
                   </TableRow>

@@ -21,7 +21,7 @@ const style = {
 export default function FarmStatusPopup({ open, farm, handleClose }) {
   const [status, setStatus] = useState(farmStatus[0]);
   const [autoActive, setAutoActive] = useState(false);
-  const [activationTime, setActivationTime] = useState(null);
+  const [activationTime, setActivationTime] = useState(false);
   const [inform, setInform] = useState(false);
   const { isPending, mutateAsync } = useUpdateFarmStatus();
 
