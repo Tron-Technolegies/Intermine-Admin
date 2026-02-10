@@ -7,9 +7,11 @@ import { useMutation } from "@tanstack/react-query";
 import api from "../../api/api";
 import { toast } from "react-toastify";
 import { UserContext } from "../../UserContext";
+import { useGetTotalUnreadNotifications } from "../../hooks/notifications/useAdminNotifications";
 
 export default function Header({ setSidebarOpen }) {
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
+  const { data } = useGetTotalUnreadNotifications();
   const navigate = useNavigate();
   const { user } = useContext(UserContext);
 
@@ -38,7 +40,10 @@ px-4 md:px-6 py-3 shadow-sm fixed top-0 left-0 right-0 z-20"
     >
       <div className="flex items-center gap-3">
         {/* Mobile menu button */}
-        <button className="lg:hidden text-white" onClick={() => setSidebarOpen((prev) => !prev)}>
+        <button
+          className="lg:hidden text-white"
+          onClick={() => setSidebarOpen((prev) => !prev)}
+        >
           <MdOutlineMenu size={26} />
         </button>
 
@@ -47,7 +52,12 @@ px-4 md:px-6 py-3 shadow-sm fixed top-0 left-0 right-0 z-20"
 
       <div className="flex items-center gap-6 relative">
         <Link to="/notifications" className="relative cursor-pointer">
-          <IoNotificationsOutline size={22} />
+          <IoNotificationsOutline size={28} />
+          {data?.totalNotifications > 0 && (
+            <div className="w-7 h-7 rounded-full text-[10px] absolute -top-3 -right-3 bg-red-500 flex justify-center items-center">
+              {data?.totalNotifications}
+            </div>
+          )}
         </Link>
 
         {/* Profile dropdown */}
@@ -69,7 +79,9 @@ px-4 md:px-6 py-3 shadow-sm fixed top-0 left-0 right-0 z-20"
             </div>
           )}
 
-          <span className="hidden sm:block text-sm font-medium">{user?.name}</span>
+          <span className="hidden sm:block text-sm font-medium">
+            {user?.name}
+          </span>
           <FaChevronDown size={12} />
         </div>
 

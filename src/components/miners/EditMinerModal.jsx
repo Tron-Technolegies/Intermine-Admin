@@ -4,14 +4,22 @@ import api from "../../api/api";
 import { toast } from "react-toastify";
 import { useGetUserDropdowns } from "../../hooks/useDropdowns";
 import Loading from "../Loading";
+import { useGetServiceProviders } from "../../hooks/useServiceProvider";
+import { useGetMinerModels } from "../../hooks/adminMiner/useGetSingleMiner";
 
 export default function EditMinerModal({ minerData, onClose }) {
   const [loc, setLoc] = useState("");
+  const [model, setModel] = useState("");
   const queryClient = useQueryClient();
 
   // ====== Fetch Clients ======
   const { data: clients, isLoading } = useGetUserDropdowns({ search: "" });
 
+  const { isLoading: serviceLoading, data: serviceProviders } =
+    useGetServiceProviders();
+
+  const { isLoading: minerModelLoading, data: minerModels } =
+    useGetMinerModels();
   // ====== Fetch Mining Farms ======
   const { data: locations } = useQuery({
     queryKey: ["locations"],
@@ -52,11 +60,20 @@ export default function EditMinerModal({ minerData, onClose }) {
   useEffect(() => {
     if (minerData && locations) {
       const location = locations.find(
-        (item) => item.farm === minerData.location
+        (item) => item.farm === minerData.location,
       );
       if (location) setLoc(location._id);
     }
   }, [minerData, locations]);
+
+  useEffect(() => {
+    if (minerData && minerModels) {
+      const currentModel = minerModels.find(
+        (item) => item.name === minerData.model,
+      );
+      if (currentModel) setModel(currentModel._id);
+    }
+  }, [minerData, minerModels]);
 
   return (
     <div
@@ -112,13 +129,24 @@ export default function EditMinerModal({ minerData, onClose }) {
 
             {/* MODEL */}
             <label className="text-xs">Model</label>
-            <input
-              name="model"
-              className="border p-2 rounded-md"
-              placeholder="Model"
-              defaultValue={minerData?.model}
-              required
-            />
+            {minerModelLoading ? (
+              <Loading />
+            ) : (
+              <select
+                name="model"
+                className="border p-2 rounded-md"
+                placeholder="Model"
+                value={model}
+                onChange={(e) => setModel(e.target.value)}
+                required
+              >
+                {minerModels.map((item) => (
+                  <option key={item._id} value={item._id}>
+                    {`${item.manufacturer} ${item.name} (${item.hashRate}TH/s, ${item.power}KW)`}
+                  </option>
+                ))}
+              </select>
+            )}
 
             {/* STATUS */}
             <label className="text-xs">Status</label>
@@ -175,26 +203,6 @@ export default function EditMinerModal({ minerData, onClose }) {
               className="border p-2 rounded-md"
             />
 
-            {/* HASH RATE */}
-            <label className="text-xs">Hashrate</label>
-            <input
-              name="hashRate"
-              defaultValue={minerData?.hashRate}
-              className="border p-2 rounded-md"
-              placeholder="Hash Rate"
-              required
-            />
-
-            {/* POWER */}
-            <label className="text-xs">Power</label>
-            <input
-              name="power"
-              defaultValue={minerData?.power}
-              className="border p-2 rounded-md"
-              placeholder="Power (W)"
-              required
-            />
-
             {/* MAC ADDRESS */}
             <label className="text-xs">Mac Address</label>
             <input
@@ -204,21 +212,25 @@ export default function EditMinerModal({ minerData, onClose }) {
               placeholder="MAC Address"
             />
 
-            {/* coins */}
-            <label className="text-xs">Coins</label>
-            <input
-              name="coins"
-              defaultValue={minerData?.coins}
-              className="border p-2 rounded-md"
-              placeholder="Coins"
-            />
-
-            <label className="text-xs">Service Provider</label>
-            <input
-              name="serviceProvider"
-              defaultValue={minerData?.serviceProvider}
-              className="w-full border p-2 rounded-md"
-            />
+            {serviceLoading ? (
+              <Loading />
+            ) : (
+              <>
+                <label className="text-xs">Service Provider</label>
+                <select
+                  name="serviceProvider"
+                  defaultValue={minerData?.serviceProvider}
+                  className="w-full border p-2 rounded-md"
+                >
+                  <option value={""}>Choose Provider</option>
+                  {serviceProviders.map((item) => (
+                    <option key={item._id} value={item.name}>
+                      {item.name}
+                    </option>
+                  ))}
+                </select>
+              </>
+            )}
 
             <button
               type="submit"

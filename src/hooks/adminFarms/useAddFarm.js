@@ -6,12 +6,8 @@ export default function useAddFarm() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ farm, capacity, serviceProvider }) => {
-      return api.post("/api/v1/mining-farms", {
-        farm,
-        capacity,
-        serviceProvider,
-      });
+    mutationFn: async (data) => {
+      return api.post("/api/v1/mining-farms", data);
     },
 
     onSuccess: () => {
@@ -22,7 +18,7 @@ export default function useAddFarm() {
       toast.error(
         error.response.data.error ||
           error.response.data.message ||
-          "something went wrong"
+          "something went wrong",
       );
     },
   });

@@ -2,6 +2,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { useAddAnnouncement } from "../../hooks/adminFarms/useAddAnnouncement";
+import { useState } from "react";
 
 const style = {
   position: "absolute",
@@ -15,14 +16,25 @@ const style = {
   p: 4,
 };
 
-export const AddAnnouncementModal = ({ open, handleClose, farms }) => {
+export const AddAnnouncementModal = ({ open, handleClose, farm }) => {
   const { isPending, mutateAsync } = useAddAnnouncement();
+  const [isOffline, setIsOffline] = useState(false);
+  const [startAt, setStartAt] = useState(false);
+  const [endAt, setEndAt] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
     const formdata = new FormData(e.target);
+    formdata.append("farmId", farm._id);
     const data = Object.fromEntries(formdata);
+    data.isOffline = isOffline;
+    data.startAt = startAt;
+    data.endAt = endAt;
     await mutateAsync(data);
+    e.target.reset();
+    setIsOffline(false);
+    setStartAt(null);
+    setEndAt(null);
     handleClose();
   }
   return (
@@ -38,18 +50,13 @@ export const AddAnnouncementModal = ({ open, handleClose, farms }) => {
         </Typography>
         <form className="mt-5 flex flex-col gap-2" onSubmit={handleSubmit}>
           <label className="text-xs font-semibold">Farm</label>
-          <select
+          <input
             name="farmId"
             required
+            disabled
+            value={farm?.farm}
             className="p-2 rounded-md outline-none shadow-md bg-neutral-100"
-          >
-            {farms?.length > 0 &&
-              farms.map((item) => (
-                <option key={item._id} value={item._id}>
-                  {item.farm}
-                </option>
-              ))}
-          </select>
+          ></input>
           <label className="text-xs font-semibold">Message</label>
           <textarea
             required
@@ -58,20 +65,34 @@ export const AddAnnouncementModal = ({ open, handleClose, farms }) => {
             rows={3}
             className="p-2 rounded-md outline-none shadow-md bg-neutral-100"
           />
-          <label className="text-xs font-semibold">Start Time</label>
-          <input
-            required
-            name="startAt"
-            type="datetime-local"
-            className="p-2 rounded-md outline-none shadow-md bg-neutral-100"
-          />
-          <label className="text-xs font-semibold">End Time</label>
-          <input
-            required
-            name="endAt"
-            type="datetime-local"
-            className="p-2 rounded-md outline-none shadow-md bg-neutral-100"
-          />
+          <div className="flex gap-2 items-center text-xs mt-1">
+            <input
+              type="checkbox"
+              checked={isOffline}
+              onChange={(e) => setIsOffline(e.target.checked)}
+            />
+            <label>Turn Miners Offline</label>
+          </div>
+          {isOffline && (
+            <>
+              <label className="text-xs font-semibold">Start Time</label>
+              <input
+                required
+                value={startAt}
+                onChange={(e) => setStartAt(e.target.value)}
+                type="datetime-local"
+                className="p-2 rounded-md outline-none shadow-md bg-neutral-100"
+              />
+              <label className="text-xs font-semibold">End Time</label>
+              <input
+                name="endAt"
+                value={endAt}
+                onChange={(e) => setEndAt(e.target.value)}
+                type="datetime-local"
+                className="p-2 rounded-md outline-none shadow-md bg-neutral-100"
+              />
+            </>
+          )}
           <button
             type="submit"
             disabled={isPending}

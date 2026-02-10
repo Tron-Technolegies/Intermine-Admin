@@ -35,7 +35,7 @@ export default function WarrantyTable({
   };
 
   return (
-    <div className="mt-10 bg-[#F5F5F5] lg:p-5 p-3 rounded-2xl shadow-sm max-w-[90vw]">
+    <div className="mt-5 bg-[#F5F5F5] lg:p-5 p-3 rounded-2xl shadow-sm max-w-[90vw]">
       <p className="text-xl font-semibold">All Warranties</p>
       <p className="text-gray-500 mb-4 text-sm">
         View and manage warranty information for all miners.
@@ -194,8 +194,8 @@ export default function WarrantyTable({
                           getStatus(item.endDate) === "Active"
                             ? "bg-green-600"
                             : getStatus(item.endDate) === "Expired"
-                            ? "bg-red-600"
-                            : "bg-yellow-600"
+                              ? "bg-red-600"
+                              : "bg-yellow-600"
                         }`}
                       >
                         {getStatus(item.endDate)}

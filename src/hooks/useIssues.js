@@ -27,3 +27,16 @@ export const useGetSingleIssue = ({ id }) => {
   });
   return { data, isError, isLoading };
 };
+
+export const useGetClientMiners = ({ clientId }) => {
+  const { isLoading, isError, data } = useQuery({
+    queryKey: ["client-miners", clientId],
+    queryFn: async () => {
+      const { data } = await api.get("/api/v1/admin/issue/client-miners", {
+        params: { clientId },
+      });
+      return data;
+    },
+  });
+  return { isLoading, isError, data };
+};

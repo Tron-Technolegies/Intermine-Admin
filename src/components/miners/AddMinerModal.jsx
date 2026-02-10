@@ -4,13 +4,22 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../../api/api";
 import { toast } from "react-toastify";
 import { useGetUserDropdowns } from "../../hooks/useDropdowns";
+import { useGetServiceProviders } from "../../hooks/useServiceProvider";
+import Loading from "../Loading";
+import { useGetMinerModels } from "../../hooks/adminMiner/useGetSingleMiner";
 
 export default function AddMinerModal({ onClose }) {
   const queryClient = useQueryClient();
+  const [warranty, setWarranty] = useState(false);
 
   const { isLoading: loadingClients, data: clients } = useGetUserDropdowns({
     search: "",
   });
+  const { isLoading: serviceProviderLoading, data: serviceProviders } =
+    useGetServiceProviders();
+
+  const { isLoading: minerModelLoading, data: minerModels } =
+    useGetMinerModels();
 
   const { data: locations, isLoading: loadingLocations } = useQuery({
     queryKey: ["locations"],
@@ -106,12 +115,22 @@ export default function AddMinerModal({ onClose }) {
 
           {/* MODEL */}
           <label className="text-xs">Model</label>
-          <input
-            name="model"
-            placeholder="Model"
-            required
-            className="w-full border p-2 rounded-md"
-          />
+          {minerModelLoading ? (
+            <Loading />
+          ) : (
+            <select
+              name="model"
+              placeholder="Model"
+              required
+              className="w-full border p-2 rounded-md"
+            >
+              {minerModels.map((item) => (
+                <option key={item._id} value={item._id}>
+                  {`${item.manufacturer} ${item.name} (${item.hashRate}TH/s, ${item.power}KW)`}
+                </option>
+              ))}
+            </select>
+          )}
 
           {/* STATUS */}
           <label className="text-xs">Status</label>
@@ -146,31 +165,44 @@ export default function AddMinerModal({ onClose }) {
           </div>
 
           {/* WARRANTY */}
-          <label className="text-xs">Warranty Start</label>
-          <input
-            name="warrantyStart"
-            type="date"
-            required
-            placeholder="Warranty Period"
-            className="w-full border p-2 rounded-md"
-          />
-          <label className="text-xs">Warranty End</label>
-          <input
-            name="warrantyEnd"
-            type="date"
-            required
-            placeholder="Warranty Period"
-            className="w-full border p-2 rounded-md"
-          />
-          <label className="text-xs">Warranty Type</label>
-          <select
-            required
-            name="warrantyType"
-            className="w-full border p-2 rounded-md"
-          >
-            <option value="Manufacturer">Manufacturer</option>
-            <option value="Intermine">Intermine</option>
-          </select>
+          <label className="text-xs">Warranty</label>
+          <div className="flex gap-2 item-center">
+            <input
+              type="checkbox"
+              checked={warranty}
+              onChange={(e) => setWarranty(e.target.checked)}
+            />
+            <label className="text-xs">Need Warranty ?</label>
+          </div>
+          {warranty && (
+            <>
+              <label className="text-xs">Warranty Type</label>
+              <select
+                required
+                name="warrantyType"
+                className="w-full border p-2 rounded-md"
+              >
+                <option value="Manufacturer">Manufacturer</option>
+                <option value="Intermine">Intermine</option>
+              </select>
+              <label className="text-xs">Warranty Start</label>
+              <input
+                name="warrantyStart"
+                type="date"
+                required
+                placeholder="Warranty Period"
+                className="w-full border p-2 rounded-md"
+              />
+              <label className="text-xs">Warranty End</label>
+              <input
+                name="warrantyEnd"
+                type="date"
+                required
+                placeholder="Warranty Period"
+                className="w-full border p-2 rounded-md"
+              />
+            </>
+          )}
 
           {/* POOL ADDRESS */}
           <label className="text-xs">Pool Address</label>
@@ -178,26 +210,6 @@ export default function AddMinerModal({ onClose }) {
             name="poolAddress"
             placeholder="Pool Address"
             className="w-full border p-2 rounded-md"
-          />
-
-          {/* HASH RATE (required) */}
-          <label className="text-xs">Hashrate</label>
-          <input
-            name="hashRate"
-            type="number"
-            placeholder="Hash Rate"
-            className="w-full border p-2 rounded-md"
-            required
-          />
-
-          {/* POWER (required) */}
-          <label className="text-xs">Power</label>
-          <input
-            name="power"
-            type="number"
-            placeholder="Power"
-            className="w-full border p-2 rounded-md"
-            required
           />
 
           {/* MAC ADDRESS (required) */}
@@ -209,12 +221,6 @@ export default function AddMinerModal({ onClose }) {
           />
           {/* COINS */}
 
-          <label className="text-xs">Coins</label>
-          <input
-            name="coins"
-            placeholder="Enter the coins"
-            className="w-full border p-2 rounded-md"
-          />
           {/* CONNECTION DATE */}
           <label className="text-xs">Buying Date</label>
           <input
@@ -222,11 +228,25 @@ export default function AddMinerModal({ onClose }) {
             name="connectionDate"
             className="w-full border p-2 rounded-md"
           />
-          <label className="text-xs">Service Provider</label>
-          <input
-            name="serviceProvider"
-            className="w-full border p-2 rounded-md"
-          />
+          {serviceProviderLoading ? (
+            <Loading />
+          ) : (
+            <>
+              <label className="text-xs">Service Provider</label>
+              <select
+                name="serviceProvider"
+                className="w-full border p-2 rounded-md"
+              >
+                <option value={""}>Choose Provider</option>
+                {serviceProviders.map((item) => (
+                  <option key={item._id} value={item.name}>
+                    {item.name}
+                  </option>
+                ))}
+              </select>
+            </>
+          )}
+
           {/* ADD BTN */}
           <button
             type="submit"

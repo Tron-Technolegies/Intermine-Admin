@@ -7,7 +7,7 @@ export default function useClients(page = 1, query = "", status = "ALL") {
     queryKey: ["clients", page, query, status],
     queryFn: async () => {
       const res = await api.get(
-        `/api/v1/admin/user/all?currentPage=${page}&query=${query}&status=${status}`
+        `/api/v1/admin/user/all?currentPage=${page}&query=${query}&status=${status}`,
       );
       return res.data;
     },
@@ -32,9 +32,31 @@ export const useEditClient = () => {
       toast.error(
         error.response.data.error ||
           error.response.data.message ||
-          "something went wrong"
+          "something went wrong",
       );
     },
   });
   return { isPending, mutate };
+};
+
+export const useDeleteClient = () => {
+  const queryClient = useQueryClient();
+  const { isPending, mutateAsync } = useMutation({
+    mutationFn: async (id) => {
+      await api.delete(`/api/v1/admin/user/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["clients"] });
+      queryClient.invalidateQueries({ queryKey: ["clientDetails"] });
+      toast.success("Deleted");
+    },
+    onError: (error) => {
+      toast.error(
+        error.response.data.error ||
+          error.response.data.message ||
+          "something went wrong",
+      );
+    },
+  });
+  return { isPending, mutateAsync };
 };

@@ -45,7 +45,7 @@ export default function useOverviewActions(type = "month") {
         params: {
           currentPage: 1,
           limit: 4,
-          status: "ALL",
+          status: "Default",
           query: "",
         },
       });
@@ -66,7 +66,11 @@ export default function useOverviewActions(type = "month") {
       minersQuery.isLoading ||
       issuesQuery.isLoading,
 
-    isError: statsQuery.isError || graphQuery.isError || minersQuery.isError || issuesQuery.isError,
+    isError:
+      statsQuery.isError ||
+      graphQuery.isError ||
+      minersQuery.isError ||
+      issuesQuery.isError,
   };
 }
 
@@ -76,7 +80,10 @@ function formatGraph({ users, issues }) {
 
   users.forEach((item) => {
     const d = new Date(item.createdAt);
-    const label = d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    const label = d.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+    });
 
     if (!map.has(label)) map.set(label, { users: 0, issues: 0 });
     map.get(label).users += 1;
@@ -84,7 +91,10 @@ function formatGraph({ users, issues }) {
 
   issues.forEach((item) => {
     const d = new Date(item.createdAt);
-    const label = d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    const label = d.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+    });
 
     if (!map.has(label)) map.set(label, { users: 0, issues: 0 });
     map.get(label).issues += 1;

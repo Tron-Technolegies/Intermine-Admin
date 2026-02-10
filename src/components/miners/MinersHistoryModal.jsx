@@ -1,147 +1,225 @@
-import React, { useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
-import api from "../../api/api";
+import React, { useEffect, useState } from "react";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import Modal from "@mui/material/Modal";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
+import { Link } from "react-router-dom";
 
-export default function MinersHistoryModal({ minerId, onClose }) {
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["minerHistory", minerId],
-    queryFn: async () => {
-      // 1) fetch miner (contains issueHistory which may be array of ids)
-      const mRes = await api.get(`/api/v1/admin/miner/${minerId}`);
-      const miner = mRes.data;
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: "90%",
+  maxHeight: 500,
+  bgcolor: "background.paper",
+  overflowY: "scroll",
+  boxShadow: 24,
+  p: 4,
+};
 
-      // 2) if issueHistory is empty or already populated objects, handle both cases
-      const rawHistory = miner.issueHistory || [];
+export default function MinersHistoryModal({
+  open,
+  handleClose,
+  history1,
+  history2,
+}) {
+  const [history, setHistory] = useState([]);
 
-      // if already populated objects (not strings), return them directly
-      const isPopulated = rawHistory.length > 0 && typeof rawHistory[0] === "object";
-
-      if (isPopulated) {
-        return { miner, issues: rawHistory };
-      }
-
-      // 3) rawHistory is likely array of ids -> fetch each issue
-      if (rawHistory.length === 0) {
-        return { miner, issues: [] };
-      }
-
-      // map to fetch promises (use admin route)
-      const fetches = rawHistory.map((id) =>
-        api
-          .get(`/api/v1/admin/issue/${id}`)
-          .then((r) => {
-            // some endpoints wrap result in r.data.issue or r.data
-            // return the most useful shape available
-            return r.data.issue || r.data || null;
-          })
-          .catch((err) => {
-            console.error("Failed to fetch issue", id, err?.response?.data || err);
-            return null; // continue even if one fails
-          })
-      );
-
-      const issues = await Promise.all(fetches);
-      // filter out nulls
-      return { miner, issues: issues.filter(Boolean) };
-    },
-    enabled: !!minerId,
-    staleTime: 1000 * 30,
-  });
-
-  const miner = data?.miner;
-  const issues = data?.issues || [];
-
-  // Close modal on outside click
-  const handleOutsideClick = (e) => {
-    if (e.target.id === "overlay") onClose();
-  };
-
-  // Close on ESC
   useEffect(() => {
-    const onKey = (e) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [onClose]);
+    const newArr = [...history1, ...history2].sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
+    );
+    setHistory(newArr);
+  }, [history1, history2]);
+
+  console.log(history);
 
   return (
-    <div
-      id="overlay"
-      onClick={handleOutsideClick}
-      className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50"
+    <Modal
+      open={open}
+      onClose={handleClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
     >
-      <div className="bg-white rounded-xl w-[92%] sm:w-96 max-h-[70vh] overflow-y-auto p-5 shadow-xl relative">
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          className="absolute top-3 right-3 text-gray-500 hover:text-black text-xl"
-          aria-label="Close history"
-        >
-          ✕
-        </button>
-
-        {/* Header */}
-        <h2 className="font-semibold text-lg mb-3">Miner History</h2>
-
-        {/* Miner summary (optional) */}
-        {miner && (
-          <div className="text-sm text-gray-600 mb-3">
-            <div className="font-medium">{miner.clientName || miner.client?.clientName}</div>
-            <div className="text-xs">
-              {miner.serialNumber} • {miner.model}
-            </div>
-          </div>
-        )}
-
-        {/* Loading */}
-        {isLoading && <p className="text-center py-4">Loading history...</p>}
-
-        {/* Error */}
-        {isError && <p className="text-center text-red-500 py-4">Failed to load miner history.</p>}
-
-        {/* No history */}
-        {!isLoading && issues.length === 0 && (
-          <p className="text-center py-4 text-gray-500">No history records found.</p>
-        )}
-
-        {/* History Records */}
-        {!isLoading &&
-          issues.map((item) => {
-            // defensive field picking — your issue object might have different keys
-            const id = item._id || item.id || item;
-            const type = item.type || item.issueType || item.issue?.issueType || "Unknown";
-            const status = item.status || item.state || "N/A";
-            const workerAddress = item.workerAddress || item.workerAddr || item.worker || "-";
-            const messages = item.messages || item.notes || [];
-            const created = item.createdAt || item.created || item.date || item.timestamp;
-            const desc =
-              item.description ||
-              item.note ||
-              (item.messages && item.messages.length ? item.messages[0].text : "") ||
-              "";
-
-            return (
-              <div key={id} className="border rounded-lg p-3 mb-3">
-                <div className="flex justify-between items-start">
-                  <h3 className="font-medium capitalize">{type}</h3>
-                  <span className="text-xs text-gray-500">{status}</span>
-                </div>
-
-                {desc && <p className="text-sm text-gray-600 mt-1">{desc}</p>}
-
-                <div className="flex items-center justify-between mt-2 text-xs text-gray-400">
-                  <div>Worker: {workerAddress}</div>
-                  <div>{created ? new Date(created).toLocaleString() : ""}</div>
-                </div>
-
-                {messages.length > 0 && (
-                  <div className="mt-2 text-xs text-gray-500">Messages: {messages.length}</div>
-                )}
-              </div>
-            );
-          })}
-      </div>
-    </div>
+      <Box sx={style}>
+        <Typography id="modal-modal-title" variant="h6" component="h2">
+          Repair and Change History
+        </Typography>
+        <TableContainer component={Paper} sx={{ marginTop: 3 }}>
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <TableHead>
+              <TableRow sx={{ backgroundColor: "#F9FAFB" }}>
+                <TableCell
+                  sx={{
+                    textAlign: "center",
+                    fontWeight: "bold",
+                  }}
+                >
+                  SI No
+                </TableCell>
+                <TableCell
+                  sx={{
+                    textAlign: "center",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Ticket Id
+                </TableCell>
+                <TableCell
+                  sx={{
+                    textAlign: "center",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Type
+                </TableCell>
+                <TableCell
+                  sx={{
+                    textAlign: "center",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Issue / Change Request
+                </TableCell>
+                <TableCell
+                  sx={{
+                    textAlign: "center",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Status
+                </TableCell>
+                <TableCell
+                  sx={{
+                    textAlign: "center",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Opened Date
+                </TableCell>
+                <TableCell
+                  sx={{
+                    textAlign: "center",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Closed Date
+                </TableCell>
+                <TableCell
+                  sx={{
+                    textAlign: "center",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Action
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody sx={{ background: "#eff6ff" }}>
+              {history?.map((item, index) => {
+                return (
+                  <TableRow
+                    key={item._id}
+                    sx={{
+                      "&:last-child td, &:last-child th": { border: 0 },
+                    }}
+                  >
+                    <TableCell
+                      component="th"
+                      scope="row"
+                      sx={{ textAlign: "center" }}
+                    >
+                      {index + 1}
+                    </TableCell>
+                    <TableCell
+                      component="th"
+                      scope="row"
+                      sx={{ textAlign: "center" }}
+                    >
+                      {item._id}
+                    </TableCell>
+                    <TableCell
+                      component="th"
+                      scope="row"
+                      sx={{ textAlign: "center" }}
+                    >
+                      {item.type === "repair" ? "Issue" : "Pool Change"}
+                    </TableCell>
+                    <TableCell
+                      component="th"
+                      scope="row"
+                      sx={{ textAlign: "center" }}
+                    >
+                      {item.type === "repair" ? (
+                        <div>{item.issue?.issueType}</div>
+                      ) : (
+                        <div>
+                          <p>Requested Pool : {item.changeRequest?.pool}</p>
+                          <p>Requested Worker : {item.changeRequest?.worker}</p>
+                        </div>
+                      )}
+                    </TableCell>
+                    <TableCell
+                      component="th"
+                      scope="row"
+                      sx={{ textAlign: "center" }}
+                    >
+                      {item.status}
+                    </TableCell>
+                    <TableCell
+                      component="th"
+                      scope="row"
+                      sx={{ textAlign: "center" }}
+                    >
+                      {new Date(item.createdAt)?.toLocaleDateString("en-US", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: false,
+                      })}
+                    </TableCell>
+                    <TableCell
+                      component="th"
+                      scope="row"
+                      sx={{ textAlign: "center" }}
+                    >
+                      {item.resolvedOn
+                        ? new Date(item.resolvedOn)?.toLocaleDateString(
+                            "en-US",
+                            {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: false,
+                            },
+                          )
+                        : "N/A"}
+                    </TableCell>
+                    <TableCell
+                      component="th"
+                      scope="row"
+                      sx={{ textAlign: "center" }}
+                    >
+                      <Link
+                        to={`/miners/miner-issue/${item._id}`}
+                        className="p-2 bg-gray-600 text-white rounded-md"
+                      >
+                        Details
+                      </Link>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
+    </Modal>
   );
 }

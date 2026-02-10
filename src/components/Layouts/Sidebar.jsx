@@ -1,8 +1,15 @@
 import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import { FiGrid, FiFileText, FiBell, FiMessageSquare, FiSettings, FiCpu } from "react-icons/fi";
+import {
+  FiGrid,
+  FiFileText,
+  FiBell,
+  FiMessageSquare,
+  FiSettings,
+  FiCpu,
+} from "react-icons/fi";
 import { GiMining } from "react-icons/gi";
-import { MdOutlineErrorOutline } from "react-icons/md";
+import { MdOutlineErrorOutline, MdMiscellaneousServices } from "react-icons/md";
 import { PiChartPieSliceFill, PiUsersThreeBold } from "react-icons/pi";
 import { TbCancel } from "react-icons/tb";
 import { IoShieldOutline } from "react-icons/io5";
@@ -15,21 +22,23 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
       {sidebarOpen && (
         <div
           onClick={() => setSidebarOpen(false)}
-          className="fixed inset-0 bg-black/40 backdrop-blur-sm lg:hidden z-20"
+          className=" bg-black/40 backdrop-blur-sm lg:hidden z-20"
         />
       )}
 
       <div
         className={`
-      fixed top-[60px] left-0 h-full bg-white border-r border-slate-200 
-      w-64 z-30 transform transition-transform duration-300
-      ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
-      lg:translate-x-0
-    `}
+    fixed top-[60px] left-0 h-[calc(100vh-60px)] bg-white border-r border-slate-200 
+    w-72 z-30 transform transition-transform duration-300
+    overflow-y-auto
+    ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
+    lg:translate-x-0
+  `}
       >
-        <nav className="flex-1 p-4 space-y-3 mt-4">
+        <nav className="flex flex-col gap-5 p-4 mt-4 ">
           <NavLink
             to="/"
+            onClick={() => setSidebarOpen(false)}
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2 rounded-md font-medium transition ${
                 isActive || location.pathname === "/"
@@ -44,6 +53,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
           <NavLink
             to="/miners"
+            onClick={() => setSidebarOpen(false)}
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2 rounded-md font-medium transition  ${
                 isActive
@@ -55,9 +65,24 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
             <FiCpu className="w-5 h-5" />
             <span className="inline">Miners</span>
           </NavLink>
+          <NavLink
+            to="/miner-models"
+            onClick={() => setSidebarOpen(false)}
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-3 py-2 rounded-md font-medium transition  ${
+                isActive
+                  ? "bg-[#2B347A] text-white"
+                  : "text-black hover:bg-[#2B347A] hover:text-white"
+              }`
+            }
+          >
+            <FiCpu className="w-5 h-5" />
+            <span className="inline">Miner Models</span>
+          </NavLink>
 
           <NavLink
             to="/clients"
+            onClick={() => setSidebarOpen(false)}
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2 rounded-md font-medium transition  ${
                 isActive
@@ -72,6 +97,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
           <NavLink
             to="/issues"
+            onClick={() => setSidebarOpen(false)}
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2 rounded-md font-medium transition ${
                 isActive
@@ -86,6 +112,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
           <NavLink
             to="/offline-miners"
+            onClick={() => setSidebarOpen(false)}
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2 rounded-md font-medium transition ${
                 isActive
@@ -100,6 +127,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
           <NavLink
             to="/agreements"
+            onClick={() => setSidebarOpen(false)}
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2 rounded-md font-medium transition ${
                 isActive
@@ -114,6 +142,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
           <NavLink
             to="/warranties"
+            onClick={() => setSidebarOpen(false)}
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2 rounded-md font-medium transition ${
                 isActive
@@ -126,7 +155,23 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
             <span className="inline">Warranties</span>
           </NavLink>
           <NavLink
+            to="/service-provider"
+            onClick={() => setSidebarOpen(false)}
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-3 py-2 rounded-md font-medium transition ${
+                isActive
+                  ? "bg-[#2B347A] text-white"
+                  : "text-black hover:bg-[#2B347A] hover:text-white"
+              }`
+            }
+          >
+            <MdMiscellaneousServices className="w-5 h-5" />
+            <span className="inline">Service Provider</span>
+          </NavLink>
+
+          <NavLink
             to="/farms"
+            onClick={() => setSidebarOpen(false)}
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2 rounded-md font-medium transition ${
                 isActive
@@ -141,6 +186,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
           <NavLink
             to="/notifications"
+            onClick={() => setSidebarOpen(false)}
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2 rounded-md font-medium transition  ${
                 isActive
@@ -155,6 +201,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
           <NavLink
             to="/messages"
+            onClick={() => setSidebarOpen(false)}
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2 rounded-md font-medium transition ${
                 isActive
@@ -169,6 +216,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
           <NavLink
             to="/settings"
+            onClick={() => setSidebarOpen(false)}
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2 rounded-md font-medium transition  ${
                 isActive

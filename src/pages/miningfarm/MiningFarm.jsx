@@ -1,65 +1,51 @@
 import React, { useState } from "react";
 import PageHeader from "../../components/PageHeader";
 import AddFarmModal from "../../components/miningfarms/AddFarmModal";
-import FarmTable from "../../components/miningfarms/FarmTable";
-import SearchFilterBar from "../../components/SearchFilterBar";
-import { FaPen } from "react-icons/fa";
-import { GrAnnounce } from "react-icons/gr";
-import { AiOutlineDelete } from "react-icons/ai";
+import AllFarmPreview from "../../components/miningfarms/AllFarmPreview";
 import useFarms from "../../hooks/adminFarms/useFarms";
-import useFarmMiners from "../../hooks/adminFarms/useFarmsMiners";
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import { useDeleteFarm } from "../../hooks/adminFarms/useDeleteFarm";
 import Loading from "../../components/Loading";
+import { FaLocationDot, FaMicrochip, FaRegClock } from "react-icons/fa6";
+import {
+  RiContractFill,
+  RiDeleteBack2Fill,
+  RiDeleteBin2Fill,
+  RiInformationLine,
+} from "react-icons/ri";
+import { IoCloudOfflineSharp } from "react-icons/io5";
+import { BiSolidCategory } from "react-icons/bi";
+import { ImPower, ImPowerCord } from "react-icons/im";
+import { FaTools, FaCalendar, FaRegEdit } from "react-icons/fa";
+import { GrAnnounce, GrStatusGood } from "react-icons/gr";
+import EditFarmModel from "../../components/miningfarms/EditFarmModel";
+import DeleteFarmModal from "../../components/miningfarms/DeleteFarmModal";
+import DowntimeHistoryModal from "../../components/miningfarms/DowntimeHistoryModal";
 import { AddAnnouncementModal } from "../../components/miningfarms/AddAnnouncementModal";
-import FarmPreview from "../../components/miningfarms/FarmPreview";
+import MinerDetailsPopup from "../../components/miningfarms/MinerDetailsPopup";
+import FarmStatusPopup from "../../components/miningfarms/FarmStatusPopup";
 
 export default function MiningFarm() {
   const [openAdd, setOpenAdd] = useState(false);
-  const [editFarm, setEditFarm] = useState(null);
-  const [deleteFarm, setDeleteFarm] = useState(null);
-  const [open, setOpen] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
+  const [openDowntimes, setOpenDowntimes] = useState(false);
   const [openAnnouncement, setOpenAnnouncement] = useState(false);
+  const [openMiners, setOpenMiners] = useState(false);
+  const [farmStatus, setFarmStatus] = useState(false);
+  const { isLoading, isError, data: allFarms } = useFarms();
+  const [selected, setSelected] = useState(null);
+  const [expanded, setExpanded] = useState(false);
 
-  const [selectedFarm, setSelectedFarm] = useState("ALL");
-  const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
-
-  // LOAD ALL FARMS
-  const { data: farms, isLoading: loadingFarms } = useFarms();
-  //delete farm
-  const { isPending, deleteFarm: farmDelete } = useDeleteFarm();
-  // LOAD MINERS FOR SELECTED FARM
-  const { data: minersData, isLoading: loadingMiners } = useFarmMiners(
-    selectedFarm,
-    page,
-    search
-  );
-
-  const farmMiners = minersData?.miners || [];
-  const totalPages = minersData?.totalPages || 1;
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setDeleteFarm(null);
-    setOpen(false);
-  };
-
-  const hadleAnnouncementOpen = () => {
-    setOpenAnnouncement(true);
-  };
-
-  const handleAnnouncementClose = () => {
-    setOpenAnnouncement(false);
-  };
+  function getStatusColor(status) {
+    if (status === "Active") {
+      return "bg-green-200 text-green-600";
+    } else if (status === "Offline") {
+      return "bg-red-200 text-red-600";
+    } else if (status === "Planned") {
+      return "bg-yellow-200 text-yellow-600";
+    } else {
+      return "bg-blue-200 text-blue-600";
+    }
+  }
 
   return (
     <div className="min-h-screen">
@@ -70,133 +56,213 @@ export default function MiningFarm() {
         onButtonClick={() => setOpenAdd(true)}
         ModalComponent={AddFarmModal}
       />
-      <button
-        onClick={hadleAnnouncementOpen}
-        className="my-5 p-2 text-sm bg-blue-900 cursor-pointer text-white rounded-md flex gap-2 items-center"
-      >
-        Add Announcement <GrAnnounce size={18} />
-      </button>
-      {openAnnouncement && (
-        <AddAnnouncementModal
-          open={openAnnouncement}
-          handleClose={handleAnnouncementClose}
-          farms={farms}
-        />
-      )}
+
       {/* FARM CARDS */}
-      <div className="bg-[#F5F5F5] my-4 rounded-lg p-4 flex flex-col gap-3">
-        <p className="text-2xl font-bold">Our Farms</p>
-        <p className="text-gray-500">View and edit farm information.</p>
-
-        <div className="flex gap-3 flex-wrap mt-3 my-3">
-          {!loadingFarms &&
-            farms?.map((farm) => (
+      {isLoading ? (
+        <Loading />
+      ) : isError ? (
+        <p>Something went wrong</p>
+      ) : (
+        <>
+          <AllFarmPreview farms={allFarms} />
+          <div className="flex flex-col gap-3 mt-3">
+            <p className="text-lg font-semibold">All Farms</p>
+            {allFarms.map((item) => (
               <div
-                key={farm._id}
-                className="bg-white rounded-lg px-3 py-2 flex cursor-pointer items-center gap-3 shadow md:min-w-[180px]"
-                onClick={() => setSelectedFarm(farm.farm)}
+                key={item._id}
+                onClick={() => {
+                  setSelected(item);
+                  setExpanded(!expanded);
+                }}
+                className="p-3 rounded-md bg-[#F5F5F5] shadow-md cursor-pointer"
               >
-                <p className="font-semibold">
-                  {farm.farm} ({farm.capacity})
-                </p>
-
-                <FaPen
-                  className="text-gray-600 cursor-pointer hover:text-black"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setEditFarm(farm);
-                    setOpenAdd(true);
-                  }}
-                />
-                <AiOutlineDelete
-                  className="text-red-700 text-lg cursor-pointer "
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setDeleteFarm(farm);
-                    handleClickOpen();
-                  }}
-                />
+                <div className="flex justify-between item-center">
+                  <p className="font-semibold text-lg">{item.farm}</p>
+                  <p
+                    className={`text-xs p-2 rounded-md ${getStatusColor(item.farmStatus)}`}
+                  >
+                    {item.farmStatus}
+                  </p>
+                </div>
+                <p className="italic font-sans font-semibold">{`${item.current}/${item.capacity} KW`}</p>
+                {expanded && selected._id === item._id && (
+                  <div className="p-2 mt-3 duration-300 ease-in-out transition-all">
+                    {item.farmInfo && (
+                      <p className="my-2 text-gray-600 text-sm flex gap-2 items-center">
+                        <RiInformationLine />
+                        {item.farmInfo}
+                      </p>
+                    )}
+                    <div className="border-t border-b border-gray-300 py-2 flex justify-between">
+                      <div className=" text-gray-600 text-sm flex flex-col gap-2">
+                        <p className="flex gap-2 items-center">
+                          <FaLocationDot />
+                          {item.country}
+                        </p>
+                        <p className="flex gap-2 items-center">
+                          <RiContractFill />
+                          {item.contractType}
+                        </p>
+                        <p className="flex gap-2 items-center">
+                          <BiSolidCategory />
+                          {item.farmType}
+                        </p>
+                        <p className="flex gap-2 items-center">
+                          <FaCalendar />
+                          Commission Date:{" "}
+                          {new Date(item.dayOfCommissioning).toLocaleString()}
+                        </p>
+                        <p className="flex gap-2 items-center">
+                          <FaRegClock />
+                          Contract Expiry:{" "}
+                          {new Date(item.contractDuration).toLocaleString()}
+                        </p>
+                      </div>
+                      <div className="flex gap-2 h-fit">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setOpenMiners(true);
+                          }}
+                          className="bg-blue-500 text-white flex justify-center items-center gap-1 hover:bg-blue-700"
+                        >
+                          <FaMicrochip />
+                          Miners
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setOpenDowntimes(true);
+                          }}
+                          className="bg-blue-500 text-white flex justify-center items-center gap-1 hover:bg-blue-700"
+                        >
+                          <IoCloudOfflineSharp />
+                          Downtimes
+                        </button>
+                      </div>
+                    </div>
+                    <div className="mt-3 grid md:grid-cols-4 grid-cols-2 md:gap-3 gap-5 place-items-center-safe pb-2 border-b border-gray-300">
+                      <div className="flex gap-2 items-center w-full justify-center">
+                        <ImPower size={28} />
+                        <p className="flex flex-col">
+                          <span className="font-bold">{item.capacity} KW</span>
+                          <span className="text-xs">capacity</span>
+                        </p>
+                      </div>
+                      <div className="flex gap-2 items-center w-full justify-center">
+                        <ImPowerCord size={28} />
+                        <p className="flex flex-col">
+                          <span className="font-bold">{item.current} KW</span>
+                          <span className="text-xs">current</span>
+                        </p>
+                      </div>
+                      <div className="flex gap-2 items-center w-full justify-center">
+                        <FaMicrochip size={28} />
+                        <p className="flex flex-col">
+                          <span className="font-bold">
+                            {item.miners?.length}
+                          </span>
+                          <span className="text-xs">Total Miners</span>
+                        </p>
+                      </div>
+                      <div className="flex gap-2 items-center w-full justify-center">
+                        <FaTools size={28} />
+                        <p className="flex flex-col">
+                          <span className="font-bold">
+                            {item.serviceProvider}
+                          </span>
+                          <span className="text-xs">Service Provider</span>
+                        </p>
+                      </div>
+                    </div>
+                    <div className="grid md:grid-cols-4 grid-cols-2 justify-between gap-2 mt-2">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setOpenEdit(true);
+                        }}
+                        className="w-full text-white bg-gray-400 hover:bg-gray-600 flex justify-center items-center gap-2"
+                      >
+                        <FaRegEdit />
+                        Edit
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setOpenAnnouncement(true);
+                        }}
+                        className="w-full text-white bg-blue-500 hover:bg-blue-700 flex justify-center items-center gap-2"
+                      >
+                        <GrAnnounce />
+                        Announcement
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setFarmStatus(true);
+                        }}
+                        className="w-full text-white bg-neutral-500 hover:bg-neutral-700 flex justify-center items-center gap-2"
+                      >
+                        <GrStatusGood />
+                        Farm Status
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setOpenDelete(true);
+                        }}
+                        className="w-full text-white bg-red-600 hover:bg-red-800 flex justify-center items-center gap-2"
+                      >
+                        <RiDeleteBin2Fill />
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
-        </div>
-        {selectedFarm !== "ALL" && (
-          <FarmPreview
-            farm={farms?.find((item) => item.farm === selectedFarm)}
-          />
-        )}
-
-        {isPending && <Loading />}
-        {/* //Delete Popup */}
-        <Dialog
-          open={open}
-          onClose={handleClose}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogTitle id="alert-dialog-title">
-            {"Delete Mining Farm?"}
-          </DialogTitle>
-          <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-              Are you sure want to delete the Mining Farm?. You will only be
-              able to complete this operation if there is no miners at your farm
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button
-              onClick={() => {
-                farmDelete({ id: deleteFarm._id });
-                handleClose();
-              }}
-            >
-              Yes
-            </Button>
-            <Button onClick={handleClose}>No</Button>
-          </DialogActions>
-        </Dialog>
-
-        {/* SEARCH + FARM DROPDOWN */}
-        <SearchFilterBar
-          search={search}
-          onSearch={(v) => {
-            setSearch(v);
-            setPage(1);
-          }}
-          filterValue={selectedFarm}
-          onFilterChange={(v) => {
-            setSelectedFarm(v);
-            setPage(1);
-          }}
-          filterOptions={["ALL", ...(farms?.map((f) => f.farm) || [])]}
-          placeholder="Search miners by model, worker, SL, MAC..."
-          title="Farm Miners"
-          subtitle="Select a farm to view miners"
-        />
-
-        {/* SHOW MINERS TABLE */}
-        {selectedFarm && (
-          <FarmTable
-            miners={farmMiners}
-            isLoading={loadingMiners}
-            page={page}
-            totalPages={totalPages}
-            setPage={setPage}
-            totalCapacity={minersData?.totalCapacity}
-            currentCapacity={minersData?.currentCapacity}
-          />
-        )}
-      </div>
+          </div>
+        </>
+      )}
 
       {/* ADD / EDIT FARM MODAL */}
       {openAdd && (
         <AddFarmModal
           onClose={() => {
             setOpenAdd(false);
-            setEditFarm(null);
           }}
-          editFarm={editFarm}
         />
       )}
+      <EditFarmModel
+        open={openEdit}
+        handleClose={() => setOpenEdit(false)}
+        farm={selected}
+      />
+      <DeleteFarmModal
+        open={openDelete}
+        handleClose={() => setOpenDelete(false)}
+        farm={selected}
+      />
+      <DowntimeHistoryModal
+        open={openDowntimes}
+        handleClose={() => setOpenDowntimes(false)}
+        farm={selected}
+      />
+      <AddAnnouncementModal
+        open={openAnnouncement}
+        handleClose={() => setOpenAnnouncement(false)}
+        farm={selected}
+      />
+      <MinerDetailsPopup
+        open={openMiners}
+        handleClose={() => setOpenMiners(false)}
+        farm={selected}
+      />
+      <FarmStatusPopup
+        open={farmStatus}
+        handleClose={() => setFarmStatus(false)}
+        farm={selected}
+      />
     </div>
   );
 }

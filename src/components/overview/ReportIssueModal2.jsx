@@ -7,6 +7,7 @@ export default function ReportIssueModal2({ onClose, currentMiner }) {
   const { isPending, mutate } = useReportIssue();
   const { isLoading: issueLoading, data: issues } = useIssueTypes();
   const [checked, setChecked] = useState(false);
+  const [inform, setInform] = useState(false);
 
   const handleChange = (event) => {
     setChecked(event.target.checked);
@@ -17,6 +18,7 @@ export default function ReportIssueModal2({ onClose, currentMiner }) {
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData);
     data.status = checked ? "online" : "offline";
+    data.inform = inform ? "inform" : "not-inform";
     data.miner = currentMiner?._id;
     data.user = currentMiner?.client?._id;
     console.log(data);
@@ -79,10 +81,18 @@ export default function ReportIssueModal2({ onClose, currentMiner }) {
             className="p-2 rounded-md shadow bg-gray-100 outline-none"
           ></textarea>
           <label className="text-xs">
-            Offline{" "}
+            {checked ? "Online" : "Offline"}
             <Switch
               checked={checked}
               onChange={handleChange}
+              slotProps={{ input: { "aria-label": "controlled" } }}
+            />
+          </label>
+          <label className="text-xs">
+            Inform Client
+            <Switch
+              checked={inform}
+              onChange={(e) => setInform(e.target.checked)}
               slotProps={{ input: { "aria-label": "controlled" } }}
             />
           </label>
@@ -91,7 +101,7 @@ export default function ReportIssueModal2({ onClose, currentMiner }) {
             disabled={isPending}
             className="p-2 rounded-md bg-indigo-700 text-white cursor-pointer"
           >
-            {isPending ? "Reporting...." : "Report Issue"}
+            {isPending ? "Creating...." : "Create Issue Ticket"}
           </button>
         </form>
       </div>

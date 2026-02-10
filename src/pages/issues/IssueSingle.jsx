@@ -6,9 +6,7 @@ import { FaUser } from "react-icons/fa";
 import { CiClock2 } from "react-icons/ci";
 import { LuCpu } from "react-icons/lu";
 import { AiOutlineWarning } from "react-icons/ai";
-import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -44,12 +42,12 @@ export default function IssueSingle() {
     <p>Something went wrong</p>
   ) : (
     <>
-      <Link
+      {/* <Link
         to={"/offline-miners"}
         className="p-2 bg-indigo-500 text-white my-10 rounded-md"
       >
         Go Back
-      </Link>
+      </Link> */}
       <div className="bg-[#F9F9F9] border border-[#E6E6E6] mt-10 rounded-2xl px-7 py-7 flex flex-col gap-2 shadow-sm">
         {/* Top: title + status */}
         <div className="flex md:flex-row flex-col-reverse gap-2 md:gap-0 justify-between items-start">
@@ -62,9 +60,9 @@ export default function IssueSingle() {
               className={`text-xs  ${
                 data.status === "Resolved"
                   ? "bg-green-600"
-                  : status === "Warranty"
-                  ? "bg-blue-600"
-                  : "bg-[#F2D56A]"
+                  : data.status === "Warranty"
+                    ? "bg-blue-600"
+                    : "bg-[#F2D56A]"
               } text-black font-medium px-3 py-1 rounded-full`}
             >
               {data.status}
@@ -197,7 +195,7 @@ export default function IssueSingle() {
               {data?.reminderHistory?.length < 1 && (
                 <p className="p-2">No Reminders sent </p>
               )}
-              {data.serviceProvider?.trim()?.toLowerCase() === "dahab" && (
+              {data.serviceProvider?.toLowerCase() === "dahab miners" && (
                 <button
                   onClick={async () => {
                     await sendReminder.mutateAsync({

@@ -8,57 +8,50 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { FiSearch } from "react-icons/fi";
 import { MdClose } from "react-icons/md";
-import EditMessageModal from "../../components/pending/EditMessageModal";
 import { CiCircleCheck, CiClock2 } from "react-icons/ci";
 import { RiInformationLine } from "react-icons/ri";
 import { TbEdit } from "react-icons/tb";
 import { IoSendOutline } from "react-icons/io5";
 import PageHeader from "../../components/PageHeader";
-import api from "../../api/api";
-import { toast } from "react-toastify";
 import {
-  cancelPendingMessage,
-  releasePendingMessage,
+  useCancelPendingMessage,
+  useGetAllPendingMessages,
+  useReleasePendingMessage,
 } from "../../hooks/useMessageActions";
+import Loading from "../../components/Loading";
+import EditMessageModal from "../../components/pending/EditMessageModal";
 
 export default function PendingMessages() {
-  const [messages, setMessages] = useState([]);
-  const [totalPages, setTotalPages] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
-  const [editData, setEditData] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [debounced, setDebounced] = useState("");
+  const [openEdit, setOpenEdit] = useState(false);
+  const [selectedId, setSelectedId] = useState("");
 
-  // Fetch messages from backend
-  const fetchMessages = async () => {
-    try {
-      setLoading(true);
-      const res = await api.get("/api/v1/messages/pending", {
-        params: {
-          currentPage,
-          query: searchTerm,
-        },
-        withCredentials: true,
-      });
-
-      setMessages(res.data.messages);
-      setTotalPages(res.data.totalPages);
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to load messages");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchMessages();
-  }, [currentPage, searchTerm]);
+  const { isError, isLoading, data } = useGetAllPendingMessages({
+    query: debounced,
+    currentPage,
+  });
+  const { isPending: cancelPending, mutateAsync: cancel } =
+    useCancelPendingMessage();
+  const { isPending: releasePending, mutateAsync: release } =
+    useReleasePendingMessage();
 
   const countStatus = (status) =>
-    messages.filter((x) => x.status === status).length;
+    data?.messages?.filter((x) => x.status === status).length;
 
-  return (
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebounced(searchTerm);
+    }, 700);
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchTerm]);
+
+  return isLoading ? (
+    <Loading />
+  ) : (
     <div className="w-full">
       <PageHeader
         title="Pending Messages"
@@ -82,7 +75,7 @@ export default function PendingMessages() {
         />
 
         <SummaryCard
-          number={messages.length}
+          number={data?.messages.length}
           title="Total Messages"
           desc="All messages"
           icon={<RiInformationLine />}
@@ -123,6 +116,14 @@ export default function PendingMessages() {
                 }}
               >
                 Message Id
+              </TableCell>
+              <TableCell
+                sx={{
+                  textAlign: "center",
+                  fontWeight: "bold",
+                }}
+              >
+                Send By
               </TableCell>
               <TableCell
                 sx={{
@@ -175,10 +176,10 @@ export default function PendingMessages() {
             </TableRow>
           </TableHead>
           <TableBody sx={{ background: "#eff6ff" }}>
-            {loading ? (
+            {isLoading ? (
               <p className="text-center py-6 w-full">Loading.....</p>
             ) : (
-              messages?.map((item) => {
+              data?.messages?.map((item) => {
                 return (
                   <TableRow
                     key={item._id}
@@ -192,6 +193,13 @@ export default function PendingMessages() {
                       sx={{ textAlign: "center" }}
                     >
                       {item._id}
+                    </TableCell>
+                    <TableCell
+                      component="th"
+                      scope="row"
+                      sx={{ textAlign: "center" }}
+                    >
+                      {item.sendBy}
                     </TableCell>
                     <TableCell
                       component="th"
@@ -247,22 +255,45 @@ export default function PendingMessages() {
                       <div className="flex gap-3 text-lg items-center">
                         <TbEdit
                           className="cursor-pointer text-gray-600 hover:text-black h-6 w-6"
-                          onClick={() => setEditData(m)}
+                          onClick={() => {
+                            setSelectedId(item._id);
+                            setOpenEdit(true);
+                          }}
                         />
-
-                        <IoSendOutline
-                          className="cursor-pointer text-green-600 hover:text-green-800 h-6 w-6"
-                          onClick={() =>
-                            releasePendingMessage(m).then(fetchMessages)
-                          }
-                        />
-
-                        <MdClose
-                          className="cursor-pointer text-red-600 hover:text-red-800 h-6 w-6"
-                          onClick={() =>
-                            cancelPendingMessage(m).then(fetchMessages)
-                          }
-                        />
+                        <button
+                          disabled={releasePending}
+                          onClick={async () => {
+                            const data = {
+                              id: item._id,
+                              serviceProviderId: item.serviceProviderId,
+                              message: item.message,
+                            };
+                            await release(data);
+                          }}
+                        >
+                          {releasePending ? (
+                            "..."
+                          ) : (
+                            <IoSendOutline className="cursor-pointer text-green-600 hover:text-green-800 h-6 w-6" />
+                          )}
+                        </button>
+                        <button
+                          disabled={cancelPending}
+                          onClick={async () => {
+                            const data = {
+                              id: item._id,
+                              serviceProviderId: item.serviceProviderId,
+                              message: item.message,
+                            };
+                            await cancel(data);
+                          }}
+                        >
+                          {cancelPending ? (
+                            "..."
+                          ) : (
+                            <MdClose className="cursor-pointer text-red-600 hover:text-red-800 h-6 w-6" />
+                          )}
+                        </button>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -272,32 +303,14 @@ export default function PendingMessages() {
           </TableBody>
         </Table>
       </TableContainer>
-
-      {/* PAGINATION */}
-      <div className="flex justify-center gap-3 mt-6">
-        {[...Array(totalPages)].map((_, i) => (
-          <button
-            key={i}
-            onClick={() => setCurrentPage(i + 1)}
-            className={`px-4 py-2 rounded-lg border ${
-              currentPage === i + 1 ? "bg-blue-600 text-white" : "bg-white"
-            }`}
-          >
-            {i + 1}
-          </button>
-        ))}
-      </div>
-
-      {/* EDIT MODAL */}
-      {editData && (
-        <EditMessageModal
-          record={editData}
-          onClose={() => {
-            setEditData(null);
-            fetchMessages();
-          }}
-        />
-      )}
+      <EditMessageModal
+        open={openEdit}
+        handleClose={() => {
+          setSelectedId("");
+          setOpenEdit(false);
+        }}
+        id={selectedId}
+      />
     </div>
   );
 }

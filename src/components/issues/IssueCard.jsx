@@ -10,6 +10,8 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { BiMessageDetail } from "react-icons/bi";
+import { MdHistory } from "react-icons/md";
+import StatusHistoryModal from "./StatusHistoryModal";
 
 export default function IssueCard({
   issue,
@@ -21,10 +23,11 @@ export default function IssueCard({
   const [status, setStatus] = useState(issue.status);
   const [saving, setSaving] = useState(false);
   const [open, setOpen] = useState(false);
+  const [openStatusHistory, setOpenStatusHistory] = useState(false);
 
   const handleSave = async () => {
     setSaving(true);
-    await onStatusUpdate(issue.id, status);
+    await onStatusUpdate(issue._id, status);
     setSaving(false);
   };
 
@@ -37,49 +40,102 @@ export default function IssueCard({
   };
   return (
     <div className="bg-[#F9F9F9] border border-[#E6E6E6] rounded-2xl px-7 py-7 flex flex-col gap-2 shadow-sm">
+      <p className="font-bold text-sm">ID: XXX-{issue._id.slice(15)}</p>
       {/* Top: title + status */}
       <div className="flex md:flex-row flex-col-reverse gap-2 md:gap-0 justify-between items-start">
-        <div className="flex items-center gap-3">
-          <h3 className=" font-semibold text-black">{issue.title}</h3>
-
-          <span
-            className={`text-xs  ${
-              status === "Resolved"
-                ? "bg-green-600"
-                : status === "Warranty"
-                ? "bg-blue-600"
-                : "bg-[#F2D56A]"
-            } text-black font-medium px-3 py-1 rounded-full`}
-          >
-            {status}
-          </span>
+        <div className="flex flex-col gap-2 w-full">
+          {issue.type === "repair" ? (
+            <h3 className=" font-semibold text-black">
+              {issue.issue?.issueType}
+            </h3>
+          ) : (
+            <p className="font-semibold text-blue-700">
+              Request for Pool Change
+            </p>
+          )}
+          {/* Description */}
+          <p className="text-gray-600 text-sm -mt-2">{issue.description}</p>
         </div>
 
-        <p className="text-xs text-gray-500">Last update: {issue.lastUpdate}</p>
+        <p className="text-xs flex flex-col items-end w-full gap-2 text-gray-500">
+          <div className="flex gap-3 items-center">
+            <p
+              className={` text-xs w-fit self-end  ${
+                issue.status === "Resolved"
+                  ? "bg-green-600"
+                  : issue.status === "Warranty"
+                    ? "bg-blue-600"
+                    : "bg-[#F2D56A]"
+              } text-black font-medium px-3 py-1 rounded-full`}
+            >
+              {issue.status}
+            </p>
+            <MdHistory
+              size={24}
+              className="cursor-pointer"
+              onClick={() => setOpenStatusHistory(true)}
+            />
+          </div>
+          Last update: {new Date(issue.updatedAt).toLocaleString()}
+        </p>
       </div>
-      <p className="font-semibold">{issue?.model}</p>
-      {/* Description */}
-      <p className="text-gray-600 text-sm -mt-2">{issue.description}</p>
+      <p className="font-semibold">
+        {issue.miner?.model} (SI No: {issue.miner?.serialNumber})
+      </p>
 
       {/* Client + Created + Serial */}
       <div className="flex md:flex-row flex-col justify-between md:items-center">
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-3 text-sm text-gray-700">
             <FaUser className="text-gray-500" />
-            <span className="font-medium">{issue.user}</span>
-            <span className="text-gray-400 text-xs">{issue.clientId}</span>
+            <span className="font-medium">{issue.user?.clientName}</span>
+            <span className="text-gray-400 text-xs">
+              {issue.user?.clientId}
+            </span>
           </div>
 
           <div className="flex items-center gap-2 text-xs text-gray-500">
             <CiClock2 className="text-gray-500 text-lg" />
-            Created {issue.created}
+            Created {new Date(issue.createdAt).toLocaleString()} by{" "}
+            {issue?.statusHistory[0]?.changedBy}
           </div>
+          {issue.resolvedOn && (
+            <div className="flex items-center gap-2 text-xs text-gray-500">
+              <CiClock2 className="text-gray-500 text-lg" />
+              Resolved {new Date(issue.resolvedOn).toLocaleString()}
+            </div>
+          )}
         </div>
 
-        <div className="flex items-center gap-2 mt-3 sm:mt-0 text-sm font-medium text-black">
-          <LuCpu className="text-xl" />
-          <span>{issue.serial}</span>
-        </div>
+        {issue.type === "change" && (
+          <div className=" flex flex-col gap-2 mb-2">
+            <div className="flex items-center gap-2 mt-3 sm:mt-0 text-sm text-gray-500">
+              Current Worker ID:
+              <span className="text-blue-700 font-semibold">
+                {issue.miner?.workerId}
+              </span>
+            </div>
+            <div className="flex items-center gap-2 mt-3 sm:mt-0 text-sm text-gray-500">
+              Requested Worker ID:
+              <span className="text-blue-700 font-semibold">
+                {issue.changeRequest?.worker}
+              </span>
+            </div>
+            <div className="flex items-center gap-2 mt-3 sm:mt-0 text-sm text-gray-500">
+              Requested Pool Address:
+              <span className="text-blue-700 font-semibold">
+                {issue.changeRequest?.pool}
+              </span>
+            </div>
+          </div>
+        )}
+
+        {issue.type === "repair" && (
+          <div className="flex items-center gap-2 mt-3 sm:mt-0 text-sm font-medium text-black">
+            <LuCpu className="text-xl" />
+            <span>{issue.miner?.workerId}</span>
+          </div>
+        )}
       </div>
 
       {/* Bottom Actions */}
@@ -118,7 +174,7 @@ export default function IssueCard({
           <div className="flex md:flex-row flex-col md:items-center  gap-4">
             {/* Chat History */}
             <button
-              onClick={() => onChatOpen(issue.id)}
+              onClick={() => onChatOpen(issue._id)}
               className="bg-gray-200 cursor-pointer w-full md:w-fit px-4 py-2 rounded-full flex items-center gap-1 text-gray-700 justify-center"
             >
               <BiMessageDetail />
@@ -163,10 +219,10 @@ export default function IssueCard({
             {issue?.reminderHistory?.length < 1 && (
               <p className="p-2">No Reminders sent </p>
             )}
-            {issue.serviceProvider?.trim()?.toLowerCase() === "dahab" && (
+            {issue.miner?.serviceProvider?.toLowerCase() === "dahab miners" && (
               <button
                 onClick={() => {
-                  onReminder(issue.id);
+                  onReminder(issue._id);
                   handleClose();
                 }}
                 className="bg-[#3B8BEA] cursor-pointer text-white w-full md:w-fit px-5 py-2 rounded-full flex items-center justify-center gap-1"
@@ -177,6 +233,11 @@ export default function IssueCard({
           </DialogContentText>
         </DialogContent>
       </Dialog>
+      <StatusHistoryModal
+        open={openStatusHistory}
+        handleClose={() => setOpenStatusHistory(false)}
+        statusHistory={issue.statusHistory}
+      />
     </div>
   );
 }

@@ -17,6 +17,7 @@ import EditMinerModal from "../../components/miners/EditMinerModal";
 import MinersHistoryModal from "../../components/miners/MinersHistoryModal";
 import ReportIssueModal2 from "../../components/overview/ReportIssueModal2";
 import { diffInMonths, monthsFromNow } from "../../utils/monthCalculation";
+import DeleteMinerPopup from "../../components/miners/DeleteMinerPopup";
 
 const getStatusColor = (status) => {
   switch (status) {
@@ -35,6 +36,7 @@ export default function SingleMinerPage() {
   const { id } = useParams();
   const { isLoading, isError, data } = useGetSingleMiner({ id });
   const [editForm, setEditForm] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [showReport, setShowReport] = useState(false);
   const [watchers, setWatchers] = useState([]);
@@ -42,11 +44,11 @@ export default function SingleMinerPage() {
   useEffect(() => {
     if (data) {
       const coinSet = new Set(
-        data.coins?.split(",")?.map((item) => item.trim().toUpperCase())
+        data.coins?.split(",")?.map((item) => item.trim().toUpperCase()),
       );
       const filteredLinks =
         data.client?.watcherLinks?.filter((item) =>
-          coinSet.has(item.coin?.trim()?.toUpperCase())
+          coinSet.has(item.coin?.trim()?.toUpperCase()),
         ) || [];
       setWatchers(filteredLinks);
     }
@@ -61,7 +63,7 @@ export default function SingleMinerPage() {
     <p>something went wrong</p>
   ) : (
     <div>
-      <div className="p-6 border-b border-[#DCDCDC] flex items-center justify-between">
+      <div className="p-6 border-b border-[#DCDCDC] flex md:flex-row flex-col-reverse md:items-center gap-4 justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-black">{data.model}</h1>
           <p className="text-md text-gray-500">
@@ -71,7 +73,7 @@ export default function SingleMinerPage() {
 
         <Link
           to={"/miners"}
-          className="bg-[#3893D0] hover:bg-[#2c7cb5] text-white rounded-xl px-4 py-1 transition-all"
+          className="bg-[#3893D0] w-fit hover:bg-[#2c7cb5] text-white rounded-xl px-4 py-1 transition-all"
         >
           Go Back
         </Link>
@@ -94,14 +96,14 @@ export default function SingleMinerPage() {
 
           <span
             className={`${getStatusColor(
-              data.status
+              data.status,
             )} px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap`}
           >
             {data.status === "online"
               ? "Online"
               : data.status === "offline"
-              ? "Offline"
-              : "In Transit"}
+                ? "Offline"
+                : "In Transit"}
           </span>
         </div>
 
@@ -168,7 +170,7 @@ export default function SingleMinerPage() {
           <div className="flex items-center gap-2">
             <FaBolt size={20} />
             <div>
-              <div className="text-lg font-semibold">{data.power}W</div>
+              <div className="text-lg font-semibold">{data.power} KW</div>
               <div className="text-xs text-gray-500">Power</div>
             </div>
           </div>
@@ -207,8 +209,10 @@ export default function SingleMinerPage() {
                   {diffInMonths(data.warrantyStartDate, data.warrantyEndDate)}{" "}
                   months
                 </span>
-              ) : (
+              ) : data.warranty ? (
                 <span>Total Warranty: {data.warranty * 12} months</span>
+              ) : (
+                <span>Total Warranty: Not Available</span>
               )}
             </div>
             {data.warrantyEndDate && (
@@ -237,28 +241,38 @@ export default function SingleMinerPage() {
         <div className="flex md:flex-row flex-col gap-3 mt-4">
           <button
             onClick={() => handleEditClick(data)}
-            className="flex-1 bg-[#787878] text-white rounded-lg py-2 font-medium cursor-pointer"
+            className=" bg-[#787878] hover:bg-[#6c6969] w-full text-white rounded-lg py-2 font-medium cursor-pointer"
           >
             Edit
           </button>
-
+          <button
+            onClick={() => setOpenDelete(true)}
+            className="bg-red-700 hover:bg-red-900 text-white w-full"
+          >
+            Delete
+          </button>
           <button
             onClick={() => setShowReport(true)}
-            className="border border-gray-400 text-gray-700 py-2 px-4 rounded-lg cursor-pointer"
+            className="border w-full border-gray-400 text-gray-700 py-2 px-4 rounded-lg cursor-pointer"
           >
             Report Issue
           </button>
         </div>
       </div>
+      <DeleteMinerPopup
+        minerId={data._id}
+        open={openDelete}
+        handleClose={() => setOpenDelete(false)}
+      />
       {editForm && (
         <EditMinerModal minerData={data} onClose={() => setEditForm(false)} />
       )}
       {showHistory && (
         <MinersHistoryModal
-          minerId={data._id}
-          onClose={() => {
-            setShowHistory(false);
-          }}
+          open={showHistory}
+          history1={data.issueHistory}
+          history2={data.changeHistory}
+          handleClose={() => setShowHistory(false)}
         />
       )}
       {showReport && (

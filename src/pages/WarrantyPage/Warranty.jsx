@@ -3,12 +3,14 @@ import WarrantyStatsCard from "../../components/warranties/WarrantyStatsCard";
 import WarrantyTable from "../../components/warranties/WarrantyTable";
 import useWarranty from "../../hooks/useWarranty";
 import useWarrantyStats from "../../hooks/useWarrantyStats";
+import AddWarrantyPopup from "../../components/warranties/AddWarrantyPopup";
 
 export default function Warranty() {
   // Backend requires: "Manufacturer" and "Intermine"
   const [activeTab, setActiveTab] = useState("Manufacturer");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [openAdd, setOpenAdd] = useState(false);
 
   // Warranty list API
   const { data, isLoading } = useWarranty(page, activeTab, search);
@@ -81,6 +83,13 @@ export default function Warranty() {
       {/* WARRANTY STATS (Now working!) */}
       <WarrantyStatsCard stats={stats} />
 
+      <button
+        onClick={() => setOpenAdd(true)}
+        className="mt-5 p-2 bg-blue-900 rounded-md text-white cursor-pointer px-4"
+      >
+        Add New Warranty
+      </button>
+      <AddWarrantyPopup open={openAdd} handleClose={() => setOpenAdd(false)} />
       {/* WARRANTY TABLE */}
       <WarrantyTable
         data={warranties}

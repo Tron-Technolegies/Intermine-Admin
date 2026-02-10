@@ -33,7 +33,7 @@ export default function HomeLayout() {
     <div className="flex min-h-screen overflow-hidden">
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
-      <div className="flex flex-col flex-1 lg:ml-64 transition-all duration-300">
+      <div className="flex flex-col flex-1 lg:ml-72 transition-all duration-300">
         <Header setSidebarOpen={setSidebarOpen} />
 
         <main className="p-4 bg-white min-h-screen mt-[60px] ">

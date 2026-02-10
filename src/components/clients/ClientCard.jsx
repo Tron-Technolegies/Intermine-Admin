@@ -10,9 +10,11 @@ import { GoCpu } from "react-icons/go";
 import { BsBuildingsFill } from "react-icons/bs";
 import useAgreementActions from "../../hooks/adminAgreement/useAgreementActions";
 import EditClientModal from "./EditClientModal";
+import DeleteClientPopup from "./DeleteClientPopup";
 
 export default function ClientCard({ client, onViewDetails }) {
   const [expanded, setExpanded] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const { sendAgreement } = useAgreementActions();
 
@@ -85,8 +87,9 @@ export default function ClientCard({ client, onViewDetails }) {
                 <span className="font-semibold">
                   {client.owned?.reduce(
                     (sum, item) => sum + (item.power || 0),
-                    0
-                  )}
+                    0,
+                  )}{" "}
+                  KW
                 </span>
                 <p className="text-xs text-gray-500">Consumption</p>
               </div>
@@ -123,7 +126,7 @@ export default function ClientCard({ client, onViewDetails }) {
                 e.stopPropagation();
                 onViewDetails(client);
               }}
-              className="flex-1 bg-[#787878] hover:bg-[#5f5f5f] text-white rounded-lg font-medium py-2 transition-colors"
+              className="w-full bg-[#787878] hover:bg-[#5f5f5f] text-white rounded-lg font-medium py-2 transition-colors"
             >
               View Details
             </button>
@@ -132,9 +135,18 @@ export default function ClientCard({ client, onViewDetails }) {
                 e.stopPropagation();
                 setOpenEdit(true);
               }}
-              className="flex-1 bg-[#787878] hover:bg-[#5f5f5f] text-white rounded-lg font-medium py-2 transition-colors"
+              className="w-full bg-[#071a94] hover:bg-[#1b2cc8] text-white rounded-lg font-medium py-2 transition-colors"
             >
               Edit User
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setOpenDelete(true);
+              }}
+              className="w-full bg-[#940707] hover:bg-[#d11f1f] text-white rounded-lg font-medium py-2 transition-colors"
+            >
+              Delete User
             </button>
           </div>
         </div>
@@ -142,6 +154,12 @@ export default function ClientCard({ client, onViewDetails }) {
       {openEdit && (
         <EditClientModal onClose={() => setOpenEdit(false)} client={client} />
       )}
+      <DeleteClientPopup
+        open={openDelete}
+        handleClose={() => setOpenDelete(false)}
+        name={client?.clientName}
+        id={client?._id}
+      />
     </div>
   );
 }

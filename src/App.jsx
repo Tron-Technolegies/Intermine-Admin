@@ -24,6 +24,9 @@ import ErrorPage from "./pages/error/ErrorPage";
 import SingleMinerPage from "./pages/myminers/SingleMinerPage";
 import { adminLoader } from "./loaders/adminLoader";
 import IssueSingle from "./pages/issues/IssueSingle";
+import ServiceProvider from "./pages/serviceProvider/ServiceProvider";
+import MinerModelPage from "./pages/minerModels/MinerModelPage";
+import SingleMinerIssue from "./pages/myminers/SingleMinerIssue";
 
 const router = createBrowserRouter([
   {
@@ -34,6 +37,8 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Dashboard /> },
       { path: "miners", element: <MinersPage /> },
+      { path: "miner-models", element: <MinerModelPage /> },
+      { path: "miners/miner-issue/:id", element: <SingleMinerIssue /> },
       { path: "miners/:id", element: <SingleMinerPage /> },
       { path: "clients", element: <Clients /> },
       { path: "clients/:id", element: <ClientDetails /> },
@@ -42,6 +47,7 @@ const router = createBrowserRouter([
       { path: "offline-miners", element: <OfflineMiners /> },
       { path: "agreements", element: <Agreements /> },
       { path: "warranties", element: <Warranty /> },
+      { path: "service-provider", element: <ServiceProvider /> },
       { path: "farms", element: <MiningFarm /> },
       { path: "notifications", element: <Notifications /> },
       { path: "messages", element: <PendingMessages /> },
@@ -59,7 +65,7 @@ const router = createBrowserRouter([
 export default function App() {
   return (
     <>
-      <ToastContainer position="top-right" autoClose={2000} theme="colored" />
+      <ToastContainer position="top-right" autoClose={2000} theme="dark" />
       <RouterProvider router={router} />
     </>
   );
