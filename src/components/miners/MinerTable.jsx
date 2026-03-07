@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -8,11 +8,16 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { FiEdit } from "react-icons/fi";
 import { Link } from "react-router-dom";
+import { IoCopyOutline } from "react-icons/io5";
+import { TiTick } from "react-icons/ti";
 import ReportIssueModal2 from "../overview/ReportIssueModal2";
+import { UserContext } from "../../UserContext";
 
 export default function MinerTable({ miners }) {
   const [openReport, setOpenReport] = useState(false);
   const [currentMiner, setCurrentMiner] = useState(null);
+  const { selectedMiner, setSelectedMiner } = useContext(UserContext);
+
   return (
     <>
       <TableContainer component={Paper} sx={{ marginTop: 3 }}>
@@ -103,7 +108,11 @@ export default function MinerTable({ miners }) {
                   <TableCell
                     component="th"
                     scope="row"
-                    sx={{ textAlign: "center" }}
+                    sx={{
+                      textAlign: "center",
+                      maxWidth: "100px",
+                      wordWrap: "break-word",
+                    }}
                   >
                     {item.workerId}
                   </TableCell>
@@ -131,8 +140,8 @@ export default function MinerTable({ miners }) {
                         item.status === "online"
                           ? "bg-green-600"
                           : item.status === "offline"
-                          ? "bg-red-600"
-                          : "bg-yellow-600"
+                            ? "bg-red-600"
+                            : "bg-yellow-600"
                       }`}
                     >
                       {item.status}
@@ -143,26 +152,41 @@ export default function MinerTable({ miners }) {
                     scope="row"
                     sx={{
                       textAlign: "center",
-                      display: "flex",
-                      gap: "10px",
-                      justifyContent: "center",
                     }}
                   >
-                    <button
-                      className="p-2 rounded-md bg-indigo-700 text-white cursor-pointer"
-                      onClick={() => {
-                        setOpenReport(true);
-                        setCurrentMiner(item);
-                      }}
-                    >
-                      Report Issue
-                    </button>
-                    <Link
-                      to={`/miners/${item._id}`}
-                      className="bg-gray-300 p-2 rounded-md"
-                    >
-                      Details
-                    </Link>
+                    <div className="flex items-center gap-2 justify-center">
+                      {selectedMiner?._id === item._id ? (
+                        <button
+                          onClick={() => setSelectedMiner(null)}
+                          className="p-2 rounded-md bg-gray-200 text-lg text-green-700"
+                        >
+                          <TiTick />
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => setSelectedMiner(item)}
+                          className="p-2 rounded-md bg-gray-200 text-lg"
+                        >
+                          <IoCopyOutline />
+                        </button>
+                      )}
+
+                      <button
+                        className="p-2 rounded-md bg-indigo-700 text-white cursor-pointer"
+                        onClick={() => {
+                          setOpenReport(true);
+                          setCurrentMiner(item);
+                        }}
+                      >
+                        Report Issue
+                      </button>
+                      <Link
+                        to={`/miners/${item._id}`}
+                        className="bg-gray-300 p-2 rounded-md"
+                      >
+                        Details
+                      </Link>
+                    </div>
                   </TableCell>
                 </TableRow>
               );

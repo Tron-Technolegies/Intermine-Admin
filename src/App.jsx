@@ -27,6 +27,7 @@ import IssueSingle from "./pages/issues/IssueSingle";
 import ServiceProvider from "./pages/serviceProvider/ServiceProvider";
 import MinerModelPage from "./pages/minerModels/MinerModelPage";
 import SingleMinerIssue from "./pages/myminers/SingleMinerIssue";
+import useAutoLogout from "./hooks/useAutoLogout";
 
 const router = createBrowserRouter([
   {
