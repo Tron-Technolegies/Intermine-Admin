@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { IoClose } from "react-icons/io5";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../../api/api";
@@ -7,10 +7,12 @@ import { useGetUserDropdowns } from "../../hooks/useDropdowns";
 import { useGetServiceProviders } from "../../hooks/useServiceProvider";
 import Loading from "../Loading";
 import { useGetMinerModels } from "../../hooks/adminMiner/useGetSingleMiner";
+import { UserContext } from "../../UserContext";
 
 export default function AddMinerModal({ onClose }) {
   const queryClient = useQueryClient();
   const [warranty, setWarranty] = useState(false);
+  const { selectedMiner } = useContext(UserContext);
 
   const { isLoading: loadingClients, data: clients } = useGetUserDropdowns({
     search: "",
@@ -87,6 +89,7 @@ export default function AddMinerModal({ onClose }) {
             name="client"
             required
             className="w-full border p-2 rounded-md"
+            defaultValue={selectedMiner?.client?._id}
           >
             <option value="">Select Client</option>
             {!loadingClients &&
@@ -103,6 +106,7 @@ export default function AddMinerModal({ onClose }) {
             name="workerId"
             placeholder="Worker Address"
             className="w-full border p-2 rounded-md"
+            defaultValue={selectedMiner?.workerId}
           />
 
           {/* SERIAL/MINER ID */}
@@ -111,6 +115,7 @@ export default function AddMinerModal({ onClose }) {
             name="serialNumber"
             placeholder="Miner Serial Number"
             className="w-full border p-2 rounded-md"
+            defaultValue={selectedMiner?.serialNumber}
           />
 
           {/* MODEL */}
@@ -123,6 +128,10 @@ export default function AddMinerModal({ onClose }) {
               placeholder="Model"
               required
               className="w-full border p-2 rounded-md"
+              defaultValue={
+                minerModels.find((item) => item.name === selectedMiner?.model)
+                  ?._id
+              }
             >
               {minerModels.map((item) => (
                 <option key={item._id} value={item._id}>
@@ -149,11 +158,16 @@ export default function AddMinerModal({ onClose }) {
             name="tracking"
             placeholder="Enter tracking id (optional)"
             className="w-full border p-2 rounded-md"
+            defaultValue={selectedMiner?.trackingLink}
           />
           {/* LOCATION DROPDOWN */}
           <div>
             <label className="text-xs">Miner Location</label>
-            <select name="location" className="w-full border p-2 rounded-md">
+            <select
+              name="location"
+              className="w-full border p-2 rounded-md"
+              defaultValue={selectedMiner?.locationId}
+            >
               <option value="">Select Location</option>
               {!loadingLocations &&
                 locations?.map((l) => (
@@ -210,6 +224,7 @@ export default function AddMinerModal({ onClose }) {
             name="poolAddress"
             placeholder="Pool Address"
             className="w-full border p-2 rounded-md"
+            defaultValue={selectedMiner?.poolAddress}
           />
 
           {/* MAC ADDRESS (required) */}
@@ -218,6 +233,7 @@ export default function AddMinerModal({ onClose }) {
             name="macAddress"
             placeholder="MAC Address"
             className="w-full border p-2 rounded-md"
+            defaultValue={selectedMiner?.macAddress}
           />
           {/* COINS */}
 
@@ -227,6 +243,9 @@ export default function AddMinerModal({ onClose }) {
             type="date"
             name="connectionDate"
             className="w-full border p-2 rounded-md"
+            defaultValue={selectedMiner?.connectionDate
+              ?.toString()
+              ?.slice(0, 10)}
           />
           {serviceProviderLoading ? (
             <Loading />
@@ -236,6 +255,7 @@ export default function AddMinerModal({ onClose }) {
               <select
                 name="serviceProvider"
                 className="w-full border p-2 rounded-md"
+                defaultValue={selectedMiner?.serviceProvider}
               >
                 <option value={""}>Choose Provider</option>
                 {serviceProviders.map((item) => (

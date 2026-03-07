@@ -8,12 +8,14 @@ import api from "../../api/api";
 import { toast } from "react-toastify";
 import { UserContext } from "../../UserContext";
 import { useGetTotalUnreadNotifications } from "../../hooks/notifications/useAdminNotifications";
+import useAutoLogout from "../../hooks/useAutoLogout";
 
 export default function Header({ setSidebarOpen }) {
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
   const { data } = useGetTotalUnreadNotifications();
   const navigate = useNavigate();
   const { user } = useContext(UserContext);
+  useAutoLogout();
 
   const logoutMutation = useMutation({
     mutationFn: async () => await api.post("/api/v1/auth/logout"),
