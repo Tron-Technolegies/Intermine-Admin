@@ -8,6 +8,7 @@ import {
 } from "react-icons/fa";
 import { GoCpu } from "react-icons/go";
 import { BsBuildingsFill } from "react-icons/bs";
+import { CiTimer } from "react-icons/ci";
 import useAgreementActions from "../../hooks/adminAgreement/useAgreementActions";
 import EditClientModal from "./EditClientModal";
 import DeleteClientPopup from "./DeleteClientPopup";
@@ -26,25 +27,37 @@ export default function ClientCard({ client, onViewDetails }) {
       onClick={() => setExpanded(!expanded)}
     >
       {/* Header Section (Always Visible) */}
-      <div className="flex items-center justify-between">
+      <div className="flex gap-5 md:flex-row flex-col md:items-center justify-between">
         <div>
           <h3 className="text-lg font-semibold text-gray-900">
             {client.clientName}
           </h3>
           <p className="text-sm text-gray-600">{client.clientId}</p>
         </div>
-
-        {/* <span
-          className={`px-3 py-1 text-xs rounded-full font-medium ${
-            client.status === "Active"
-              ? "bg-green-100 text-green-700"
-              : client.status === "Pending"
-              ? "bg-yellow-100 text-yellow-700"
-              : "bg-gray-100 text-gray-600"
-          }`}
-        >
-          {client.status}
-        </span> */}
+        {!expanded && (
+          <div className="flex gap-5">
+            <div className="flex items-center gap-1">
+              <GoCpu className="text-gray-500" />
+              <div>
+                <span className="font-semibold">{client.owned?.length}</span>
+                <p className="text-xs text-gray-500">Miners</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-1">
+              <FaBolt className="text-gray-500" />
+              <div>
+                <span className="font-semibold">
+                  {client.owned?.reduce(
+                    (sum, item) => sum + (item.power || 0),
+                    0,
+                  )}{" "}
+                  KW
+                </span>
+                <p className="text-xs text-gray-500">Consumption</p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Expanded Section */}
@@ -67,10 +80,16 @@ export default function ClientCard({ client, onViewDetails }) {
             </div>
             <div className="flex items-center gap-2">
               <FaCalendarAlt className="text-gray-400" />
-              <span>
-                Joined {new Date(client.createdAt).toLocaleDateString()}
-              </span>
+              <span>Joined {new Date(client.createdAt).toLocaleString()}</span>
             </div>
+            {client.lastActive && (
+              <div className="flex items-center gap-2">
+                <CiTimer className="text-gray-400" />
+                <span>
+                  Last active {new Date(client.lastActive).toLocaleString()}
+                </span>
+              </div>
+            )}
           </div>
 
           <div className="flex md:flex-row flex-col gap-2 justify-between md:items-center border-t border-[#DADADA] pt-3 text-sm text-gray-700">

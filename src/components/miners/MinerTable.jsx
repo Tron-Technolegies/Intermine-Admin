@@ -9,11 +9,11 @@ import Paper from "@mui/material/Paper";
 import { FiEdit } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { IoCopyOutline } from "react-icons/io5";
-import { TiTick } from "react-icons/ti";
+import { TiArrowUnsorted, TiTick } from "react-icons/ti";
 import ReportIssueModal2 from "../overview/ReportIssueModal2";
 import { UserContext } from "../../UserContext";
 
-export default function MinerTable({ miners }) {
+export default function MinerTable({ miners, sort, setSort }) {
   const [openReport, setOpenReport] = useState(false);
   const [currentMiner, setCurrentMiner] = useState(null);
   const { selectedMiner, setSelectedMiner } = useContext(UserContext);
@@ -25,44 +25,102 @@ export default function MinerTable({ miners }) {
           <TableHead>
             <TableRow sx={{ backgroundColor: "#F9FAFB" }}>
               <TableCell
+                onClick={() =>
+                  sort === "minerAZ" ? setSort("minerZA") : setSort("minerAZ")
+                }
                 sx={{
                   textAlign: "center",
                   fontWeight: "bold",
+                  cursor: "pointer",
+                  backgroundColor: sort.includes("miner") && "#F0F0F0",
                 }}
               >
-                Miner
+                <div className="flex gap-2 items-center justify-center">
+                  <span>Miner</span>
+                  <span>
+                    <TiArrowUnsorted />
+                  </span>
+                </div>
               </TableCell>
               <TableCell
+                onClick={() =>
+                  sort === "clientAZ"
+                    ? setSort("clientZA")
+                    : setSort("clientAZ")
+                }
                 sx={{
                   textAlign: "center",
                   fontWeight: "bold",
+                  cursor: "pointer",
+                  backgroundColor: sort.includes("client") && "#F0F0F0",
                 }}
               >
-                Client
+                <div className="flex gap-2 items-center justify-center">
+                  <span>Client</span>
+                  <span>
+                    <TiArrowUnsorted />
+                  </span>
+                </div>
               </TableCell>
               <TableCell
+                onClick={() =>
+                  sort === "workerAZ"
+                    ? setSort("workerZA")
+                    : setSort("workerAZ")
+                }
                 sx={{
                   textAlign: "center",
                   fontWeight: "bold",
+                  cursor: "pointer",
+                  backgroundColor: sort.includes("worker") && "#F0F0F0",
                 }}
               >
-                Worker Id
+                <div className="flex gap-2 items-center justify-center">
+                  <span>Worker ID</span>
+                  <span>
+                    <TiArrowUnsorted />
+                  </span>
+                </div>
               </TableCell>
               <TableCell
+                onClick={() =>
+                  sort === "serialAZ"
+                    ? setSort("serialZA")
+                    : setSort("serialAZ")
+                }
                 sx={{
                   textAlign: "center",
                   fontWeight: "bold",
+                  cursor: "pointer",
+                  backgroundColor: sort.includes("serial") && "#F0F0F0",
                 }}
               >
-                Serial Number
+                <div className="flex gap-2 items-center justify-center">
+                  <span>Serial No</span>
+                  <span>
+                    <TiArrowUnsorted />
+                  </span>
+                </div>
               </TableCell>
               <TableCell
+                onClick={() =>
+                  sort === "locationAZ"
+                    ? setSort("locationZA")
+                    : setSort("locationAZ")
+                }
                 sx={{
                   textAlign: "center",
                   fontWeight: "bold",
+                  cursor: "pointer",
+                  backgroundColor: sort.includes("location") && "#F0F0F0",
                 }}
               >
-                Location
+                <div className="flex gap-2 items-center justify-center">
+                  <span>Location</span>
+                  <span>
+                    <TiArrowUnsorted />
+                  </span>
+                </div>
               </TableCell>
               <TableCell
                 sx={{

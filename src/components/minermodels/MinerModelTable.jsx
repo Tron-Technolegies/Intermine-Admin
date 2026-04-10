@@ -12,6 +12,7 @@ import { useGetAllMinerModels } from "../../hooks/adminMiner/useMinerModels";
 import Loading from "../Loading";
 import EditMinerModelPopup from "./EditMinerModelPopup";
 import DeleteMinerModelPopup from "./DeleteMinerModelPopup";
+import { TiArrowUnsorted } from "react-icons/ti";
 export default function MinerModelTable() {
   const [search, setSearch] = useState("");
   const [editForm, setEditForm] = useState(false);
@@ -19,9 +20,11 @@ export default function MinerModelTable() {
   const [deletePopup, setDeletePopup] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [debounced, setDebounced] = useState("");
+  const [sortBy, setSortBy] = useState("");
   const { isError, isLoading, data } = useGetAllMinerModels({
     search: debounced,
     currentPage,
+    sortBy,
   });
 
   const handleChange = (event, value) => {
@@ -57,60 +60,144 @@ export default function MinerModelTable() {
           <TableHead>
             <TableRow sx={{ backgroundColor: "#F9FAFB" }}>
               <TableCell
+                onClick={() =>
+                  sortBy === "manufacturerAZ"
+                    ? setSortBy("manufacturerZA")
+                    : setSortBy("manufacturerAZ")
+                }
                 sx={{
                   textAlign: "center",
                   fontWeight: "bold",
+                  cursor: "pointer",
+                  backgroundColor: sortBy.includes("manufacturer") && "#F0F0F0",
                 }}
               >
-                Manufacturer
+                <div className="flex gap-2 items-center justify-center">
+                  <span>Manufacturer</span>
+                  <span>
+                    <TiArrowUnsorted />
+                  </span>
+                </div>
               </TableCell>
               <TableCell
+                onClick={() =>
+                  sortBy === "modelAZ"
+                    ? setSortBy("modelZA")
+                    : setSortBy("modelAZ")
+                }
                 sx={{
                   textAlign: "center",
                   fontWeight: "bold",
+                  cursor: "pointer",
+                  backgroundColor: sortBy.includes("model") && "#F0F0F0",
                 }}
               >
-                Model Name
+                <div className="flex gap-2 items-center justify-center">
+                  <span>Model Name</span>
+                  <span>
+                    <TiArrowUnsorted />
+                  </span>
+                </div>
               </TableCell>
               <TableCell
+                onClick={() =>
+                  sortBy === "powerAZ"
+                    ? setSortBy("powerZA")
+                    : setSortBy("powerAZ")
+                }
                 sx={{
                   textAlign: "center",
                   fontWeight: "bold",
+                  cursor: "pointer",
+                  backgroundColor: sortBy.includes("power") && "#F0F0F0",
                 }}
               >
-                Power (KW)
+                <div className="flex gap-2 items-center justify-center">
+                  <span>Power (KW)</span>
+                  <span>
+                    <TiArrowUnsorted />
+                  </span>
+                </div>
               </TableCell>
               <TableCell
+                onClick={() =>
+                  sortBy === "hashrateAZ"
+                    ? setSortBy("hashrateZA")
+                    : setSortBy("hashrateAZ")
+                }
                 sx={{
                   textAlign: "center",
                   fontWeight: "bold",
+                  cursor: "pointer",
+                  backgroundColor: sortBy.includes("hashrate") && "#F0F0F0",
                 }}
               >
-                Hash Rate (TH/s)
+                <div className="flex gap-2 items-center justify-center">
+                  <span>Hashrate</span>
+                  <span>
+                    <TiArrowUnsorted />
+                  </span>
+                </div>
               </TableCell>
               <TableCell
+                onClick={() =>
+                  sortBy === "coolingAZ"
+                    ? setSortBy("coolingZA")
+                    : setSortBy("coolingAZ")
+                }
                 sx={{
                   textAlign: "center",
                   fontWeight: "bold",
+                  cursor: "pointer",
+                  backgroundColor: sortBy.includes("cooling") && "#F0F0F0",
                 }}
               >
-                Cooling Type
+                <div className="flex gap-2 items-center justify-center">
+                  <span>Cooling Type</span>
+                  <span>
+                    <TiArrowUnsorted />
+                  </span>
+                </div>
               </TableCell>
               <TableCell
+                onClick={() =>
+                  sortBy === "algorithmAZ"
+                    ? setSortBy("algorithmZA")
+                    : setSortBy("algorithmAZ")
+                }
                 sx={{
                   textAlign: "center",
                   fontWeight: "bold",
+                  cursor: "pointer",
+                  backgroundColor: sortBy.includes("algorithm") && "#F0F0F0",
                 }}
               >
-                Algorithm
+                <div className="flex gap-2 items-center justify-center">
+                  <span>Algorithm</span>
+                  <span>
+                    <TiArrowUnsorted />
+                  </span>
+                </div>
               </TableCell>
               <TableCell
+                onClick={() =>
+                  sortBy === "coinsAZ"
+                    ? setSortBy("coinsZA")
+                    : setSortBy("coinsAZ")
+                }
                 sx={{
                   textAlign: "center",
                   fontWeight: "bold",
+                  cursor: "pointer",
+                  backgroundColor: sortBy.includes("coins") && "#F0F0F0",
                 }}
               >
-                Coins
+                <div className="flex gap-2 items-center justify-center">
+                  <span>Coins</span>
+                  <span>
+                    <TiArrowUnsorted />
+                  </span>
+                </div>
               </TableCell>
               <TableCell
                 sx={{
