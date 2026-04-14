@@ -12,6 +12,7 @@ export default function useAddFarm() {
 
     onSuccess: () => {
       queryClient.invalidateQueries(["farms"]);
+      queryClient.invalidateQueries({ queryKey: ["farms-list"] });
       toast.success("Farm Added successfully");
     },
     onError: (error) => {

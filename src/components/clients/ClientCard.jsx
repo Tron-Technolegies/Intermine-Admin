@@ -50,7 +50,7 @@ export default function ClientCard({ client, onViewDetails }) {
                   {client.owned?.reduce(
                     (sum, item) => sum + (item.power || 0),
                     0,
-                  )}{" "}
+                  ) / 1000}{" "}
                   KW
                 </span>
                 <p className="text-xs text-gray-500">Consumption</p>
@@ -107,7 +107,7 @@ export default function ClientCard({ client, onViewDetails }) {
                   {client.owned?.reduce(
                     (sum, item) => sum + (item.power || 0),
                     0,
-                  )}{" "}
+                  ) / 1000}{" "}
                   KW
                 </span>
                 <p className="text-xs text-gray-500">Consumption</p>

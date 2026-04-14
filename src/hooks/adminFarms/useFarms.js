@@ -11,3 +11,16 @@ export default function useFarms() {
     refetchOnWindowFocus: false,
   });
 }
+
+export const useGetFarmList = ({ currentPage, serviceProvider }) => {
+  const { isLoading, isError, error, data } = useQuery({
+    queryKey: ["farms-list", currentPage, serviceProvider],
+    queryFn: async () => {
+      const { data } = await api.get(`/api/v1/mining-farms/list`, {
+        params: { currentPage, serviceProvider },
+      });
+      return data;
+    },
+  });
+  return { isLoading, isError, error, data };
+};

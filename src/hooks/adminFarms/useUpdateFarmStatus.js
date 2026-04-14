@@ -11,6 +11,7 @@ export const useUpdateFarmStatus = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["farms"] });
       queryClient.invalidateQueries({ queryKey: ["farm-miners"] });
+      queryClient.invalidateQueries({ queryKey: ["farms-list"] });
       toast.success("Updated");
     },
     onError: (error) => {

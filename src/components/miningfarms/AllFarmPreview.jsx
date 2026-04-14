@@ -43,11 +43,15 @@ export default function AllFarmPreview({ farms }) {
         </div>
         <div className="bg-blue-200 p-5 sm:w-[250px] w-full rounded-md flex flex-col gap-3 items-center">
           <p className="font-semibold text-blue-800">Total Capacity</p>
-          <p className="font-black text-4xl text-blue-500">{capacity} KW</p>
+          <p className="font-black text-4xl text-blue-500">
+            {capacity / 1000} KW
+          </p>
         </div>
         <div className="bg-blue-200 p-5 sm:w-[250px] w-full rounded-md flex flex-col gap-3 items-center">
           <p className="font-semibold text-yellow-800">Current Capacity</p>
-          <p className="font-black text-4xl text-yellow-500">{current} KW</p>
+          <p className="font-black text-4xl text-yellow-500">
+            {current / 1000} KW
+          </p>
         </div>
         <div className="bg-blue-200 p-5 sm:w-[250px] w-full rounded-md flex flex-col gap-3 items-center">
           <p className="font-semibold text-violet-800">Total Miners</p>
@@ -60,12 +64,12 @@ export default function AllFarmPreview({ farms }) {
           <PieDiagram
             content={[
               {
-                label: `Current (${current} KW)`,
+                label: `Current (${current / 1000} KW)`,
                 value: ((current / capacity) * 100).toFixed(2),
                 color: " oklch(79.5% 0.184 86.047)",
               },
               {
-                label: `Remaining (${capacity - current} KW)`,
+                label: `Remaining (${(capacity - current) / 1000} KW)`,
                 value: (100 - (current / capacity) * 100).toFixed(2),
                 color: "#4D96FF",
               },

@@ -18,10 +18,11 @@ import {
 } from "@mui/material";
 import { getDaysSince } from "../../utils/monthCalculation";
 import { Link } from "react-router-dom";
+import { useGetRepairMiners } from "../../hooks/adminMiner/useGetRepairMiners";
 
 export default function OfflineMiners() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("All Status");
+  const [statusFilter, setStatusFilter] = useState("ALL");
   const [currentPage, setCurrentPage] = useState(1);
 
   // Backend is always limit = 15
@@ -33,33 +34,35 @@ export default function OfflineMiners() {
       onChange={(e) => setStatusFilter(e.target.value)}
       className="px-4 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full md:w-auto"
     >
-      <option value="All Status">All Status</option>
-      <option value="offline">Offline</option>
-      <option value="repair">Under Repair</option>
-      <option value="warranty">Under Warranty</option>
-      <option value="network">Network Issue</option>
-      <option value="psu">PSU Issue</option>
+      <option value="ALL">ALL</option>
+      <option value="Warranty">Warranty</option>
+      <option value="Repair Center">Repair Center</option>
     </select>
   );
 
   // FETCH MINERS
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["offlineMiners", currentPage, searchTerm, statusFilter],
-    queryFn: async () => {
-      const res = await api.get(`/api/v1/admin/miner/offline`, {
-        params: {
-          currentPage,
-          query: searchTerm,
-          status: statusFilter === "All Status" ? "" : statusFilter,
-        },
-      });
+  // const { data, isLoading, isError } = useQuery({
+  //   queryKey: ["offlineMiners", currentPage, searchTerm, statusFilter],
+  //   queryFn: async () => {
+  //     const res = await api.get(`/api/v1/admin/miner/offline`, {
+  //       params: {
+  //         currentPage,
+  //         query: searchTerm,
+  //         status: statusFilter === "All Status" ? "" : statusFilter,
+  //       },
+  //     });
 
-      return res.data;
-    },
-    keepPreviousData: true,
+  //     return res.data;
+  //   },
+  //   keepPreviousData: true,
+  // });
+  const { isError, isLoading, data } = useGetRepairMiners({
+    currentPage,
+    status: statusFilter,
+    query: searchTerm,
   });
 
-  const miners = data?.miners || [];
+  const miners = data?.issues || [];
   const totalPages = data?.totalPages || 1;
 
   // Since backend does NOT return totalMiners, we calculate it:
@@ -127,7 +130,6 @@ export default function OfflineMiners() {
                     "Model",
                     "Status",
                     "Issue",
-                    "Mining Farm",
                     "Provider",
                     "Action",
                   ].map((head) => (
@@ -149,16 +151,18 @@ export default function OfflineMiners() {
               <TableBody>
                 {miners.map((m) => (
                   <TableRow hover key={m._id}>
-                    <TableCell align="center">{m.serialNumber}</TableCell>
+                    <TableCell align="center">
+                      {m.miner?.serialNumber}
+                    </TableCell>
 
                     <TableCell align="center">
-                      {m.client?.clientName}{" "}
+                      {m.user?.clientName}{" "}
                       <span className="text-xs text-gray-400">
-                        ({m.client?.clientId})
+                        ({m.user?.clientId})
                       </span>
                     </TableCell>
 
-                    <TableCell align="center">{m.model}</TableCell>
+                    <TableCell align="center">{m.miner?.model}</TableCell>
 
                     <TableCell align="center">
                       <div className="flex gap-2 items-center justify-center">
@@ -169,28 +173,19 @@ export default function OfflineMiners() {
                         >
                           {m.status}
                         </p>
-                        {m.offlineReason === "issue" && (
-                          <p>
-                            {getDaysSince(
-                              m.offlineHistory?.[m.offlineHistory.length - 1]
-                                ?.date,
-                            )}{" "}
-                            days
-                          </p>
-                        )}
+
+                        <p>{getDaysSince(m.createdAt)} days</p>
                       </div>
                     </TableCell>
 
                     <TableCell align="center">
-                      {m.currentIssue?.issue?.issueType || "-"}
+                      {m.issue?.issueType || "-"}
                     </TableCell>
-
-                    <TableCell align="center">{m.location}</TableCell>
 
                     <TableCell align="center">{m.serviceProvider}</TableCell>
 
                     <TableCell align="center">
-                      {m.offlineReason === "farm maintenance" ? (
+                      {/* {m.offlineReason === "farm maintenance" ? (
                         <p>Farm is down</p>
                       ) : m.currentIssue ? (
                         <Link
@@ -201,7 +196,13 @@ export default function OfflineMiners() {
                         </Link>
                       ) : (
                         "Manually Turned Offline"
-                      )}
+                      )} */}
+                      <Link
+                        to={`/issues/${m._id}`}
+                        className="px-4 py-2 rounded-md bg-[#2B347A] hover:bg-[#1f275c] text-white"
+                      >
+                        View
+                      </Link>
                     </TableCell>
                   </TableRow>
                 ))}

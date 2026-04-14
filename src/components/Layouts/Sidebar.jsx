@@ -122,7 +122,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
             }
           >
             <TbCancel className="w-5 h-5" />
-            <span className="inline">Offline Miners</span>
+            <span className="inline">Warranty/Repairs</span>
           </NavLink>
 
           <NavLink

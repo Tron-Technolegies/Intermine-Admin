@@ -15,6 +15,7 @@ export default function useEditFarm() {
       console.log("Farm updated successfully!");
       queryClient.invalidateQueries({ queryKey: ["farms"] }); // refresh farms list
       queryClient.invalidateQueries({ queryKey: ["farm-miners"] });
+      queryClient.invalidateQueries({ queryKey: ["farms-list"] });
       toast.success("Farm updated successfully");
     },
 

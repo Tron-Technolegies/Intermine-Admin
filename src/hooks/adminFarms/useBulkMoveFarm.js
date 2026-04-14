@@ -10,6 +10,7 @@ export const useBulkMoveFarm = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["farms"] });
+      queryClient.invalidateQueries({ queryKey: ["farms-list"] });
       queryClient.invalidateQueries({ queryKey: ["farm-miners"] });
       queryClient.invalidateQueries({ queryKey: ["miners"] });
       toast.success("Bulk Move success");

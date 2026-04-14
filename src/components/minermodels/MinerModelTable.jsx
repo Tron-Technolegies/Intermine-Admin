@@ -113,7 +113,7 @@ export default function MinerModelTable() {
                 }}
               >
                 <div className="flex gap-2 items-center justify-center">
-                  <span>Power (KW)</span>
+                  <span>Power (Watt)</span>
                   <span>
                     <TiArrowUnsorted />
                   </span>
@@ -244,7 +244,7 @@ export default function MinerModelTable() {
                     scope="row"
                     sx={{ textAlign: "center" }}
                   >
-                    {item.hashRate}
+                    {item.hashRate} {item.hashRateUnit || "TH"}
                   </TableCell>
                   <TableCell
                     component="th"

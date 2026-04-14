@@ -67,16 +67,28 @@ export default function EditMinerModelPopup({ open, handleClose, id }) {
             placeholder=""
             required
           />
-          <label className="text-xs font-medium">Hashrate (TH/s)</label>
-          <input
-            type="number"
-            name="hashrate"
-            defaultValue={data.hashRate}
-            className="p-2 rounded-md text-sm shadow-md outline-none bg-neutral-100"
-            placeholder=""
-            required
-          />
-          <label className="text-xs font-medium">Power (KW)</label>
+          <label className="text-xs font-medium">Hashrate</label>
+          <div className="flex gap-2 items-center">
+            <input
+              type="number"
+              name="hashrate"
+              defaultValue={data.hashRate}
+              className="p-2 rounded-md w-full text-sm shadow-md outline-none bg-neutral-100"
+              placeholder=""
+              required
+            />
+            <select
+              name="hashRateUnit"
+              defaultValue={data.hashRateUnit}
+              className="p-2 rounded-md text-sm shadow-md outline-none bg-neutral-100"
+              required
+            >
+              <option value={"TH"}>TH</option>
+              <option value={"GH"}>GH</option>
+              <option value={"MH"}>MH</option>
+            </select>
+          </div>
+          <label className="text-xs font-medium">Power (Watt)</label>
           <input
             type="number"
             name="power"
