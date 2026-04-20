@@ -2,15 +2,15 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../api/api";
 import { toast } from "react-toastify";
 
-export default function useWarranty(page, type, query) {
+export default function useWarranty(page, query) {
   return useQuery({
-    queryKey: ["warranty", page, type, query],
+    queryKey: ["warranty", page, query],
 
     queryFn: async () => {
       const res = await api.get("/api/v1/warranty", {
         params: {
           currentPage: page,
-          type: type,
+
           query: query,
         },
       });

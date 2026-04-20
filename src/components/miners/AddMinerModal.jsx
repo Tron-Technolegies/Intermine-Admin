@@ -12,6 +12,7 @@ import { UserContext } from "../../UserContext";
 export default function AddMinerModal({ onClose }) {
   const queryClient = useQueryClient();
   const [warranty, setWarranty] = useState(false);
+  const [extended, setExtended] = useState(false);
   const { selectedMiner } = useContext(UserContext);
 
   const { isLoading: loadingClients, data: clients } = useGetUserDropdowns({
@@ -191,14 +192,12 @@ export default function AddMinerModal({ onClose }) {
           {warranty && (
             <>
               <label className="text-xs">Warranty Type</label>
-              <select
+              <input
                 required
                 name="warrantyType"
+                value={"Manufacturer"}
                 className="w-full border p-2 rounded-md"
-              >
-                <option value="Manufacturer">Manufacturer</option>
-                <option value="Intermine">Intermine</option>
-              </select>
+              ></input>
               <label className="text-xs">Warranty Start</label>
               <input
                 name="warrantyStart"
@@ -217,7 +216,46 @@ export default function AddMinerModal({ onClose }) {
               />
             </>
           )}
-
+          {warranty && (
+            <>
+              <label className="text-xs">Intermine Warranty</label>
+              <div className="flex gap-2 item-center">
+                <input
+                  type="checkbox"
+                  checked={extended}
+                  onChange={(e) => setExtended(e.target.checked)}
+                />
+                <label className="text-xs">Need Intermine Warranty ?</label>
+              </div>
+            </>
+          )}
+          {extended && (
+            <>
+              <label className="text-xs">Warranty Type</label>
+              <input
+                required
+                name="extendedIntermine"
+                value={"Intermine"}
+                className="w-full border p-2 rounded-md"
+              ></input>
+              <label className="text-xs">Extended Warranty Start</label>
+              <input
+                name="extendedStartDate"
+                type="date"
+                required
+                placeholder="Warranty Period"
+                className="w-full border p-2 rounded-md"
+              />
+              <label className="text-xs">Extended Warranty End</label>
+              <input
+                name="extendedEndDate"
+                type="date"
+                required
+                placeholder="Warranty Period"
+                className="w-full border p-2 rounded-md"
+              />
+            </>
+          )}
           {/* POOL ADDRESS */}
           <label className="text-xs">Pool Address</label>
           <input
