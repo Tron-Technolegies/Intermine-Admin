@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IoClose } from "react-icons/io5";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../../api/api";
@@ -10,6 +10,13 @@ export default function UpdateWarrantyModal({ item, onClose }) {
   const [type, setType] = useState(item.warrantyType);
   const [start, setStart] = useState(item.startDate?.substring(0, 10));
   const [end, setEnd] = useState(item.endDate?.substring(0, 10));
+
+  useEffect(() => {
+    if (type === "Intermine") {
+      setStart(item.extendedStartDate?.substring(0, 10) || "");
+      setEnd(item.extendedEndDate?.substring(0, 10) || "");
+    }
+  }, [type]);
 
   const updateMutation = useMutation({
     mutationFn: async () => {
