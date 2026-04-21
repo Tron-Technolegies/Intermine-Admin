@@ -157,7 +157,7 @@ export default function MinerDetailsPopup({ open, handleClose, farm }) {
                       fontWeight: "bold",
                     }}
                   >
-                    Power (KW)
+                    Power (Watt)
                   </TableCell>
                   <TableCell
                     sx={{

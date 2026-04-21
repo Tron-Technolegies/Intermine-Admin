@@ -2,12 +2,12 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../../api/api";
 import { toast } from "react-toastify";
 
-export const useGetAllMinerModels = ({ search, currentPage }) => {
+export const useGetAllMinerModels = ({ search, currentPage, sortBy }) => {
   const { isLoading, isError, data } = useQuery({
-    queryKey: ["miner-models", search, currentPage],
+    queryKey: ["miner-models", search, currentPage, sortBy],
     queryFn: async () => {
       const { data } = await api.get(`/api/v1/admin/miner/model`, {
-        params: { search, currentPage },
+        params: { search, currentPage, sortBy },
       });
       return data;
     },

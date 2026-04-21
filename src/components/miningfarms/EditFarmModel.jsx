@@ -77,7 +77,7 @@ export default function EditFarmModel({ open, handleClose, farm }) {
             defaultValue={farm?.farm}
             required
           />
-          <label className="text-xs font-medium">Capacity (KW)</label>
+          <label className="text-xs font-medium">Capacity (Watt)</label>
           <input
             type="number"
             className="p-2 bg-neutral-100 shadow-md outline-none"

@@ -171,14 +171,14 @@ export default function ClientDetails() {
               <div className="p-3 bg-gray-50">
                 <div
                   className={`${getStatusColor(
-                    miner.status
+                    miner.status,
                   )} px-3 py-1 rounded-full w-fit text-sm font-medium whitespace-nowrap`}
                 >
                   {miner.status === "online"
                     ? "Online"
                     : miner.status === "offline"
-                    ? "Offline"
-                    : "In Transit"}
+                      ? "Offline"
+                      : "In Transit"}
                 </div>
                 <div className="flex justify-between md:flex-row flex-col md:justify-start gap-5 md:gap-16 py-4 border-t border-b border-gray-100 mb-4">
                   {/* Hashrate */}
@@ -186,7 +186,7 @@ export default function ClientDetails() {
                     <BiChip size={20} />
                     <div>
                       <div className="text-lg font-semibold">
-                        {miner.hashRate}
+                        {miner.hashRate} {miner.hashRateUnit || "TH"}
                       </div>
                       <div className="text-xs text-gray-500">Hash Rate</div>
                     </div>
@@ -197,7 +197,7 @@ export default function ClientDetails() {
                     <FaBolt size={20} />
                     <div>
                       <div className="text-lg font-semibold">
-                        {miner.power}W
+                        {miner.power} Watt
                       </div>
                       <div className="text-xs text-gray-500">Power</div>
                     </div>

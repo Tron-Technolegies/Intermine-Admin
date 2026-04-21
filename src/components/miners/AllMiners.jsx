@@ -6,13 +6,14 @@ import Loading from "../Loading";
 import MinerTable from "./MinerTable";
 
 const fetchMiners = async ({ queryKey }) => {
-  const [_key, { page, query, status }] = queryKey;
+  const [_key, { page, query, status, sortBy }] = queryKey;
 
   const res = await api.get("/api/v1/admin/miner", {
     params: {
       currentPage: page,
       query: query || "",
       status: status || "ALL",
+      sortBy,
     },
   });
 
@@ -24,11 +25,17 @@ export default function AllMiners() {
   const [debounced, setDebounced] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [currentPage, setCurrentPage] = useState(1);
+  const [sort, setSort] = useState("");
 
   const { data, isLoading, isError } = useQuery({
     queryKey: [
       "miners",
-      { page: currentPage, query: debounced, status: statusFilter },
+      {
+        page: currentPage,
+        query: debounced,
+        status: statusFilter,
+        sortBy: sort,
+      },
     ],
     queryFn: fetchMiners,
     keepPreviousData: true,
@@ -94,7 +101,7 @@ export default function AllMiners() {
       {isError && (
         <p className="text-center text-red-500 mt-10">No miners found</p>
       )}
-      <MinerTable miners={miners} />
+      <MinerTable miners={miners} setSort={setSort} sort={sort} />
       <div className="flex justify-center gap-4 mt-8">
         <button
           disabled={currentPage === 1}

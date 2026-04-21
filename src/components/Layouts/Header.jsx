@@ -15,7 +15,7 @@ export default function Header({ setSidebarOpen }) {
   const { data } = useGetTotalUnreadNotifications();
   const navigate = useNavigate();
   const { user } = useContext(UserContext);
-  useAutoLogout();
+  // useAutoLogout();
 
   const logoutMutation = useMutation({
     mutationFn: async () => await api.post("/api/v1/auth/logout"),

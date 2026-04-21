@@ -8,8 +8,13 @@ export const adminLoader = async () => {
     if (!user || user.role !== "Admin") {
       throw new Error("No Access");
     }
+
     return user;
   } catch (error) {
+    console.error(
+      "adminLoader Request Error:",
+      error.response?.data || error.message,
+    );
     return redirect("/login");
   }
 };

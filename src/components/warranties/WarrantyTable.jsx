@@ -159,47 +159,87 @@ export default function WarrantyTable({
                     <TableCell
                       component="th"
                       scope="row"
-                      sx={{ textAlign: "center" }}
+                      sx={{
+                        textAlign: "center",
+                      }}
                     >
-                      {item.warrantyType}
+                      <div className="flex flex-col gap-4 justify-center items-center">
+                        <p>{item.warrantyType}</p>
+                        <p className="text-blue-800">
+                          {item.extendedIntermine && "Intermine"}
+                        </p>
+                      </div>
                     </TableCell>
                     <TableCell
                       component="th"
                       scope="row"
                       sx={{ textAlign: "center" }}
                     >
-                      {dayjs(item.startDate).format("YYYY-MM-DD")}
+                      <div className="flex flex-col gap-4 justify-center items-center">
+                        <p> {dayjs(item.startDate).format("YYYY-MM-DD")}</p>
+                        <p className="text-blue-800">
+                          {item.extendedStartDate &&
+                            dayjs(item.extendedStartDate).format("YYYY-MM-DD")}
+                        </p>
+                      </div>
                     </TableCell>
                     <TableCell
                       component="th"
                       scope="row"
                       sx={{ textAlign: "center" }}
                     >
-                      {dayjs(item.endDate).format("YYYY-MM-DD")}
+                      <div className="flex flex-col gap-4 justify-center items-center">
+                        <p>{dayjs(item.endDate).format("YYYY-MM-DD")}</p>
+                        <p className="text-blue-800">
+                          {item.extendedEndDate &&
+                            dayjs(item.extendedEndDate).format("YYYY-MM-DD")}
+                        </p>
+                      </div>
                     </TableCell>
                     <TableCell
                       component="th"
                       scope="row"
                       sx={{ textAlign: "center" }}
                     >
-                      {calcDaysRemaining(item.endDate)}
+                      <div className="flex flex-col gap-4 justify-center items-center">
+                        <p>{calcDaysRemaining(item.endDate)}</p>
+                        <p className="text-blue-800">
+                          {item.extendedEndDate &&
+                            calcDaysRemaining(item.extendedEndDate)}
+                        </p>
+                      </div>
                     </TableCell>
                     <TableCell
                       component="th"
                       scope="row"
                       sx={{ textAlign: "center" }}
                     >
-                      <span
-                        className={`px-2 py-1 rounded-full text-white ${
-                          getStatus(item.endDate) === "Active"
-                            ? "bg-green-600"
-                            : getStatus(item.endDate) === "Expired"
-                              ? "bg-red-600"
-                              : "bg-yellow-600"
-                        }`}
-                      >
-                        {getStatus(item.endDate)}
-                      </span>
+                      <div className="flex flex-col gap-4 justify-center items-center">
+                        <span
+                          className={`px-2 py-1 rounded-full text-white ${
+                            getStatus(item.endDate) === "Active"
+                              ? "bg-green-600"
+                              : getStatus(item.endDate) === "Expired"
+                                ? "bg-red-600"
+                                : "bg-yellow-600"
+                          }`}
+                        >
+                          {getStatus(item.endDate)}
+                        </span>
+                        {item.extendedEndDate && (
+                          <span
+                            className={`px-2 py-1 rounded-full text-white ${
+                              getStatus(item.extendedEndDate) === "Active"
+                                ? "bg-green-600"
+                                : getStatus(item.extendedEndDate) === "Expired"
+                                  ? "bg-red-600"
+                                  : "bg-yellow-600"
+                            }`}
+                          >
+                            {getStatus(item.extendedEndDate)}
+                          </span>
+                        )}
+                      </div>
                     </TableCell>
                     <TableCell
                       component="th"

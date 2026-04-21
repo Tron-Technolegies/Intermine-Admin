@@ -10,6 +10,7 @@ export const useDeleteFarm = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["farms"] });
+      queryClient.invalidateQueries({ queryKey: ["farms-list"] });
       toast.success("Deleted successfully");
     },
     onError: (error) => {

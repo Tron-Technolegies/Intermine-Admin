@@ -161,7 +161,9 @@ export default function SingleMinerPage() {
           <div className="flex items-center gap-2">
             <BiChip size={20} />
             <div>
-              <div className="text-lg font-semibold">{data.hashRate}</div>
+              <div className="text-lg font-semibold">
+                {data.hashRate} {data.hashRateUnit || "TH"}
+              </div>
               <div className="text-xs text-gray-500">Hash Rate</div>
             </div>
           </div>
@@ -170,7 +172,7 @@ export default function SingleMinerPage() {
           <div className="flex items-center gap-2">
             <FaBolt size={20} />
             <div>
-              <div className="text-lg font-semibold">{data.power} KW</div>
+              <div className="text-lg font-semibold">{data.power} Watt</div>
               <div className="text-xs text-gray-500">Power</div>
             </div>
           </div>
