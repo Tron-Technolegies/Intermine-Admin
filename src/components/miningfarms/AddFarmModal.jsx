@@ -44,6 +44,12 @@ export default function AddFarmModal({ onClose }) {
             name="farm"
             required
           />
+          <label className="text-xs font-medium">Facility Code</label>
+          <input
+            type="text"
+            className="p-2 bg-neutral-100 shadow-md outline-none"
+            name="facilityCode"
+          />
           <label className="text-xs font-medium">Capacity (Watt)</label>
           <input
             type="number"

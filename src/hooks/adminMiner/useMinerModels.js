@@ -71,3 +71,14 @@ export const useDeleteMinerModel = () => {
   });
   return { isPending, mutateAsync };
 };
+
+export const useClientsForModels = ({ id }) => {
+  const { isLoading, isError, data } = useQuery({
+    queryKey: ["model-users", id],
+    queryFn: async () => {
+      const { data } = await api.get(`/api/v1/admin/miner/model-users/${id}`);
+      return data;
+    },
+  });
+  return { isLoading, isError, data };
+};

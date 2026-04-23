@@ -33,7 +33,7 @@ export default function Clients() {
         onSearch={setSearch}
         filterValue={status}
         onFilterChange={setStatus}
-        filterOptions={["ALL", "online", "offline"]}
+        filterOptions={["ALL", "hosting", "no-hosting", "hybrid"]}
       />
 
       {/* Client Cards Grid */}

@@ -7,6 +7,8 @@ import { toast } from "react-toastify";
 export default function AddClientModal({ onClose }) {
   const queryClient = useQueryClient();
   const [agreement, setAgreement] = useState(false);
+  const [sendLogin, setSendLogin] = useState(false);
+  const [isNoHosting, setIsNoHosting] = useState(false);
   const [watchers, setWatchers] = useState([]);
 
   //functions for Watchers
@@ -69,6 +71,9 @@ export default function AddClientModal({ onClose }) {
     formData.append("watcher", JSON.stringify(watchers));
     const data = Object.fromEntries(formData);
     data.isAgreement = agreement;
+    data.sendLogin = sendLogin;
+    data.isNoHosting = isNoHosting;
+
     createClientMutation.mutate({ data });
   };
 
@@ -227,6 +232,26 @@ export default function AddClientModal({ onClose }) {
             <label className="text-sm text-gray-700">
               Include Mining Agreement
             </label>
+          </div>
+          <div className="flex items-center gap-2 mt-2">
+            <input
+              type="checkbox"
+              name="isAgreement"
+              checked={sendLogin}
+              onChange={(e) => setSendLogin(e.target.checked)}
+              className="accent-blue-600"
+            />
+            <label className="text-sm text-gray-700">Send Login Data</label>
+          </div>
+          <div className="flex items-center gap-2 mt-2">
+            <input
+              type="checkbox"
+              name="isAgreement"
+              checked={isNoHosting}
+              onChange={(e) => setIsNoHosting(e.target.checked)}
+              className="accent-blue-600"
+            />
+            <label className="text-sm text-gray-700">No-Hosting Client</label>
           </div>
 
           <button

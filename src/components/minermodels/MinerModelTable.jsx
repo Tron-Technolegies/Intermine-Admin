@@ -13,6 +13,7 @@ import Loading from "../Loading";
 import EditMinerModelPopup from "./EditMinerModelPopup";
 import DeleteMinerModelPopup from "./DeleteMinerModelPopup";
 import { TiArrowUnsorted } from "react-icons/ti";
+import ModelUsers from "./ModelUsers";
 export default function MinerModelTable() {
   const [search, setSearch] = useState("");
   const [editForm, setEditForm] = useState(false);
@@ -21,6 +22,7 @@ export default function MinerModelTable() {
   const [currentPage, setCurrentPage] = useState(1);
   const [debounced, setDebounced] = useState("");
   const [sortBy, setSortBy] = useState("");
+  const [clientsPopup, setClientsPopup] = useState(false);
   const { isError, isLoading, data } = useGetAllMinerModels({
     search: debounced,
     currentPage,
@@ -280,6 +282,15 @@ export default function MinerModelTable() {
                     <button
                       onClick={() => {
                         setSelectedId(item._id);
+                        setClientsPopup(true);
+                      }}
+                      className="bg-gray-700 text-white"
+                    >
+                      Details
+                    </button>
+                    <button
+                      onClick={() => {
+                        setSelectedId(item._id);
                         setEditForm(true);
                       }}
                       className="p-2 bg-blue-900 rounded-md text-white cursor-pointer hover:bg-blue-800 "
@@ -326,6 +337,11 @@ export default function MinerModelTable() {
           setSelectedId("");
         }}
         minerId={selectedId}
+      />
+      <ModelUsers
+        open={clientsPopup}
+        handleClose={() => setClientsPopup(false)}
+        id={selectedId}
       />
     </div>
   );
