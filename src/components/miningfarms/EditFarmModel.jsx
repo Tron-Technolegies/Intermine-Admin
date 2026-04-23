@@ -77,6 +77,13 @@ export default function EditFarmModel({ open, handleClose, farm }) {
             defaultValue={farm?.farm}
             required
           />
+          <label className="text-xs font-medium">Facility Code</label>
+          <input
+            type="text"
+            className="p-2 bg-neutral-100 shadow-md outline-none"
+            name="facilityCode"
+            defaultValue={farm?.facilityCode}
+          />
           <label className="text-xs font-medium">Capacity (Watt)</label>
           <input
             type="number"
