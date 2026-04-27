@@ -57,11 +57,26 @@ export default function AddServiceProviderModal({ open, handleClose }) {
             required
             className="outline-none p-2 shadow-md rounded-md bg-neutral-100"
           />
+          <label className="text-xs font-medium">Provider Code</label>
+          <input
+            type="text"
+            placeholder="Enter Service provider code"
+            name="code"
+            required
+            className="outline-none p-2 shadow-md rounded-md bg-neutral-100"
+          />
           <label className="text-xs font-medium">Provider Contact</label>
           <input
             type="text"
             placeholder="Enter Service provider contact"
             name="contact"
+            required
+            className="outline-none p-2 shadow-md rounded-md bg-neutral-100"
+          />
+          <label className="text-xs font-medium">Provider Password</label>
+          <input
+            type="password"
+            name="password"
             required
             className="outline-none p-2 shadow-md rounded-md bg-neutral-100"
           />
