@@ -49,8 +49,8 @@ export default function Issues() {
   const [showChatModal, setShowChatModal] = useState(null);
 
   // Status update handler
-  const handleStatusUpdate = async (id, status) => {
-    await updateStatus.mutateAsync({ id, status });
+  const handleStatusUpdate = async (id, status, serviceProvider) => {
+    await updateStatus.mutateAsync({ id, status, serviceProvider });
   };
 
   // Reminder handler
@@ -142,7 +142,7 @@ export default function Issues() {
                       : `Request for Pool Change with New Worker Id ${issue.changeRequest?.worker} and new Pool Address ${issue.changeRequest?.pool}`,
                   model: issue.miner?.model,
                   serviceProvider: issue.miner?.serviceProvider,
-                  serialNumber: issue.miner?.workerId,
+                  serialNumber: issue.miner?.serialNumber,
                 })
               }
             />

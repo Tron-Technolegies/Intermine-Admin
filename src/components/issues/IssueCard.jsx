@@ -27,8 +27,13 @@ export default function IssueCard({
 
   const handleSave = async () => {
     setSaving(true);
-    await onStatusUpdate(issue._id, status);
-    setSaving(false);
+    try {
+      await onStatusUpdate(issue._id, status, issue.miner?.serviceProvider);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleClickOpen = () => {
@@ -212,8 +217,8 @@ export default function IssueCard({
             }}
           >
             {issue?.reminderHistory?.map((item) => (
-              <p key={item} className="p-2 shadow w-full">
-                {new Date(item).toLocaleString()}
+              <p key={item} className="p-2 text-sm shadow w-full">
+                Reminded on {new Date(item).toLocaleString()}
               </p>
             ))}
             {issue?.reminderHistory?.length < 1 && (

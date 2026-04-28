@@ -7,8 +7,11 @@ export default function useIssueActions() {
   const queryClient = useQueryClient();
 
   const updateStatus = useMutation({
-    mutationFn: ({ id, status }) =>
-      api.patch(`/api/v1/admin/issue/update-status/${id}`, { status }),
+    mutationFn: ({ id, status, serviceProvider }) =>
+      api.patch(`/api/v1/admin/issue/update-status/${id}`, {
+        status,
+        serviceProvider,
+      }),
     onSuccess: () => {
       queryClient.invalidateQueries(["issues"]);
       queryClient.invalidateQueries({ queryKey: ["miners"] });
@@ -18,7 +21,7 @@ export default function useIssueActions() {
       toast.error(
         error.response.data.error ||
           error.response.data.message ||
-          "something went wrong"
+          "something went wrong",
       );
     },
   });
@@ -34,7 +37,7 @@ export default function useIssueActions() {
       toast.error(
         error.response.data.error ||
           error.response.data.message ||
-          "something went wrong"
+          "something went wrong",
       );
     },
   });
@@ -56,7 +59,7 @@ export default function useIssueActions() {
       toast.error(
         error.response.data.error ||
           error.response.data.message ||
-          "something went wrong"
+          "something went wrong",
       );
     },
   });
