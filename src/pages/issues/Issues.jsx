@@ -138,7 +138,9 @@ export default function Issues() {
                   id: issue._id,
                   issue:
                     issue.type === "repair"
-                      ? issue.issue?.issueType
+                      ? issue.issue
+                        ? issue.issue.issueType
+                        : issue.description
                       : `Request for Pool Change with New Worker Id ${issue.changeRequest?.worker} and new Pool Address ${issue.changeRequest?.pool}`,
                   model: issue.miner?.model,
                   serviceProvider: issue.miner?.serviceProvider,
