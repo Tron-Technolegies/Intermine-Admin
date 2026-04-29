@@ -126,6 +126,7 @@ export default function OfflineMiners() {
                 <TableRow>
                   {[
                     "SL No",
+                    "workerID",
                     "Owner",
                     "Model",
                     "Status",
@@ -154,7 +155,7 @@ export default function OfflineMiners() {
                     <TableCell align="center">
                       {m.miner?.serialNumber}
                     </TableCell>
-
+                    <TableCell align="center">{m.workerAddress}</TableCell>
                     <TableCell align="center">
                       {m.user?.clientName}{" "}
                       <span className="text-xs text-gray-400">

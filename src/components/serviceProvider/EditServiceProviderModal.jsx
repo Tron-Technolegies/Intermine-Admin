@@ -68,6 +68,14 @@ export default function EditServiceProviderModal({ open, handleClose, id }) {
               required
               className="outline-none p-2 shadow-md rounded-md bg-neutral-100"
             />
+            <label className="text-xs font-medium">Provider Code</label>
+            <input
+              type="text"
+              placeholder="Enter Service provider Code"
+              name="code"
+              defaultValue={data.providerCode}
+              className="outline-none p-2 shadow-md rounded-md bg-neutral-100"
+            />
             <label className="text-xs font-medium">Provider Contact</label>
             <input
               type="text"
