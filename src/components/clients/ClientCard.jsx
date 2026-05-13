@@ -12,11 +12,13 @@ import { CiTimer } from "react-icons/ci";
 import useAgreementActions from "../../hooks/adminAgreement/useAgreementActions";
 import EditClientModal from "./EditClientModal";
 import DeleteClientPopup from "./DeleteClientPopup";
+import { useResendLoginData } from "../../hooks/useClients";
 
 export default function ClientCard({ client, onViewDetails }) {
   const [expanded, setExpanded] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
+  const { isPending, mutateAsync } = useResendLoginData();
   const { sendAgreement } = useAgreementActions();
 
   return (
@@ -121,9 +123,9 @@ export default function ClientCard({ client, onViewDetails }) {
               <p className="text-xs text-gray-500">
                 Agreement{" "}
                 {client.miningAgreement ? (
-                  <span className="text-green-600 font-bold">✔</span>
+                  <span className="text-green-600 font-bold">✅</span>
                 ) : (
-                  <span className="text-red-500 font-bold">✘</span>
+                  <span className="text-red-500 font-bold">❌</span>
                 )}
               </p>
               {!client.miningAgreement && (
@@ -138,6 +140,42 @@ export default function ClientCard({ client, onViewDetails }) {
                   {sendAgreement.isPending ? "Sending..." : "Send Agreement"}
                 </button>
               )}
+            </div>
+          </div>
+          <div className="my-3 border-t border-[#DADADA] py-2 flex md:flex-row flex-col gap-3 justify-between md:items-center">
+            <div className="flex gap-3 items-center">
+              <p className="text-xs text-gray-500">
+                {client.isLoginDataSend
+                  ? "Login Data Send ✅"
+                  : "Send Login Data ❌"}
+              </p>
+              <button
+                disabled={isPending}
+                onClick={async (e) => {
+                  e.stopPropagation();
+                  await mutateAsync(client._id);
+                }}
+                className="text-sm px-4 py-2 rounded-md bg-[#071a94] text-white"
+              >
+                {isPending
+                  ? "...."
+                  : client.isLoginDataSend
+                    ? "Resend"
+                    : "Send"}
+              </button>
+            </div>
+            <div>
+              <p className="text-xs text-gray-500">
+                Last Active:{" "}
+                {client.lastActive
+                  ? new Date(client.lastActive).toLocaleString()
+                  : "Never ⚫"}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-gray-500">
+                Agreement Signed: {client.isAgreementSigned ? "✅" : "❌"}
+              </p>
             </div>
           </div>
 

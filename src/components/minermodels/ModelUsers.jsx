@@ -39,7 +39,7 @@ export default function ModelUsers({ id, open, handleClose }) {
           <Loading />
         ) : (
           <>
-            <h4>Total Machines: {data.totalMiners}</h4>
+            <h4>Total Machines: {data?.totalMiners}</h4>
             <TableContainer component={Paper} sx={{ marginTop: 3 }}>
               <Table sx={{}} aria-label="simple table">
                 <TableHead>
