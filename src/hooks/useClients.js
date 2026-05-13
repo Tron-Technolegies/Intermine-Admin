@@ -60,3 +60,25 @@ export const useDeleteClient = () => {
   });
   return { isPending, mutateAsync };
 };
+
+export const useResendLoginData = () => {
+  const queryClient = useQueryClient();
+  const { isPending, mutateAsync } = useMutation({
+    mutationFn: async (id) => {
+      await api.post(`/api/v1/admin/user/resend-login`, { userId: id });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["clients"] });
+      queryClient.invalidateQueries({ queryKey: ["clientDetails"] });
+      toast.success("Deleted");
+    },
+    onError: (error) => {
+      toast.error(
+        error.response.data.error ||
+          error.response.data.message ||
+          "something went wrong",
+      );
+    },
+  });
+  return { isPending, mutateAsync };
+};
