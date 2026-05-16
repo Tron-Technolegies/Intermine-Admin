@@ -134,25 +134,6 @@ export default function AddMinerModal({ onClose }) {
             </select>
           )}
 
-          {/* STATUS */}
-          <label className="text-xs">Status</label>
-          <select
-            name="status"
-            required
-            className="w-full border p-2 rounded-md"
-          >
-            <option value="online">Online</option>
-            <option value="offline">Offline</option>
-            <option value="In Transit">In Transit</option>
-          </select>
-          {/* Tracking Link */}
-          <label className="text-xs">Tracking Link</label>
-          <input
-            name="tracking"
-            placeholder="Enter tracking id (optional)"
-            className="w-full border p-2 rounded-md"
-            defaultValue={selectedMiner?.trackingLink}
-          />
           <label className="text-xs">No Hosting</label>
           <div className="flex gap-2 item-center">
             <input
@@ -164,6 +145,25 @@ export default function AddMinerModal({ onClose }) {
           </div>
           {!noHosting && (
             <>
+              {/* STATUS */}
+              <label className="text-xs">Status</label>
+              <select
+                name="status"
+                required
+                className="w-full border p-2 rounded-md"
+              >
+                <option value="online">Online</option>
+                <option value="offline">Offline</option>
+                <option value="In Transit">In Transit</option>
+              </select>
+              {/* Tracking Link */}
+              <label className="text-xs">Tracking Link</label>
+              <input
+                name="tracking"
+                placeholder="Enter tracking id (optional)"
+                className="w-full border p-2 rounded-md"
+                defaultValue={selectedMiner?.trackingLink}
+              />
               {/* WORKER ADDRESS */}
               <label className="text-xs">Worker Id</label>
               <input

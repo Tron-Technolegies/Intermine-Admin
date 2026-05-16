@@ -144,25 +144,7 @@ export default function EditMinerModal({ minerData, onClose }) {
             )}
 
             {/* STATUS */}
-            <label className="text-xs">Status</label>
-            <select
-              name="status"
-              defaultValue={minerData?.status}
-              className="border p-2 rounded-md"
-              required
-            >
-              <option value="online">Online</option>
-              <option value="offline">Offline</option>
-              <option value="In Transit">In Transit</option>
-            </select>
-            {/* Tracking */}
-            <label className="text-xs">Tracking Link</label>
-            <input
-              name="tracking"
-              className="border p-2 rounded-md"
-              placeholder="Enter Tracking Id"
-              defaultValue={minerData?.trackingLink}
-            />
+
             {/* <label className="text-xs">No Hosting</label>
             <div className="flex gap-2 item-center">
               <input
@@ -175,6 +157,25 @@ export default function EditMinerModal({ minerData, onClose }) {
 
             {!noHosting && (
               <>
+                <label className="text-xs">Status</label>
+                <select
+                  name="status"
+                  defaultValue={minerData?.status}
+                  className="border p-2 rounded-md"
+                  required
+                >
+                  <option value="online">Online</option>
+                  <option value="offline">Offline</option>
+                  <option value="In Transit">In Transit</option>
+                </select>
+                {/* Tracking */}
+                <label className="text-xs">Tracking Link</label>
+                <input
+                  name="tracking"
+                  className="border p-2 rounded-md"
+                  placeholder="Enter Tracking Id"
+                  defaultValue={minerData?.trackingLink}
+                />
                 {/* LOCATION */}
                 <label className="text-xs">Mining Location</label>
                 <select

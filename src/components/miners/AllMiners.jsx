@@ -94,6 +94,7 @@ export default function AllMiners() {
             <option value="online">Online</option>
             <option value="In Transit">In Transit</option>
             <option value="offline">Offline</option>
+            <option value="no-hosting">No Hosting</option>
           </select>
         </div>
       </div>
