@@ -24,3 +24,16 @@ export const useGetFarmList = ({ currentPage, serviceProvider }) => {
   });
   return { isLoading, isError, error, data };
 };
+
+export const useGetNoHostingMiners = ({ search, currentPage }) => {
+  const { isLoading, isError, error, data } = useQuery({
+    queryKey: ["no-hosting", currentPage, search],
+    queryFn: async () => {
+      const { data } = await api.get(`/api/v1/mining-farms/no-hosting`, {
+        params: { currentPage, search },
+      });
+      return data;
+    },
+  });
+  return { isLoading, isError, error, data };
+};

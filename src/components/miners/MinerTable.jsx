@@ -193,17 +193,23 @@ export default function MinerTable({ miners, sort, setSort }) {
                     scope="row"
                     sx={{ textAlign: "center" }}
                   >
-                    <span
-                      className={`px-2 py-1 rounded-full text-white ${
-                        item.status === "online"
-                          ? "bg-green-600"
-                          : item.status === "offline"
-                            ? "bg-red-600"
-                            : "bg-yellow-600"
-                      }`}
-                    >
-                      {item.status}
-                    </span>
+                    {item.status === "no-hosting" ? (
+                      <span className="px-2 py-1 rounded-full text-white bg-blue-500">
+                        No Hosting
+                      </span>
+                    ) : (
+                      <span
+                        className={`px-2 py-1 rounded-full text-white ${
+                          item.status === "online"
+                            ? "bg-green-600"
+                            : item.status === "offline"
+                              ? "bg-red-600"
+                              : "bg-yellow-600"
+                        }`}
+                      >
+                        {item.status}
+                      </span>
+                    )}
                   </TableCell>
                   <TableCell
                     component="th"

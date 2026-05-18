@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   FaArrowLeft,
@@ -17,6 +17,7 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { useAddInternalNote, useClearNotes } from "../../hooks/useAddNote";
+import { FaLocationPin } from "react-icons/fa6";
 
 const style = {
   position: "absolute",
@@ -50,6 +51,8 @@ export default function ClientDetails() {
   const { id } = useParams();
   const [note, setNote] = useState("");
   const [open, setOpen] = useState(false);
+  const [hosting, setHosting] = useState([]);
+  const [noHosting, setNoHosting] = useState([]);
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setOpen(false);
@@ -62,6 +65,17 @@ export default function ClientDetails() {
   const { data: client, isLoading, error } = useClientDetails(id);
   const { isPending, mutate: addNote } = useAddInternalNote();
   const { isPending: clearPending, mutate: clearNotes } = useClearNotes();
+
+  useEffect(() => {
+    if (client) {
+      setHosting(
+        client?.owned?.filter((item) => item.hostingType !== "no-hosting"),
+      );
+      setNoHosting(
+        client?.owned?.filter((item) => item.hostingType === "no-hosting"),
+      );
+    }
+  }, [client]);
 
   if (isLoading) return <div className="p-6">Loading client...</div>;
   if (error)
@@ -80,7 +94,12 @@ export default function ClientDetails() {
       <p className="text-gray-500 mb-4">{client.email}</p>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-        <StatBox label="Total Miners" value={client.owned?.length || 0} />
+        <StatBox
+          label="Total Miners"
+          value={client.owned?.length || 0}
+          extra1={`Hosting: ${hosting?.length}`}
+          extra2={`No Hosting: ${noHosting?.length}`}
+        />
         <StatBox
           label="Online"
           value={client.owned?.filter((m) => m.status === "online").length}
@@ -153,7 +172,12 @@ export default function ClientDetails() {
               className="p-3 flex justify-between items-center cursor-pointer"
             >
               <div className="flex flex-col gap-2">
-                <p className="text-xl">{miner.model}</p>
+                <p className="text-xl">
+                  {miner.model}{" "}
+                  <span className="text-xs ml-5 p-2 rounded-md bg-gray-200">
+                    {miner.hostingType}
+                  </span>
+                </p>
                 <p className="font-medium">SN: {miner.serialNumber}</p>
                 <p className="text-xs text-gray-500">
                   {miner.workerId || "Worker Not Assigned"}
@@ -178,7 +202,9 @@ export default function ClientDetails() {
                     ? "Online"
                     : miner.status === "offline"
                       ? "Offline"
-                      : "In Transit"}
+                      : miner.status === "no-hosting"
+                        ? "No Hosting"
+                        : "In Transit"}
                 </div>
                 <div className="flex justify-between md:flex-row flex-col md:justify-start gap-5 md:gap-16 py-4 border-t border-b border-gray-100 mb-4">
                   {/* Hashrate */}
@@ -216,6 +242,15 @@ export default function ClientDetails() {
                     <div>
                       <div className="text-lg font-semibold">{miner.coins}</div>
                       <div className="text-xs text-gray-500">Coins</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <FaLocationPin size={20} />
+                    <div>
+                      <div className="text-lg font-semibold">
+                        {miner.location}
+                      </div>
+                      <div className="text-xs text-gray-500">Location</div>
                     </div>
                   </div>
                 </div>
@@ -264,11 +299,13 @@ export default function ClientDetails() {
   );
 }
 
-function StatBox({ label, value }) {
+function StatBox({ label, value, extra1, extra2 }) {
   return (
-    <div className="bg-gray-100 text-center p-4 rounded-xl">
+    <div className="bg-gray-100 flex flex-col justify-center items-center text-center p-4 rounded-xl">
       <p className="text-lg font-bold">{value}</p>
       <p className="text-xs text-gray-600">{label}</p>
+      <p className="text-xs text-gray-600 font-semibold">{extra1}</p>
+      <p className="text-xs text-gray-600 font-semibold">{extra2}</p>
     </div>
   );
 }

@@ -13,6 +13,7 @@ export default function AddMinerModal({ onClose }) {
   const queryClient = useQueryClient();
   const [warranty, setWarranty] = useState(false);
   const [extended, setExtended] = useState(false);
+  const [noHosting, setNoHosting] = useState(false);
   const { selectedMiner } = useContext(UserContext);
 
   const { isLoading: loadingClients, data: clients } = useGetUserDropdowns({
@@ -76,11 +77,12 @@ export default function AddMinerModal({ onClose }) {
 
         {/* FORM */}
         <form
-          onSubmit={(e) => {
+          onSubmit={async (e) => {
             e.preventDefault();
             const formdata = new FormData(e.target);
             const cleaned = Object.fromEntries(formdata);
-            addMiner.mutate(cleaned);
+            cleaned.hostingType = noHosting ? "no-hosting" : "hosting";
+            await addMiner.mutateAsync(cleaned);
           }}
           className="flex flex-col gap-2"
         >
@@ -100,16 +102,6 @@ export default function AddMinerModal({ onClose }) {
                 </option>
               ))}
           </select>
-
-          {/* WORKER ADDRESS */}
-          <label className="text-xs">Worker Id</label>
-          <input
-            name="workerId"
-            placeholder="Worker Address"
-            className="w-full border p-2 rounded-md"
-            defaultValue={selectedMiner?.workerId}
-          />
-
           {/* SERIAL/MINER ID */}
           <label className="text-xs">Serial Number</label>
           <input
@@ -142,42 +134,100 @@ export default function AddMinerModal({ onClose }) {
             </select>
           )}
 
-          {/* STATUS */}
-          <label className="text-xs">Status</label>
-          <select
-            name="status"
-            required
-            className="w-full border p-2 rounded-md"
-          >
-            <option value="online">Online</option>
-            <option value="offline">Offline</option>
-            <option value="In Transit">In Transit</option>
-          </select>
-          {/* Tracking Link */}
-          <label className="text-xs">Tracking Link</label>
-          <input
-            name="tracking"
-            placeholder="Enter tracking id (optional)"
-            className="w-full border p-2 rounded-md"
-            defaultValue={selectedMiner?.trackingLink}
-          />
-          {/* LOCATION DROPDOWN */}
-          <div>
-            <label className="text-xs">Miner Location</label>
-            <select
-              name="location"
-              className="w-full border p-2 rounded-md"
-              defaultValue={selectedMiner?.locationId}
-            >
-              <option value="">Select Location</option>
-              {!loadingLocations &&
-                locations?.map((l) => (
-                  <option key={l._id} value={l._id}>
-                    {l.farm}
-                  </option>
-                ))}
-            </select>
+          <label className="text-xs">No Hosting</label>
+          <div className="flex gap-2 item-center">
+            <input
+              type="checkbox"
+              checked={noHosting}
+              onChange={(e) => setNoHosting(e.target.checked)}
+            />
+            <label className="text-xs">Is No Hosting ?</label>
           </div>
+          {!noHosting && (
+            <>
+              {/* STATUS */}
+              <label className="text-xs">Status</label>
+              <select
+                name="status"
+                required
+                className="w-full border p-2 rounded-md"
+              >
+                <option value="online">Online</option>
+                <option value="offline">Offline</option>
+                <option value="In Transit">In Transit</option>
+              </select>
+              {/* Tracking Link */}
+              <label className="text-xs">Tracking Link</label>
+              <input
+                name="tracking"
+                placeholder="Enter tracking id (optional)"
+                className="w-full border p-2 rounded-md"
+                defaultValue={selectedMiner?.trackingLink}
+              />
+              {/* WORKER ADDRESS */}
+              <label className="text-xs">Worker Id</label>
+              <input
+                name="workerId"
+                placeholder="Worker Address"
+                className="w-full border p-2 rounded-md"
+                defaultValue={selectedMiner?.workerId}
+              />
+
+              {/* LOCATION DROPDOWN */}
+              <div>
+                <label className="text-xs">Miner Location</label>
+                <select
+                  name="location"
+                  className="w-full border p-2 rounded-md"
+                  defaultValue={selectedMiner?.locationId}
+                >
+                  <option value="">Select Location</option>
+                  {!loadingLocations &&
+                    locations?.map((l) => (
+                      <option key={l._id} value={l._id}>
+                        {l.farm}
+                      </option>
+                    ))}
+                </select>
+              </div>
+              {/* POOL ADDRESS */}
+              <label className="text-xs">Pool Address</label>
+              <input
+                name="poolAddress"
+                placeholder="Pool Address"
+                className="w-full border p-2 rounded-md"
+                defaultValue={selectedMiner?.poolAddress}
+              />
+
+              {/* MAC ADDRESS (required) */}
+              <label className="text-xs">Mac Address</label>
+              <input
+                name="macAddress"
+                placeholder="MAC Address"
+                className="w-full border p-2 rounded-md"
+                defaultValue={selectedMiner?.macAddress}
+              />
+              {serviceProviderLoading ? (
+                <Loading />
+              ) : (
+                <>
+                  <label className="text-xs">Service Provider</label>
+                  <select
+                    name="serviceProvider"
+                    className="w-full border p-2 rounded-md"
+                    defaultValue={selectedMiner?.serviceProvider}
+                  >
+                    <option value={""}>Choose Provider</option>
+                    {serviceProviders.map((item) => (
+                      <option key={item._id} value={item.name}>
+                        {item.name}
+                      </option>
+                    ))}
+                  </select>
+                </>
+              )}
+            </>
+          )}
 
           {/* WARRANTY */}
           <label className="text-xs">Warranty</label>
@@ -256,24 +306,6 @@ export default function AddMinerModal({ onClose }) {
               />
             </>
           )}
-          {/* POOL ADDRESS */}
-          <label className="text-xs">Pool Address</label>
-          <input
-            name="poolAddress"
-            placeholder="Pool Address"
-            className="w-full border p-2 rounded-md"
-            defaultValue={selectedMiner?.poolAddress}
-          />
-
-          {/* MAC ADDRESS (required) */}
-          <label className="text-xs">Mac Address</label>
-          <input
-            name="macAddress"
-            placeholder="MAC Address"
-            className="w-full border p-2 rounded-md"
-            defaultValue={selectedMiner?.macAddress}
-          />
-          {/* COINS */}
 
           {/* CONNECTION DATE */}
           <label className="text-xs">Buying Date</label>
@@ -285,25 +317,6 @@ export default function AddMinerModal({ onClose }) {
               ?.toString()
               ?.slice(0, 10)}
           />
-          {serviceProviderLoading ? (
-            <Loading />
-          ) : (
-            <>
-              <label className="text-xs">Service Provider</label>
-              <select
-                name="serviceProvider"
-                className="w-full border p-2 rounded-md"
-                defaultValue={selectedMiner?.serviceProvider}
-              >
-                <option value={""}>Choose Provider</option>
-                {serviceProviders.map((item) => (
-                  <option key={item._id} value={item.name}>
-                    {item.name}
-                  </option>
-                ))}
-              </select>
-            </>
-          )}
 
           {/* ADD BTN */}
           <button

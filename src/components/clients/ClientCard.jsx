@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   FaEnvelope,
   FaMapMarkerAlt,
@@ -16,10 +16,23 @@ import { useResendLoginData } from "../../hooks/useClients";
 
 export default function ClientCard({ client, onViewDetails }) {
   const [expanded, setExpanded] = useState(false);
+  const [hosting, setHosting] = useState([]);
+  const [noHosting, setNoHosting] = useState([]);
   const [openDelete, setOpenDelete] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const { isPending, mutateAsync } = useResendLoginData();
   const { sendAgreement } = useAgreementActions();
+
+  useEffect(() => {
+    if (client) {
+      setHosting(
+        client?.owned?.filter((item) => item.hostingType !== "no-hosting"),
+      );
+      setNoHosting(
+        client?.owned?.filter((item) => item.hostingType === "no-hosting"),
+      );
+    }
+  }, [client]);
 
   return (
     <div
@@ -34,7 +47,11 @@ export default function ClientCard({ client, onViewDetails }) {
           <h3 className="text-lg font-semibold text-gray-900">
             {client.clientName}{" "}
             <span className="text-xs font-normal ml-5">
-              ({client.clientType?.toUpperCase()})
+              (
+              {hosting?.length && noHosting?.length
+                ? "HYBRID"
+                : client.clientType?.toUpperCase()}
+              )
             </span>
           </h3>
           <p className="text-sm text-gray-600">{client.clientId}</p>
@@ -44,7 +61,7 @@ export default function ClientCard({ client, onViewDetails }) {
             <div className="flex items-center gap-1">
               <GoCpu className="text-gray-500" />
               <div>
-                <span className="font-semibold">{client.owned?.length}</span>
+                <span className="font-semibold">{hosting?.length || 0}</span>
                 <p className="text-xs text-gray-500">Miners</p>
               </div>
             </div>
@@ -52,10 +69,8 @@ export default function ClientCard({ client, onViewDetails }) {
               <FaBolt className="text-gray-500" />
               <div>
                 <span className="font-semibold">
-                  {client.owned?.reduce(
-                    (sum, item) => sum + (item.power || 0),
-                    0,
-                  ) / 1000}{" "}
+                  {hosting?.reduce((sum, item) => sum + (item.power || 0), 0) /
+                    1000}{" "}
                   KW
                 </span>
                 <p className="text-xs text-gray-500">Consumption</p>
@@ -101,7 +116,7 @@ export default function ClientCard({ client, onViewDetails }) {
             <div className="flex items-center gap-1">
               <GoCpu className="text-gray-500" />
               <div>
-                <span className="font-semibold">{client.owned?.length}</span>
+                <span className="font-semibold">{hosting?.length}</span>
                 <p className="text-xs text-gray-500">Miners</p>
               </div>
             </div>
@@ -109,10 +124,8 @@ export default function ClientCard({ client, onViewDetails }) {
               <FaBolt className="text-gray-500" />
               <div>
                 <span className="font-semibold">
-                  {client.owned?.reduce(
-                    (sum, item) => sum + (item.power || 0),
-                    0,
-                  ) / 1000}{" "}
+                  {hosting?.reduce((sum, item) => sum + (item.power || 0), 0) /
+                    1000}{" "}
                   KW
                 </span>
                 <p className="text-xs text-gray-500">Consumption</p>

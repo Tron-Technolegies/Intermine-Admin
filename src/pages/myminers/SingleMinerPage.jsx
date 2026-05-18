@@ -103,7 +103,9 @@ export default function SingleMinerPage() {
               ? "Online"
               : data.status === "offline"
                 ? "Offline"
-                : "In Transit"}
+                : data.status === "no-hosting"
+                  ? "No Hosting"
+                  : "In Transit"}
           </span>
         </div>
 
