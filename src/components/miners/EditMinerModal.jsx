@@ -51,9 +51,10 @@ export default function EditMinerModal({ minerData, onClose }) {
     e.preventDefault();
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData);
-
+    data.hostingType = noHosting ? "no-hosting" : "hosting";
     // Only allowed fields + serviceProvider for backend
-    data.location = loc;
+
+    data.location = noHosting ? undefined : loc;
 
     updateMiner.mutate(data);
   };
@@ -145,7 +146,7 @@ export default function EditMinerModal({ minerData, onClose }) {
 
             {/* STATUS */}
 
-            {/* <label className="text-xs">No Hosting</label>
+            <label className="text-xs">No Hosting</label>
             <div className="flex gap-2 item-center">
               <input
                 type="checkbox"
@@ -153,7 +154,7 @@ export default function EditMinerModal({ minerData, onClose }) {
                 onChange={(e) => setNoHosting(e.target.checked)}
               />
               <label className="text-xs">Is No Hosting ?</label>
-            </div> */}
+            </div>
 
             {!noHosting && (
               <>
