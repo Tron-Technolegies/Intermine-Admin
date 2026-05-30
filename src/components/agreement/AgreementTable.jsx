@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { FiDownload, FiSend } from "react-icons/fi";
 import Loading from "../Loading";
 import Table from "@mui/material/Table";
@@ -8,6 +8,8 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
+import { useDownloadPdf } from "../../hooks/adminAgreement/useAgreements";
+import { toast } from "react-toastify";
 
 export default function AgreementTable({
   data,
@@ -16,9 +18,28 @@ export default function AgreementTable({
   totalPages,
   setPage,
 }) {
+  const { isPending, mutateAsync } = useDownloadPdf();
   if (isLoading) return <Loading />;
-
+  const [id, setId] = useState(null);
   const agreements = data || [];
+
+  async function handleDownload(agreementId) {
+    try {
+      const blob = await mutateAsync(agreementId);
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `agreement-${agreementId}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      toast.error("Failed to download");
+    } finally {
+      setId(null);
+    }
+  }
 
   return (
     <div className="bg-[#F5F5F5] rounded-lg p-4 mt-6 max-w-[90vw]">
@@ -73,14 +94,14 @@ export default function AgreementTable({
               >
                 Status
               </TableCell>
-              {/* <TableCell
+              <TableCell
                 sx={{
                   textAlign: "center",
                   fontWeight: "bold",
                 }}
               >
                 Actions
-              </TableCell> */}
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody sx={{ background: "#eff6ff" }}>
@@ -134,25 +155,30 @@ export default function AgreementTable({
                   >
                     {item.signed ? "Signed" : "Pending"}
                   </TableCell>
-                  {/* <TableCell
+                  <TableCell
                     component="th"
                     scope="row"
                     sx={{ textAlign: "center" }}
                   >
                     <div className="flex justify-center">
-                      {item.signed ? (
-                        <FiDownload
-                          size={18}
-                          className="cursor-pointer hover:text-blue-500"
-                        />
-                      ) : (
-                        <FiSend
-                          size={18}
-                          className="cursor-pointer hover:text-blue-500"
-                        />
+                      {item.signed && (
+                        <button className="p-2" disabled={isPending}>
+                          {isPending && id === item._id ? (
+                            "...."
+                          ) : (
+                            <FiDownload
+                              onClick={() => {
+                                setId(item._id);
+                                handleDownload(item._id);
+                              }}
+                              size={18}
+                              className="cursor-pointer hover:text-blue-500"
+                            />
+                          )}
+                        </button>
                       )}
                     </div>
-                  </TableCell> */}
+                  </TableCell>
                 </TableRow>
               );
             })}

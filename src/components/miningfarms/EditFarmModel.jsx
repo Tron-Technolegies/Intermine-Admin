@@ -92,6 +92,13 @@ export default function EditFarmModel({ open, handleClose, farm }) {
             defaultValue={farm?.capacity}
             required
           />
+          <label className="text-xs font-medium">Extra Capacity (Watt)</label>
+          <input
+            type="number"
+            className="p-2 bg-neutral-100 shadow-md outline-none"
+            name="additionalCapacity"
+            defaultValue={farm?.additionalCapacity}
+          />
           <label className="text-xs font-medium">Service Provider</label>
           {isLoading ? (
             <Loading />
@@ -134,6 +141,18 @@ export default function EditFarmModel({ open, handleClose, farm }) {
             />
             <p className="text-xs">Hydro</p>
           </div>
+          <label className="text-xs font-medium mt-2">Farm Category</label>
+          <select
+            className="p-2 bg-neutral-100 text-sm shadow-md outline-none"
+            name="category"
+            defaultValue={farm?.category}
+            required
+          >
+            <option value={"hosting-facility"}>Hosting Facility</option>
+            <option value={"storage"}>Storage</option>
+            <option value={"repair-center"}>Repair Center</option>
+            <option value={"warranty-center"}>Warranty Center</option>
+          </select>
           <label className="text-xs font-medium">Country</label>
           <select
             className="p-2 bg-neutral-100 text-sm shadow-md outline-none"
