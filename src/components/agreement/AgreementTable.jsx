@@ -18,9 +18,10 @@ export default function AgreementTable({
   totalPages,
   setPage,
 }) {
+  const [id, setId] = useState(null);
   const { isPending, mutateAsync } = useDownloadPdf();
   if (isLoading) return <Loading />;
-  const [id, setId] = useState(null);
+
   const agreements = data || [];
 
   async function handleDownload(agreementId) {
