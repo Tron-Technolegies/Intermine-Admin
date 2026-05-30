@@ -59,6 +59,19 @@ export default function MiningFarm() {
       return "bg-blue-200 text-blue-600";
     }
   }
+  const getCapacityColor = (current, capacity) => {
+    const percentage = (current / capacity) * 100;
+
+    if (percentage > 100) {
+      return "bg-red-600"; // Exceeded capacity
+    }
+
+    if (percentage >= 90) {
+      return "bg-orange-500"; // Near capacity
+    }
+
+    return "bg-[#F5F5F5]"; // Safe
+  };
 
   return (
     <div className="min-h-screen">
@@ -108,170 +121,200 @@ export default function MiningFarm() {
                         </option>
                       ))}
                   </select>
-                  {data.farms?.map((item) => (
-                    <div
-                      key={item._id}
-                      onClick={() => {
-                        setSelected(item);
-                        setExpanded(!expanded);
-                      }}
-                      className="p-3 rounded-md bg-[#F5F5F5] shadow-md cursor-pointer"
-                    >
-                      <div className="flex justify-between item-center">
-                        <p className="font-semibold text-lg">{item.farm}</p>
-                        <p
-                          className={`text-xs p-2 rounded-md ${getStatusColor(item.farmStatus)}`}
-                        >
-                          {item.farmStatus}
+                  {data.farms?.map((item) => {
+                    const limit = (item.current / item.capacity) * 100;
+                    return (
+                      <div
+                        key={item._id}
+                        onClick={() => {
+                          setSelected(item);
+                          setExpanded(!expanded);
+                        }}
+                        className={`p-3 rounded-md  shadow-md cursor-pointer ${getCapacityColor(item.current, item.capacity)}`}
+                      >
+                        <p className="font-light text-xs">
+                          {limit === 100
+                            ? "Max Capacity reached"
+                            : limit > 100
+                              ? "Capacity Overloaded"
+                              : limit >= 90
+                                ? "Nearing Capacity"
+                                : ""}
                         </p>
-                      </div>
-                      <p className="italic font-sans font-semibold">{`${item.current / 1000}/${item.capacity / 1000} KW`}</p>
-                      {expanded && selected._id === item._id && (
-                        <div className="p-2 mt-3 duration-300 ease-in-out transition-all">
-                          {item.farmInfo && (
-                            <p className="my-2 text-gray-600 text-sm flex gap-2 items-center">
-                              <RiInformationLine />
-                              {item.farmInfo}
+                        <div className="flex justify-between item-center">
+                          <p className="font-semibold text-lg">{item.farm}</p>
+                          {item.category === "hosting-facility" && (
+                            <p
+                              className={`text-xs p-2 rounded-md ${getStatusColor(item.farmStatus)}`}
+                            >
+                              {item.farmStatus}
                             </p>
                           )}
-                          <div className="border-t border-b border-gray-300 py-2 flex justify-between">
-                            <div className=" text-gray-600 text-sm flex flex-col gap-2">
-                              <p className="flex gap-2 items-center">
-                                <FaLocationDot />
-                                {item.country}
-                              </p>
-                              <p className="flex gap-2 items-center">
-                                <RiContractFill />
-                                {item.contractType}
-                              </p>
-                              <p className="flex gap-2 items-center">
-                                <BiSolidCategory />
-                                {item.farmType}
-                              </p>
-                              <p className="flex gap-2 items-center">
-                                <FaCalendar />
-                                Commission Date:{" "}
-                                {new Date(
-                                  item.dayOfCommissioning,
-                                ).toLocaleString()}
-                              </p>
-                              <p className="flex gap-2 items-center">
-                                <FaRegClock />
-                                Contract Expiry:{" "}
-                                {new Date(
-                                  item.contractDuration,
-                                ).toLocaleString()}
-                              </p>
-                            </div>
-                            <div className="flex gap-2 h-fit">
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setOpenMiners(true);
-                                }}
-                                className="bg-blue-500 text-white flex justify-center items-center gap-1 hover:bg-blue-700"
-                              >
-                                <FaMicrochip />
-                                Miners
-                              </button>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setOpenDowntimes(true);
-                                }}
-                                className="bg-blue-500 text-white flex justify-center items-center gap-1 hover:bg-blue-700"
-                              >
-                                <IoCloudOfflineSharp />
-                                Downtimes
-                              </button>
-                            </div>
-                          </div>
-                          <div className="mt-3 grid md:grid-cols-4 grid-cols-2 md:gap-3 gap-5 place-items-center-safe pb-2 border-b border-gray-300">
-                            <div className="flex gap-2 items-center w-full justify-center">
-                              <ImPower size={28} />
-                              <p className="flex flex-col">
-                                <span className="font-bold">
-                                  {item.capacity / 1000} KW
-                                </span>
-                                <span className="text-xs">capacity</span>
-                              </p>
-                            </div>
-                            <div className="flex gap-2 items-center w-full justify-center">
-                              <ImPowerCord size={28} />
-                              <p className="flex flex-col">
-                                <span className="font-bold">
-                                  {item.current / 1000} KW
-                                </span>
-                                <span className="text-xs">current</span>
-                              </p>
-                            </div>
-                            <div className="flex gap-2 items-center w-full justify-center">
-                              <FaMicrochip size={28} />
-                              <p className="flex flex-col">
-                                <span className="font-bold">
-                                  {item.miners?.length}
-                                </span>
-                                <span className="text-xs">Total Miners</span>
-                              </p>
-                            </div>
-                            <div className="flex gap-2 items-center w-full justify-center">
-                              <FaTools size={28} />
-                              <p className="flex flex-col">
-                                <span className="font-bold">
-                                  {item.serviceProvider}
-                                </span>
-                                <span className="text-xs">
-                                  Service Provider
-                                </span>
-                              </p>
-                            </div>
-                          </div>
-                          <div className="grid md:grid-cols-4 grid-cols-2 justify-between gap-2 mt-2">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setOpenEdit(true);
-                              }}
-                              className="w-full text-white bg-gray-400 hover:bg-gray-600 flex justify-center items-center gap-2"
-                            >
-                              <FaRegEdit />
-                              Edit
-                            </button>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setOpenAnnouncement(true);
-                              }}
-                              className="w-full text-white bg-blue-500 hover:bg-blue-700 flex justify-center items-center gap-2"
-                            >
-                              <GrAnnounce />
-                              Announcement
-                            </button>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setFarmStatus(true);
-                              }}
-                              className="w-full text-white bg-neutral-500 hover:bg-neutral-700 flex justify-center items-center gap-2"
-                            >
-                              <GrStatusGood />
-                              Farm Status
-                            </button>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setOpenDelete(true);
-                              }}
-                              className="w-full text-white bg-red-600 hover:bg-red-800 flex justify-center items-center gap-2"
-                            >
-                              <RiDeleteBin2Fill />
-                              Delete
-                            </button>
-                          </div>
                         </div>
-                      )}
-                    </div>
-                  ))}
+                        {item.category !== "hosting-facility" ? (
+                          <p className="italic font-sans font-semibold">{`${item.current / 1000} KW`}</p>
+                        ) : (
+                          <p className="italic font-sans font-semibold">{`${item.current / 1000}/${item.capacity / 1000} KW`}</p>
+                        )}
+
+                        {expanded && selected._id === item._id && (
+                          <div className="p-2 mt-3 duration-300 ease-in-out transition-all">
+                            {item.farmInfo && (
+                              <p className="my-2 text-gray-600 text-sm flex gap-2 items-center">
+                                <RiInformationLine />
+                                {item.farmInfo}
+                              </p>
+                            )}
+                            <div className="border-t border-b border-gray-300 py-2 flex justify-between">
+                              <div className=" text-gray-600 text-sm flex flex-col gap-2">
+                                <p className="flex gap-2 items-center">
+                                  <FaLocationDot />
+                                  {item.country}
+                                </p>
+                                <p className="flex gap-2 items-center">
+                                  <RiContractFill />
+                                  {item.contractType}
+                                </p>
+                                <p className="flex gap-2 items-center">
+                                  <BiSolidCategory />
+                                  {item.farmType}
+                                </p>
+                                <p className="flex gap-2 items-center">
+                                  <FaCalendar />
+                                  Commission Date:{" "}
+                                  {new Date(
+                                    item.dayOfCommissioning,
+                                  ).toLocaleString()}
+                                </p>
+                                <p className="flex gap-2 items-center">
+                                  <FaRegClock />
+                                  Contract Expiry:{" "}
+                                  {new Date(
+                                    item.contractDuration,
+                                  ).toLocaleString()}
+                                </p>
+                              </div>
+                              <div className="flex gap-2 h-fit">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setOpenMiners(true);
+                                  }}
+                                  className="bg-blue-500 text-white flex justify-center items-center gap-1 hover:bg-blue-700"
+                                >
+                                  <FaMicrochip />
+                                  Miners
+                                </button>
+                                {item.category === "hosting-facility" && (
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setOpenDowntimes(true);
+                                    }}
+                                    className="bg-blue-500 text-white flex justify-center items-center gap-1 hover:bg-blue-700"
+                                  >
+                                    <IoCloudOfflineSharp />
+                                    Downtimes
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                            <div className="mt-3 grid md:grid-cols-4 grid-cols-2 md:gap-3 gap-5 place-items-center-safe pb-2 border-b border-gray-300">
+                              {item.category === "hosting-facility" && (
+                                <div className="flex gap-2 items-center w-full justify-center">
+                                  <ImPower size={28} />
+                                  <p className="flex flex-col">
+                                    <span className="font-bold">
+                                      {item.capacity / 1000} KW
+                                    </span>
+                                    <span className="text-xs">capacity</span>
+                                  </p>
+                                </div>
+                              )}
+
+                              <div className="flex gap-2 items-center w-full justify-center">
+                                <ImPowerCord size={28} />
+                                <p className="flex flex-col">
+                                  <span className="font-bold">
+                                    {item.current / 1000} KW
+                                  </span>
+                                  <span className="text-xs">current</span>
+                                </p>
+                              </div>
+                              <div className="flex gap-2 items-center w-full justify-center">
+                                <FaMicrochip size={28} />
+                                <p className="flex flex-col">
+                                  <span className="font-bold">
+                                    {item.miners?.length}
+                                  </span>
+                                  <span className="text-xs">Total Miners</span>
+                                </p>
+                              </div>
+                              <div className="flex gap-2 items-center w-full justify-center">
+                                <FaTools size={28} />
+                                <p className="flex flex-col">
+                                  <span className="font-bold">
+                                    {item.serviceProvider}
+                                  </span>
+                                  <span className="text-xs">
+                                    Service Provider
+                                  </span>
+                                </p>
+                              </div>
+                            </div>
+                            <div className="grid md:grid-cols-4 grid-cols-2 justify-between gap-2 mt-2">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setOpenEdit(true);
+                                }}
+                                className="w-full text-white bg-gray-400 hover:bg-gray-600 flex justify-center items-center gap-2"
+                              >
+                                <FaRegEdit />
+                                Edit
+                              </button>
+                              {item.category === "hosting-facility" && (
+                                <>
+                                  {" "}
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setOpenAnnouncement(true);
+                                    }}
+                                    className="w-full text-white bg-blue-500 hover:bg-blue-700 flex justify-center items-center gap-2"
+                                  >
+                                    <GrAnnounce />
+                                    Announcement
+                                  </button>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setFarmStatus(true);
+                                    }}
+                                    className="w-full text-white bg-neutral-500 hover:bg-neutral-700 flex justify-center items-center gap-2"
+                                  >
+                                    <GrStatusGood />
+                                    Farm Status
+                                  </button>
+                                </>
+                              )}
+
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setOpenDelete(true);
+                                }}
+                                className="w-full text-white bg-red-600 hover:bg-red-800 flex justify-center items-center gap-2"
+                              >
+                                <RiDeleteBin2Fill />
+                                Delete
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                   {data.totalPages > 1 && (
                     <div className="flex gap-2 items-center mx-auto mt-5">
                       <button
