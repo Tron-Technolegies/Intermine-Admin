@@ -97,6 +97,15 @@ export default function EditMinerModelPopup({ open, handleClose, id }) {
             placeholder=""
             required
           />
+          <label className="text-xs font-medium">Model Code</label>
+          <input
+            type="text"
+            name="modelCode"
+            defaultValue={data.modelCode}
+            className="p-2 rounded-md text-sm shadow-md outline-none bg-neutral-100"
+            placeholder=""
+            required
+          />
           <label className="text-xs font-medium">Cooling Type</label>
           <select
             type="text"
