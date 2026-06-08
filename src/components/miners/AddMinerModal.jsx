@@ -235,6 +235,7 @@ export default function AddMinerModal({ onClose }) {
             <input
               type="checkbox"
               checked={warranty}
+              defaultChecked={selectedMiner?.relatedWarranty}
               onChange={(e) => setWarranty(e.target.checked)}
             />
             <label className="text-xs">Need Warranty ?</label>
@@ -253,6 +254,9 @@ export default function AddMinerModal({ onClose }) {
                 name="warrantyStart"
                 type="date"
                 required
+                defaultValue={selectedMiner?.warrantyStartDate
+                  ?.toString()
+                  ?.slice(0, 10)}
                 placeholder="Warranty Period"
                 className="w-full border p-2 rounded-md"
               />
@@ -261,6 +265,9 @@ export default function AddMinerModal({ onClose }) {
                 name="warrantyEnd"
                 type="date"
                 required
+                defaultValue={selectedMiner?.warrantyEndDate
+                  ?.toString()
+                  ?.slice(0, 10)}
                 placeholder="Warranty Period"
                 className="w-full border p-2 rounded-md"
               />

@@ -74,11 +74,18 @@ export default function MinerModelPopup({ open, handleClose }) {
               <option value={"MH"}>MH</option>
             </select>
           </div>
-
           <label className="text-xs font-medium">Power (Watt)</label>
           <input
             type="number"
             name="power"
+            className="p-2 rounded-md text-sm shadow-md outline-none bg-neutral-100"
+            placeholder=""
+            required
+          />
+          <label className="text-xs font-medium">Model Code</label>
+          <input
+            type="text"
+            name="modelCode"
             className="p-2 rounded-md text-sm shadow-md outline-none bg-neutral-100"
             placeholder=""
             required
