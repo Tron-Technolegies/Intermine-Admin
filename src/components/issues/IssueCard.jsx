@@ -12,6 +12,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { BiMessageDetail } from "react-icons/bi";
 import { MdHistory } from "react-icons/md";
 import StatusHistoryModal from "./StatusHistoryModal";
+import { useGetRepairAndWarrantyFarms } from "../../hooks/adminFarms/useFarms";
 
 export default function IssueCard({
   issue,
@@ -22,13 +23,22 @@ export default function IssueCard({
 }) {
   const [status, setStatus] = useState(issue.status);
   const [saving, setSaving] = useState(false);
+  const [currentLocation, setCurrentLocation] = useState(
+    issue.currentLocation || null,
+  );
   const [open, setOpen] = useState(false);
   const [openStatusHistory, setOpenStatusHistory] = useState(false);
+  const { isLoading, data } = useGetRepairAndWarrantyFarms();
 
   const handleSave = async () => {
     setSaving(true);
     try {
-      await onStatusUpdate(issue._id, status, issue.miner?.serviceProvider);
+      await onStatusUpdate(
+        issue._id,
+        status,
+        issue.miner?.serviceProvider,
+        currentLocation,
+      );
     } catch (error) {
       console.log(error);
     } finally {
@@ -165,7 +175,23 @@ export default function IssueCard({
                 <option value="Repair Center">Repair Center</option>
                 <option value="Resolved">Resolved</option>
               </select>
-
+              {!isLoading &&
+                data &&
+                (status === "Warranty" || status === "Repair Center") && (
+                  <select
+                    value={currentLocation}
+                    onChange={(e) => setCurrentLocation(e.target.value)}
+                    className="px-4 py-1.5 text-sm rounded-lg border border-gray-300 text-gray-700"
+                    required
+                  >
+                    <option value={""}>Choose Location</option>
+                    {data.map((item) => (
+                      <option key={item._id} value={item._id}>
+                        {item.farm}
+                      </option>
+                    ))}
+                  </select>
+                )}
               <button
                 onClick={handleSave}
                 className="px-4 py-1.5 text-sm cursor-pointer rounded-lg bg-blue-600 text-white"

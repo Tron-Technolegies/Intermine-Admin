@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 
 export const useReportIssue = () => {
   const queryClient = useQueryClient();
-  const { isPending, mutate } = useMutation({
+  const { isPending, mutateAsync } = useMutation({
     mutationFn: async ({ data }) => {
       await api.post("/api/v1/admin/issue", data);
     },
@@ -19,5 +19,5 @@ export const useReportIssue = () => {
       toast.error(error?.response?.data?.error);
     },
   });
-  return { isPending, mutate };
+  return { isPending, mutateAsync };
 };

@@ -281,7 +281,8 @@ export default function SingleMinerPage() {
       )}
       {showReport && (
         <ReportIssueModal2
-          onClose={() => setShowReport(false)}
+          open={showReport}
+          handleClose={() => setShowReport(false)}
           currentMiner={data}
         />
       )}
