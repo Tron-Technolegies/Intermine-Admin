@@ -49,8 +49,8 @@ export default function Issues() {
   const [showChatModal, setShowChatModal] = useState(null);
 
   // Status update handler
-  const handleStatusUpdate = async (id, status, serviceProvider) => {
-    await updateStatus.mutateAsync({ id, status, serviceProvider });
+  const handleStatusUpdate = async (id, status, serviceProvider, location) => {
+    await updateStatus.mutateAsync({ id, status, serviceProvider, location });
   };
 
   // Reminder handler

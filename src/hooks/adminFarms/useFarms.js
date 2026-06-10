@@ -37,3 +37,16 @@ export const useGetNoHostingMiners = ({ search, currentPage }) => {
   });
   return { isLoading, isError, error, data };
 };
+
+export const useGetRepairAndWarrantyFarms = () => {
+  const { isLoading, isError, error, data } = useQuery({
+    queryKey: ["repair-warranty-farms"],
+    queryFn: async () => {
+      const { data } = await api.get(
+        `/api/v1/mining-farms/repair-warranty-list`,
+      );
+      return data;
+    },
+  });
+  return { isLoading, isError, error, data };
+};

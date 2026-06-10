@@ -186,7 +186,7 @@ export default function MinerTable({ miners, sort, setSort }) {
                     scope="row"
                     sx={{ textAlign: "center" }}
                   >
-                    {item.location}
+                    {item.tempLocation || item.location}
                   </TableCell>
                   <TableCell
                     component="th"
@@ -260,7 +260,8 @@ export default function MinerTable({ miners, sort, setSort }) {
       </TableContainer>
       {openReport && (
         <ReportIssueModal2
-          onClose={() => {
+          open={openReport}
+          handleClose={() => {
             setOpenReport(false);
             setCurrentMiner(null);
           }}

@@ -7,10 +7,11 @@ export default function useIssueActions() {
   const queryClient = useQueryClient();
 
   const updateStatus = useMutation({
-    mutationFn: ({ id, status, serviceProvider }) =>
+    mutationFn: ({ id, status, serviceProvider, location }) =>
       api.patch(`/api/v1/admin/issue/update-status/${id}`, {
         status,
         serviceProvider,
+        location,
       }),
     onSuccess: () => {
       queryClient.invalidateQueries(["issues"]);

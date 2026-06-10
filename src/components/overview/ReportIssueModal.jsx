@@ -24,17 +24,16 @@ export default function ReportIssueModal({ onClose, currentMiner }) {
     useGetClientMiners({ clientId });
 
   const { isLoading: issueLoading, data: issues } = useIssueTypes();
-  const { isPending, mutate } = useReportIssue();
+  const { isPending, mutateAsync } = useReportIssue();
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData);
     data.status = checked ? "online" : "offline";
     data.inform = inform ? "inform" : "not-inform";
     data.miner = machine._id;
-
-    mutate({ data });
+    await mutateAsync({ data });
     onClose();
   }
 

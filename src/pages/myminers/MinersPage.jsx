@@ -1,12 +1,12 @@
 import React from "react";
 import MinersHeader from "../../components/miners/MinersHeader";
-import MinerCard from "../../components/miners/AllMiners";
+import AllMiners from "../../components/miners/AllMiners";
 
 export default function MinersPage() {
   return (
     <div>
       <MinersHeader />
-      <MinerCard />
+      <AllMiners />
     </div>
   );
 }

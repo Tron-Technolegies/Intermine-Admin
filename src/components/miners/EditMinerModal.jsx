@@ -10,6 +10,8 @@ import { useGetMinerModels } from "../../hooks/adminMiner/useGetSingleMiner";
 export default function EditMinerModal({ minerData, onClose }) {
   const [loc, setLoc] = useState("");
   const [model, setModel] = useState("");
+  const [warranty, setWarranty] = useState(false);
+  const [extended, setExtended] = useState(false);
   const queryClient = useQueryClient();
   const [noHosting, setNoHosting] = useState(false);
 
@@ -237,6 +239,101 @@ export default function EditMinerModal({ minerData, onClose }) {
                     </select>
                   </>
                 )}
+              </>
+            )}
+            {/* Warranty */}
+            <label className="text-xs">Warranty</label>
+            <div className="flex gap-2 item-center">
+              <input
+                type="checkbox"
+                checked={warranty}
+                defaultChecked={minerData?.relatedWarranty ? true : false}
+                onChange={(e) => setWarranty(e.target.checked)}
+              />
+              <label className="text-xs">Need Warranty ?</label>
+            </div>
+            {warranty && (
+              <>
+                <label className="text-xs">Warranty Type</label>
+                <input
+                  required
+                  name="warrantyType"
+                  value={"Manufacturer"}
+                  className="w-full border p-2 rounded-md"
+                ></input>
+                <label className="text-xs">Warranty Start</label>
+                <input
+                  name="warrantyStart"
+                  type="date"
+                  required
+                  defaultValue={minerData?.warrantyStartDate
+                    ?.toString()
+                    ?.slice(0, 10)}
+                  placeholder="Warranty Period"
+                  className="w-full border p-2 rounded-md"
+                />
+                <label className="text-xs">Warranty End</label>
+                <input
+                  name="warrantyEnd"
+                  type="date"
+                  required
+                  defaultValue={minerData?.warrantyEndDate
+                    ?.toString()
+                    ?.slice(0, 10)}
+                  placeholder="Warranty Period"
+                  className="w-full border p-2 rounded-md"
+                />
+              </>
+            )}
+            {warranty && (
+              <>
+                <label className="text-xs">Intermine Warranty</label>
+                <div className="flex gap-2 item-center">
+                  <input
+                    type="checkbox"
+                    checked={extended}
+                    defaultChecked={
+                      minerData?.relatedWarranty?.extendedIntermine
+                        ? true
+                        : false
+                    }
+                    onChange={(e) => setExtended(e.target.checked)}
+                  />
+                  <label className="text-xs">Need Intermine Warranty ?</label>
+                </div>
+              </>
+            )}
+            {extended && (
+              <>
+                <label className="text-xs">Warranty Type</label>
+                <input
+                  required
+                  name="extendedIntermine"
+                  value={"Intermine"}
+                  className="w-full border p-2 rounded-md"
+                ></input>
+                <label className="text-xs">Extended Warranty Start</label>
+                <input
+                  name="extendedStartDate"
+                  type="date"
+                  defaultValue={minerData?.relatedWarranty?.extendedStartDate
+                    ?.toString()
+                    ?.slice(0, 10)}
+                  required
+                  placeholder="Warranty Period"
+                  className="w-full border p-2 rounded-md"
+                />
+                <label className="text-xs">Extended Warranty End</label>
+                <input
+                  name="extendedEndDate"
+                  type="date"
+                  defaultValue={minerData?.relatedWarranty?.extendedEndDate
+                    ?.toString()
+                    ?.slice(0, 10)}
+                  required
+                  placeholder="Warranty Period"
+                  className="w-full border p-2 rounded-md"
+                />
               </>
             )}
 
