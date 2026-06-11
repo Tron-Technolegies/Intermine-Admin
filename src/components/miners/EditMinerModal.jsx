@@ -12,8 +12,15 @@ export default function EditMinerModal({ minerData, onClose }) {
   const [model, setModel] = useState("");
   const [warranty, setWarranty] = useState(false);
   const [extended, setExtended] = useState(false);
+  const [provider, setProvider] = useState("");
   const queryClient = useQueryClient();
   const [noHosting, setNoHosting] = useState(false);
+
+  useEffect(() => {
+    if (minerData?.serviceProvider) {
+      setProvider(minerData.serviceProvider);
+    }
+  }, [minerData]);
 
   // ====== Fetch Clients ======
   const { data: clients, isLoading } = useGetUserDropdowns({ search: "" });
@@ -27,9 +34,7 @@ export default function EditMinerModal({ minerData, onClose }) {
   const { data: locations } = useQuery({
     queryKey: ["locations"],
     queryFn: async () => {
-      const res = await api.get("/api/v1/mining-farms", {
-        params: { currentPage: 1, location: "", query: "", status: "ALL" },
-      });
+      const res = await api.get("/api/v1/mining-farms/dropdown", {});
       return res.data;
     },
   });
@@ -55,7 +60,7 @@ export default function EditMinerModal({ minerData, onClose }) {
     const data = Object.fromEntries(formData);
     data.hostingType = noHosting ? "no-hosting" : "hosting";
     // Only allowed fields + serviceProvider for backend
-
+    data.serviceProvider = noHosting ? undefined : provider;
     data.location = noHosting ? undefined : loc;
 
     updateMiner.mutate(data);
@@ -179,6 +184,26 @@ export default function EditMinerModal({ minerData, onClose }) {
                   placeholder="Enter Tracking Id"
                   defaultValue={minerData?.trackingLink}
                 />
+                {serviceLoading ? (
+                  <Loading />
+                ) : (
+                  <>
+                    <label className="text-xs">Service Provider</label>
+                    <select
+                      name="serviceProvider"
+                      value={provider}
+                      onChange={(e) => setProvider(e.target.value)}
+                      className="w-full border p-2 rounded-md"
+                    >
+                      <option value={""}>Choose Provider</option>
+                      {serviceProviders.map((item) => (
+                        <option key={item._id} value={item.name}>
+                          {item.name}
+                        </option>
+                      ))}
+                    </select>
+                  </>
+                )}
                 {/* LOCATION */}
                 <label className="text-xs">Mining Location</label>
                 <select
@@ -188,11 +213,13 @@ export default function EditMinerModal({ minerData, onClose }) {
                   className="border p-2 rounded-md"
                 >
                   <option value="">Select Mining Farm</option>
-                  {locations?.map((farm) => (
-                    <option key={farm._id} value={farm._id}>
-                      {farm.farm}
-                    </option>
-                  ))}
+                  {locations
+                    ?.filter((item) => item.serviceProvider === provider)
+                    .map((farm) => (
+                      <option key={farm._id} value={farm._id}>
+                        {farm.farm}
+                      </option>
+                    ))}
                 </select>
                 {/* WORKER ID */}
                 <label className="text-xs">Worker Id</label>
@@ -219,26 +246,6 @@ export default function EditMinerModal({ minerData, onClose }) {
                   className="border p-2 rounded-md"
                   placeholder="MAC Address"
                 />
-
-                {serviceLoading ? (
-                  <Loading />
-                ) : (
-                  <>
-                    <label className="text-xs">Service Provider</label>
-                    <select
-                      name="serviceProvider"
-                      defaultValue={minerData?.serviceProvider}
-                      className="w-full border p-2 rounded-md"
-                    >
-                      <option value={""}>Choose Provider</option>
-                      {serviceProviders.map((item) => (
-                        <option key={item._id} value={item.name}>
-                          {item.name}
-                        </option>
-                      ))}
-                    </select>
-                  </>
-                )}
               </>
             )}
             {/* Warranty */}

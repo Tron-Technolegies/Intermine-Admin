@@ -29,6 +29,7 @@ export default function MinersHistoryModal({
   open,
   handleClose,
   history1,
+  downtimes,
   history2,
 }) {
   const [history, setHistory] = useState([]);
@@ -219,6 +220,33 @@ export default function MinersHistoryModal({
             </TableBody>
           </Table>
         </TableContainer>
+        <Typography
+          id="modal-modal-title"
+          variant="h6"
+          component="h2"
+          sx={{ marginTop: 3 }}
+        >
+          Farm Downtimes
+        </Typography>
+        <div className="mt-3 flex flex-col gap-2">
+          {downtimes?.map((item) => (
+            <div key={item._id} className="p-3 shadow">
+              <p className="text-sm text-blue-400">{item.message}</p>
+              <div className="mt-2 text-sm">
+                <p>
+                  Started On:{" "}
+                  {new Date(
+                    item?.startAt || item?.activatedAt,
+                  )?.toLocaleString()}
+                </p>
+                <p>
+                  Ended On:{" "}
+                  {new Date(item?.endAt || item?.completedAt)?.toLocaleString()}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
       </Box>
     </Modal>
   );

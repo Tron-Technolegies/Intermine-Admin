@@ -86,6 +86,7 @@ export default function EditMinerModelPopup({ open, handleClose, id }) {
               <option value={"TH"}>TH</option>
               <option value={"GH"}>GH</option>
               <option value={"MH"}>MH</option>
+              <option value={"KSOL"}>KSOL</option>
             </select>
           </div>
           <label className="text-xs font-medium">Power (Watt)</label>

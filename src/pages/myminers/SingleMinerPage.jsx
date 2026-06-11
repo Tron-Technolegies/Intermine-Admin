@@ -276,6 +276,7 @@ export default function SingleMinerPage() {
           open={showHistory}
           history1={data.issueHistory}
           history2={data.changeHistory}
+          downtimes={data.relatedDownTimes}
           handleClose={() => setShowHistory(false)}
         />
       )}

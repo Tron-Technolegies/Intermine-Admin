@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaUser } from "react-icons/fa";
 import { CiClock2 } from "react-icons/ci";
 import { LuCpu } from "react-icons/lu";
@@ -23,6 +23,7 @@ export default function IssueCard({
 }) {
   const [status, setStatus] = useState(issue.status);
   const [saving, setSaving] = useState(false);
+  const [provider, setProvider] = useState(issue?.serviceProvider || "");
   const [currentLocation, setCurrentLocation] = useState(
     issue.currentLocation || null,
   );
@@ -53,6 +54,12 @@ export default function IssueCard({
   const handleClose = () => {
     setOpen(false);
   };
+
+  useEffect(() => {
+    if (issue) {
+      setProvider(issue.serviceProvider);
+    }
+  }, [issue]);
   return (
     <div className="bg-[#F9F9F9] border border-[#E6E6E6] rounded-2xl px-7 py-7 flex flex-col gap-2 shadow-sm">
       <p className="font-bold text-sm">ID: XXX-{issue._id.slice(15)}</p>
@@ -185,11 +192,13 @@ export default function IssueCard({
                     required
                   >
                     <option value={""}>Choose Location</option>
-                    {data.map((item) => (
-                      <option key={item._id} value={item._id}>
-                        {item.farm}
-                      </option>
-                    ))}
+                    {data
+                      .filter((item) => item.serviceProvider === provider)
+                      .map((item) => (
+                        <option key={item._id} value={item._id}>
+                          {item.farm}
+                        </option>
+                      ))}
                   </select>
                 )}
               <button
