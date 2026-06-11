@@ -13,8 +13,15 @@ export default function AddMinerModal({ onClose }) {
   const queryClient = useQueryClient();
   const [warranty, setWarranty] = useState(false);
   const [extended, setExtended] = useState(false);
+  const [provider, setProvider] = useState("");
   const [noHosting, setNoHosting] = useState(false);
   const { selectedMiner } = useContext(UserContext);
+
+  useEffect(() => {
+    if (selectedMiner?.serviceProvider) {
+      setProvider(selectedMiner.serviceProvider);
+    }
+  }, [selectedMiner]);
 
   const { isLoading: loadingClients, data: clients } = useGetUserDropdowns({
     search: "",
@@ -28,14 +35,7 @@ export default function AddMinerModal({ onClose }) {
   const { data: locations, isLoading: loadingLocations } = useQuery({
     queryKey: ["locations"],
     queryFn: async () => {
-      const res = await api.get("/api/v1/mining-farms", {
-        params: {
-          currentPage: 1,
-          location: "",
-          query: "",
-          status: "ALL",
-        },
-      });
+      const res = await api.get("/api/v1/mining-farms/dropdown", {});
       return res.data;
     },
   });
@@ -82,6 +82,7 @@ export default function AddMinerModal({ onClose }) {
             const formdata = new FormData(e.target);
             const cleaned = Object.fromEntries(formdata);
             cleaned.hostingType = noHosting ? "no-hosting" : "hosting";
+            cleaned.serviceProvider = provider;
             await addMiner.mutateAsync(cleaned);
           }}
           className="flex flex-col gap-2"
@@ -172,6 +173,26 @@ export default function AddMinerModal({ onClose }) {
                 className="w-full border p-2 rounded-md"
                 defaultValue={selectedMiner?.workerId}
               />
+              {serviceProviderLoading ? (
+                <Loading />
+              ) : (
+                <>
+                  <label className="text-xs">Service Provider</label>
+                  <select
+                    name="serviceProvider"
+                    value={provider}
+                    onChange={(e) => setProvider(e.target.value)}
+                    className="w-full border p-2 rounded-md"
+                  >
+                    <option value={""}>Choose Provider</option>
+                    {serviceProviders.map((item) => (
+                      <option key={item._id} value={item.name}>
+                        {item.name}
+                      </option>
+                    ))}
+                  </select>
+                </>
+              )}
 
               {/* LOCATION DROPDOWN */}
               <div>
@@ -183,11 +204,13 @@ export default function AddMinerModal({ onClose }) {
                 >
                   <option value="">Select Location</option>
                   {!loadingLocations &&
-                    locations?.map((l) => (
-                      <option key={l._id} value={l._id}>
-                        {l.farm}
-                      </option>
-                    ))}
+                    locations
+                      ?.filter((item) => item.serviceProvider === provider)
+                      .map((l) => (
+                        <option key={l._id} value={l._id}>
+                          {l.farm}
+                        </option>
+                      ))}
                 </select>
               </div>
               {/* POOL ADDRESS */}
@@ -207,25 +230,6 @@ export default function AddMinerModal({ onClose }) {
                 className="w-full border p-2 rounded-md"
                 defaultValue={selectedMiner?.macAddress}
               />
-              {serviceProviderLoading ? (
-                <Loading />
-              ) : (
-                <>
-                  <label className="text-xs">Service Provider</label>
-                  <select
-                    name="serviceProvider"
-                    className="w-full border p-2 rounded-md"
-                    defaultValue={selectedMiner?.serviceProvider}
-                  >
-                    <option value={""}>Choose Provider</option>
-                    {serviceProviders.map((item) => (
-                      <option key={item._id} value={item.name}>
-                        {item.name}
-                      </option>
-                    ))}
-                  </select>
-                </>
-              )}
             </>
           )}
 
