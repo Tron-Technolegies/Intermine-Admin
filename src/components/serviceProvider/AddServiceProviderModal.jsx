@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
@@ -20,6 +20,7 @@ const style = {
 
 export default function AddServiceProviderModal({ open, handleClose }) {
   const { isPending, mutateAsync } = useAddServiceProvider();
+  const [sendCredentials, setSendCredentials] = useState(true);
   return (
     <Modal
       open={open}
@@ -36,6 +37,7 @@ export default function AddServiceProviderModal({ open, handleClose }) {
           onSubmit={async (e) => {
             e.preventDefault();
             const formdata = new FormData(e.target);
+            formdata.append("sendEmail", sendCredentials);
             const data = Object.fromEntries(formdata);
             await mutateAsync(data);
             handleClose();
@@ -80,6 +82,16 @@ export default function AddServiceProviderModal({ open, handleClose }) {
             required
             className="outline-none p-2 shadow-md rounded-md bg-neutral-100"
           />
+          <div className="flex gap-2 items-center my-3">
+            <label className="text-xs font-medium">Send Credentials</label>
+            <input
+              type="checkbox"
+              checked={sendCredentials}
+              onChange={(e) => setSendCredentials(e.target.checked)}
+              className="outline-none p-2 shadow-md rounded-md bg-neutral-100"
+            />
+          </div>
+
           <button
             type="submit"
             disabled={isPending}
