@@ -70,7 +70,7 @@ export const useResendLoginData = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["clients"] });
       queryClient.invalidateQueries({ queryKey: ["clientDetails"] });
-      toast.success("Deleted");
+      toast.success("Resend Password reset link successfully");
     },
     onError: (error) => {
       toast.error(
