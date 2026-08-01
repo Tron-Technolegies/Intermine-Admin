@@ -61,11 +61,11 @@ export default function IssueCard({
     }
   }, [issue]);
   return (
-    <div className="bg-[#F9F9F9] border border-[#E6E6E6] rounded-2xl px-7 py-7 flex flex-col gap-2 shadow-sm">
+    <div className="bg-[#F9F9F9] border border-[#E6E6E6] rounded-2xl px-7 py-7 flex flex-col gap-2 shadow-sm overflow-hidden">
       <p className="font-bold text-sm">ID: XXX-{issue._id.slice(15)}</p>
       {/* Top: title + status */}
-      <div className="flex md:flex-row flex-col-reverse gap-2 md:gap-0 justify-between items-start">
-        <div className="flex flex-col gap-2 w-full">
+      <div className="flex md:flex-row flex-col-reverse gap-2 md:gap-0 justify-between items-start min-w-0">
+        <div className="flex flex-col gap-2 w-full min-w-0">
           {issue.type === "repair" ? (
             <h3 className=" font-semibold text-black">
               {issue.issue?.issueType}
@@ -76,13 +76,15 @@ export default function IssueCard({
             </p>
           )}
           {/* Description */}
-          <p className="text-gray-600 text-sm -mt-2">{issue.description}</p>
+          <p className="text-gray-600 text-sm -mt-2 break-words whitespace-normal">
+            {issue.description}
+          </p>
         </div>
 
-        <p className="text-xs flex flex-col items-end w-full gap-2 text-gray-500">
-          <div className="flex gap-3 items-center">
-            <p
-              className={` text-xs w-fit self-end  ${
+        <div className="text-xs flex flex-col items-start md:items-end w-full md:w-auto gap-2 text-gray-500 shrink-0">
+          <div className="flex gap-3 items-center md:self-end">
+            <span
+              className={`text-xs w-fit ${
                 issue.status === "Resolved"
                   ? "bg-green-600"
                   : issue.status === "Warranty"
@@ -91,22 +93,25 @@ export default function IssueCard({
               } text-black font-medium px-3 py-1 rounded-full`}
             >
               {issue.status}
-            </p>
+            </span>
             <MdHistory
               size={24}
               className="cursor-pointer"
               onClick={() => setOpenStatusHistory(true)}
             />
           </div>
-          Last update: {new Date(issue.updatedAt).toLocaleString()}
-        </p>
+          <span>Last update: {new Date(issue.updatedAt).toLocaleString()}</span>
+        </div>
       </div>
-      <p className="font-semibold">
+      <p
+        className="font-semibold break-words whitespace-normal min-w-0 max-w-full"
+        style={{ overflowWrap: "anywhere", wordBreak: "break-all" }}
+      >
         {issue.miner?.model} (SI No: {issue.miner?.serialNumber})
       </p>
 
       {/* Client + Created + Serial */}
-      <div className="flex md:flex-row flex-col justify-between md:items-center">
+      <div className="flex md:flex-row flex-col justify-between md:items-center min-w-0">
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-3 text-sm text-gray-700">
             <FaUser className="text-gray-500" />
@@ -130,22 +135,31 @@ export default function IssueCard({
         </div>
 
         {issue.type === "change" && (
-          <div className=" flex flex-col gap-2 mb-2">
-            <div className="flex items-center gap-2 mt-3 sm:mt-0 text-sm text-gray-500">
-              Current Worker ID:
-              <span className="text-blue-700 font-semibold">
+          <div className="flex flex-col gap-2 mb-2 min-w-0 max-w-full">
+            <div className="flex flex-wrap items-start gap-2 mt-3 sm:mt-0 text-sm text-gray-500 min-w-0 w-full">
+              <span className="min-w-0">Current Worker ID:</span>
+              <span
+                className="text-blue-700 font-semibold break-words whitespace-normal min-w-0 w-full"
+                style={{ overflowWrap: "anywhere", wordBreak: "break-all" }}
+              >
                 {issue.miner?.workerId}
               </span>
             </div>
-            <div className="flex items-center gap-2 mt-3 sm:mt-0 text-sm text-gray-500">
-              Requested Worker ID:
-              <span className="text-blue-700 font-semibold">
+            <div className="flex flex-wrap items-start gap-2 mt-3 sm:mt-0 text-sm text-gray-500 min-w-0 w-full">
+              <span className="min-w-0">Requested Worker ID:</span>
+              <span
+                className="text-blue-700 font-semibold break-words whitespace-normal min-w-0 w-full"
+                style={{ overflowWrap: "anywhere", wordBreak: "break-all" }}
+              >
                 {issue.changeRequest?.worker}
               </span>
             </div>
-            <div className="flex items-center gap-2 mt-3 sm:mt-0 text-sm text-gray-500">
-              Requested Pool Address:
-              <span className="text-blue-700 font-semibold">
+            <div className="flex flex-wrap items-start gap-2 mt-3 sm:mt-0 text-sm text-gray-500 min-w-0 w-full">
+              <span className="min-w-0">Requested Pool Address:</span>
+              <span
+                className="text-blue-700 font-semibold break-words whitespace-normal min-w-0 w-full"
+                style={{ overflowWrap: "anywhere", wordBreak: "break-all" }}
+              >
                 {issue.changeRequest?.pool}
               </span>
             </div>
@@ -153,9 +167,14 @@ export default function IssueCard({
         )}
 
         {issue.type === "repair" && (
-          <div className="flex items-center gap-2 mt-3 sm:mt-0 text-sm font-medium text-black">
+          <div className="flex flex-wrap items-center gap-2 mt-3 sm:mt-0 text-sm font-medium text-black min-w-0 w-full">
             <LuCpu className="text-xl" />
-            <span>{issue.miner?.workerId}</span>
+            <span
+              className="break-words whitespace-normal min-w-0 w-full"
+              style={{ overflowWrap: "anywhere", wordBreak: "break-all" }}
+            >
+              {issue.miner?.workerId}
+            </span>
           </div>
         )}
       </div>
@@ -164,18 +183,18 @@ export default function IssueCard({
       <div className="flex justify-between items-center flex-wrap gap-3">
         {/* Left controls */}
         <div className="flex md:flex-row flex-col justify-between md:items-center gap-3 w-full">
-          <div className="flex md:flex-row flex-col gap-3 md:items-center">
+          <div className="flex md:flex-row flex-col gap-3 md:items-center w-full md:w-auto">
             <button
               onClick={onRespond}
-              className="px-4 py-1.5 text-sm rounded-lg cursor-pointer border border-gray-300 text-gray-700"
+              className="px-4 py-1.5 text-sm rounded-lg cursor-pointer border border-gray-300 text-gray-700 w-full sm:w-auto text-center"
             >
               Send Response
             </button>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
-                className="px-4 py-1.5 text-sm rounded-lg border border-gray-300 text-gray-700"
+                className="px-4 py-1.5 text-sm rounded-lg border border-gray-300 text-gray-700 w-full sm:w-auto"
               >
                 <option value="Pending">Pending</option>
                 <option value="Warranty">Warranty</option>
@@ -188,7 +207,7 @@ export default function IssueCard({
                   <select
                     value={currentLocation}
                     onChange={(e) => setCurrentLocation(e.target.value)}
-                    className="px-4 py-1.5 text-sm rounded-lg border border-gray-300 text-gray-700"
+                    className="px-4 py-1.5 text-sm rounded-lg border border-gray-300 text-gray-700 w-full sm:w-auto"
                     required
                   >
                     <option value={""}>Choose Location</option>
@@ -203,7 +222,7 @@ export default function IssueCard({
                 )}
               <button
                 onClick={handleSave}
-                className="px-4 py-1.5 text-sm cursor-pointer rounded-lg bg-blue-600 text-white"
+                className="px-4 py-1.5 text-sm cursor-pointer rounded-lg bg-blue-600 text-white w-full sm:w-auto text-center"
               >
                 {saving ? "Saving..." : "Save"}
               </button>
@@ -211,7 +230,7 @@ export default function IssueCard({
           </div>
 
           {/* Right side buttons */}
-          <div className="flex md:flex-row flex-col md:items-center  gap-4">
+          <div className="flex md:flex-row flex-col md:items-center gap-4 w-full md:w-auto">
             {/* Chat History */}
             <button
               onClick={() => onChatOpen(issue._id)}
@@ -223,7 +242,7 @@ export default function IssueCard({
             {issue.reminderHistory && (
               <button
                 onClick={handleClickOpen}
-                className="bg-gray-300 md:w-fit w-full self-end p-2 cursor-pointer rounded-full text-sm"
+                className="bg-gray-300 w-full md:w-fit p-2 cursor-pointer rounded-full text-sm text-center flex justify-center items-center"
               >
                 Remind Service Provider
               </button>

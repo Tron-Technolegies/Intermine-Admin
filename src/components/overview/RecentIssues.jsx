@@ -47,21 +47,21 @@ export default function RecentIssues() {
         {issues.map((issue) => (
           <div
             key={issue._id}
-            className="bg-white border border-gray-100 rounded-md px-3 py-2 flex justify-between items-center text-sm"
+            className="bg-white border border-gray-100 rounded-md px-3 py-2 flex justify-between items-center text-sm min-w-0"
           >
-            <div>
-              <p className="font-medium text-gray-800">
+            <div className="min-w-0 flex-1 mr-2">
+              <p className="font-medium text-gray-800 truncate">
                 {issue.user?.clientName}
               </p>
-              <p className="text-gray-500">{issue.issue?.issueType}</p>
+              <p className="text-gray-500 truncate">{issue.issue?.issueType}</p>
             </div>
 
-            <div className="flex items-center gap-3">
-              <span className="text-xs bg-white px-2 py-1 border border-gray-300 rounded-2xl">
+            <div className="flex items-center gap-3 shrink-0">
+              <span className="text-xs bg-white px-2 py-1 border border-gray-300 rounded-2xl truncate max-w-[100px] sm:max-w-none">
                 {issue.miner?.serialNumber}
               </span>
 
-              <span className="text-sm text-gray-400 flex items-center gap-1">
+              <span className="text-sm text-gray-400 flex items-center gap-1 whitespace-nowrap">
                 <LuAlarmClock /> {timeAgo(issue.createdAt)}
               </span>
             </div>

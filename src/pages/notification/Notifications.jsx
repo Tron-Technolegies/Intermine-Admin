@@ -108,26 +108,28 @@ export default function Notifications() {
               <Link
                 to={n.isIssue && `/issues/${n.issue}`}
                 key={n._id}
-                className="bg-white rounded-lg p-4 shadow flex gap-5 justify-between items-center border border-gray-200"
+                className="bg-white rounded-lg p-4 shadow flex flex-col sm:flex-row gap-4 sm:gap-5 justify-between items-start sm:items-center border border-gray-200 min-w-0"
               >
-                <div>
-                  <p className="font-semibold text-gray-900">{n.problem}</p>
+                <div className="min-w-0 flex-1">
+                  <p className="font-semibold text-gray-900 break-words whitespace-normal min-w-0">
+                    {n.problem}
+                  </p>
 
                   {n.client && (
-                    <p className="text-gray-600 text-sm mt-1">
+                    <p className="text-gray-600 text-sm mt-1 break-words whitespace-normal min-w-0">
                       Client:{" "}
-                      <span className="font-medium">
+                      <span className="font-medium break-all">
                         {n.client?.clientName}
                       </span>
                     </p>
                   )}
 
                   {n.miner && (
-                    <p className="text-gray-600 text-sm">
+                    <p className="text-gray-600 text-sm break-words whitespace-normal min-w-0">
                       Miner:{" "}
-                      <span className="font-medium">{n.miner?.model}</span>
+                      <span className="font-medium break-all">{n.miner?.model}</span>
                       &nbsp;• Worker ID:{" "}
-                      <span className="font-medium">{n.miner?.workerId}</span>
+                      <span className="font-medium break-all">{n.miner?.workerId}</span>
                     </p>
                   )}
 
@@ -137,19 +139,21 @@ export default function Notifications() {
                 </div>
 
                 {/* RIGHT SIDE STATUS + BUTTON */}
-                <div className="flex flex-col w-full items-end gap-2">
+                <div className="flex flex-col items-start sm:items-end gap-2 shrink-0 w-full sm:w-auto">
                   {/* Status icon */}
                   {isRead && (
-                    <FaCheckCircle className="text-green-600" size={22} />
+                    <FaCheckCircle className="text-green-600 sm:self-end" size={22} />
                   )}
 
                   {!isRead && (
                     <button
-                      onClick={async () => {
+                      onClick={async (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
                         await clearSingle.mutateAsync(n._id);
                       }}
                       disabled={clearSingle.isPending}
-                      className="text-sm bg-blue-500 min-w-fit text-white cursor-pointer px-3 py-1 rounded hover:bg-blue-600"
+                      className="text-sm bg-blue-500 min-w-fit text-white cursor-pointer px-3 py-1.5 rounded hover:bg-blue-600 w-full sm:w-auto text-center"
                     >
                       {clearSingle.isPending ? "......." : " Mark as Read"}
                     </button>

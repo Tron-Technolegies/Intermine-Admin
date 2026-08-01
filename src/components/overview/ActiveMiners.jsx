@@ -46,15 +46,15 @@ export default function ActiveMiners() {
         {miners.map((miner) => (
           <div
             key={miner._id}
-            className="bg-white border border-gray-100 rounded-md px-3 py-2 flex justify-between items-center text-sm"
+            className="bg-white border border-gray-100 rounded-md px-3 py-2 flex justify-between items-center text-sm min-w-0"
           >
-            <div>
-              <p className="font-medium text-gray-800">{miner.serialNumber}</p>
-              <p className="text-gray-500">{miner.serviceProvider}</p>
+            <div className="min-w-0 flex-1 mr-2">
+              <p className="font-medium text-gray-800 truncate">{miner.serialNumber}</p>
+              <p className="text-gray-500 truncate">{miner.serviceProvider}</p>
             </div>
 
             <span
-              className={`px-2 py-1 rounded-md text-xs font-medium ${getStatusColor(miner.status)}`}
+              className={`px-2 py-1 rounded-md text-xs font-medium shrink-0 whitespace-nowrap ${getStatusColor(miner.status)}`}
             >
               {miner.status}
             </span>
