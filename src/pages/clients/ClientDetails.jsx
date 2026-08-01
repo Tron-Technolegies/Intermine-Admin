@@ -90,8 +90,8 @@ export default function ClientDetails() {
         <FaArrowLeft className="mr-2" /> Back
       </button>
 
-      <h1 className="text-2xl font-semibold">{client.clientName}</h1>
-      <p className="text-gray-500 mb-4">{client.email}</p>
+      <h1 className="text-2xl font-semibold break-words whitespace-normal">{client.clientName}</h1>
+      <p className="text-gray-500 mb-4 break-all whitespace-normal">{client.email}</p>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
         <StatBox
@@ -150,10 +150,10 @@ export default function ClientDetails() {
           client.watcherLinks?.map((item) => (
             <a
               href={item.link}
-              className="text-sm text-blue-500 underline w-fit"
+              className="text-sm text-blue-500 underline w-fit break-all whitespace-normal"
               target="_blank"
             >
-              Visit <span className="text-lg font-semibold">{item.coin}</span>{" "}
+              Visit <span className="text-lg font-semibold break-words">{item.coin}</span>{" "}
               Watcher Link
             </a>
           ))}
@@ -171,15 +171,15 @@ export default function ClientDetails() {
               onClick={() => toggleMiner(miner._id)}
               className="p-3 flex justify-between items-center cursor-pointer"
             >
-              <div className="flex flex-col gap-2">
-                <p className="text-xl">
-                  {miner.model}{" "}
-                  <span className="text-xs ml-5 p-2 rounded-md bg-gray-200">
+              <div className="flex flex-col gap-2 min-w-0">
+                <p className="text-xl flex flex-wrap items-center gap-2 min-w-0">
+                  <span className="break-all whitespace-normal">{miner.model}</span>
+                  <span className="text-xs px-2 py-1 rounded-md bg-gray-200 font-normal whitespace-nowrap">
                     {miner.hostingType}
                   </span>
                 </p>
-                <p className="font-medium">SN: {miner.serialNumber}</p>
-                <p className="text-xs text-gray-500">
+                <p className="font-medium break-all whitespace-normal">SN: {miner.serialNumber}</p>
+                <p className="text-xs text-gray-500 break-all whitespace-normal">
                   {miner.workerId || "Worker Not Assigned"}
                 </p>
               </div>
@@ -206,12 +206,12 @@ export default function ClientDetails() {
                         ? "No Hosting"
                         : "In Transit"}
                 </div>
-                <div className="flex justify-between md:flex-row flex-col md:justify-start gap-5 md:gap-16 py-4 border-t border-b border-gray-100 mb-4">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 py-4 border-t border-b border-gray-100 mb-4 min-w-0">
                   {/* Hashrate */}
-                  <div className="flex items-center gap-2">
-                    <BiChip size={20} />
-                    <div>
-                      <div className="text-lg font-semibold">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <BiChip size={20} className="shrink-0 text-gray-600" />
+                    <div className="min-w-0">
+                      <div className="text-lg font-semibold truncate">
                         {miner.hashRate} {miner.hashRateUnit || "TH"}
                       </div>
                       <div className="text-xs text-gray-500">Hash Rate</div>
@@ -219,35 +219,41 @@ export default function ClientDetails() {
                   </div>
 
                   {/* Power */}
-                  <div className="flex items-center gap-2">
-                    <FaBolt size={20} />
-                    <div>
-                      <div className="text-lg font-semibold">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <FaBolt size={20} className="shrink-0 text-gray-600" />
+                    <div className="min-w-0">
+                      <div className="text-lg font-semibold truncate">
                         {miner.power} Watt
                       </div>
                       <div className="text-xs text-gray-500">Power</div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <LuQrCode size={20} />
-                    <div>
-                      <div className="text-lg font-semibold">
+
+                  {/* Pool Address */}
+                  <div className="flex items-center gap-2 min-w-0 col-span-2 md:col-span-1">
+                    <LuQrCode size={20} className="shrink-0 text-gray-600" />
+                    <div className="min-w-0">
+                      <div className="text-lg font-semibold break-all">
                         {miner.poolAddress}
                       </div>
                       <div className="text-xs text-gray-500">Pool Address</div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <FaBitcoin size={20} />
-                    <div>
-                      <div className="text-lg font-semibold">{miner.coins}</div>
+
+                  {/* Coins */}
+                  <div className="flex items-center gap-2 min-w-0">
+                    <FaBitcoin size={20} className="shrink-0 text-gray-600" />
+                    <div className="min-w-0">
+                      <div className="text-lg font-semibold truncate">{miner.coins}</div>
                       <div className="text-xs text-gray-500">Coins</div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <FaLocationPin size={20} />
-                    <div>
-                      <div className="text-lg font-semibold">
+
+                  {/* Location */}
+                  <div className="flex items-center gap-2 min-w-0">
+                    <FaLocationPin size={20} className="shrink-0 text-gray-600" />
+                    <div className="min-w-0">
+                      <div className="text-lg font-semibold break-words">
                         {miner.location}
                       </div>
                       <div className="text-xs text-gray-500">Location</div>
@@ -256,7 +262,7 @@ export default function ClientDetails() {
                 </div>
                 <Link
                   to={`/miners/${miner._id}`}
-                  className="bg-indigo-600 text-white p-2 rounded-md"
+                  className="bg-indigo-600 text-white px-4 py-2 rounded-md inline-block text-sm"
                 >
                   View Full Details
                 </Link>
