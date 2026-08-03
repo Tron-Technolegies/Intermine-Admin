@@ -197,8 +197,15 @@ export default function IssueCard({
                 className="px-4 py-1.5 text-sm rounded-lg border border-gray-300 text-gray-700 w-full sm:w-auto"
               >
                 <option value="Pending">Pending</option>
-                <option value="Warranty">Warranty</option>
-                <option value="Repair Center">Repair Center</option>
+                {issue.type === "repair" && (
+                  <option value="Warranty">Warranty</option>
+                )}
+                {issue.type === "repair" && (
+                  <option value="Repair Center">Repair Center</option>
+                )}
+                {issue.type === "change" && (
+                  <option value={"Cancelled"}>Cancelled</option>
+                )}
                 <option value="Resolved">Resolved</option>
               </select>
               {!isLoading &&
