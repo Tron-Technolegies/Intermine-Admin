@@ -1,24 +1,31 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IoClose } from "react-icons/io5";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../../api/api";
 import { toast } from "react-toastify";
 
-export default function AddIssueModal({ onClose }) {
+export default function EditIssueTypeModal({ onClose, item }) {
   const [issueType, setIssueType] = useState("");
   const [adminOnly, setAdminOnly] = useState(false);
   const queryClient = useQueryClient();
 
-  const addIssueType = useMutation({
-    mutationFn: (payload) => api.post("/api/v1/admin/issue/type", payload),
+  useEffect(() => {
+    if (item) {
+      setIssueType(item.issueType);
+      setAdminOnly(item.adminOnly);
+    }
+  }, [item]);
+
+  const editIssueType = useMutation({
+    mutationFn: (payload) => api.patch("/api/v1/admin/issue/type", payload),
     onSuccess: () => {
-      toast.success("Issue Type Added Successfully!");
+      toast.success("Issue Type Edited Successfully!");
       queryClient.invalidateQueries(["issueTypes"]);
       setIssueType("");
       onClose();
     },
     onError: (err) => {
-      const message = err.response?.data?.error || "Failed to add issue type";
+      const message = err.response?.data?.error || "Failed to edit issue type";
       toast.error(message);
     },
   });
@@ -33,7 +40,7 @@ export default function AddIssueModal({ onClose }) {
     e.preventDefault();
     if (!issueType.trim()) return toast.error("Issue type cannot be empty");
 
-    addIssueType.mutate({ issueType, adminOnly });
+    editIssueType.mutate({ issueType, adminOnly, id: item?._id });
   };
 
   return (
@@ -54,10 +61,7 @@ export default function AddIssueModal({ onClose }) {
         <h2 className="text-xl font-semibold text-gray-900 mb-1">
           Add New Issue Type
         </h2>
-        <p className="text-sm text-gray-500 mb-5">
-          Create a new issue type that will appear in the client report issue
-          dropdown.
-        </p>
+        <p className="text-sm text-gray-500 mb-5">Edit the issue.</p>
 
         <form onSubmit={handleSubmit} className="space-y-3 p-2">
           <label className="font-medium text-gray-700">Issue Type</label>
@@ -79,10 +83,10 @@ export default function AddIssueModal({ onClose }) {
           </div>
           <button
             type="submit"
-            disabled={addIssueType.isPending}
+            disabled={editIssueType.isPending}
             className="bg-[#2B347A] p-2 rounded text-white text-center w-full mt-4 disabled:opacity-50"
           >
-            {addIssueType.isPending ? "Adding..." : "Add Issue Type"}
+            {editIssueType.isPending ? "Saving..." : "Save Issue Type"}
           </button>
         </form>
       </div>

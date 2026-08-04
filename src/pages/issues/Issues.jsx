@@ -10,6 +10,7 @@ import useIssueTypes from "../../hooks/useIssueTypes";
 import useIssueActions from "../../hooks/useIssueActions";
 import ChatHistoryModal from "../../components/issues/ChatHistoryModal";
 import SearchFilterBar from "../../components/SearchFilterBar";
+import EditIssueTypeModal from "../../components/issues/EditIssueTypeModal";
 
 export default function Issues() {
   const [selectedType, setSelectedType] = useState("Default");
@@ -17,6 +18,7 @@ export default function Issues() {
   const [page, setPage] = useState(1);
 
   const [showAddTypeModal, setShowAddTypeModal] = useState(false);
+  const [showEditTypeModal, setShowEditTypeModal] = useState(false);
   const [editTypeData, setEditTypeData] = useState(null);
 
   const [showRespondModal, setShowRespondModal] = useState(null);
@@ -112,7 +114,7 @@ export default function Issues() {
               <button
                 onClick={() => {
                   setEditTypeData(item);
-                  setShowAddTypeModal(true);
+                  setShowEditTypeModal(true);
                 }}
               >
                 ✎
@@ -188,11 +190,14 @@ export default function Issues() {
           </div>
         </div>
       )}
-      {/* Add/Edit Modal */}
+
       {showAddTypeModal && (
-        <AddIssueModal
-          onClose={() => setShowAddTypeModal(false)}
-          editData={editTypeData}
+        <AddIssueModal onClose={() => setShowAddTypeModal(false)} />
+      )}
+      {showEditTypeModal && (
+        <EditIssueTypeModal
+          item={editTypeData}
+          onClose={() => setShowEditTypeModal(false)}
         />
       )}
       {showChatModal && (
