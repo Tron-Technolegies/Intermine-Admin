@@ -16,11 +16,7 @@ export default function Notifications() {
 
   const status = showUnseen ? "unread" : "ALL";
 
-  const { data, isLoading } = useAdminNotifications(
-    page,
-    debouncedSearch,
-    status,
-  );
+  const { data, isLoading } = useAdminNotifications(page, debouncedSearch, status);
   const { markAll, clearSingle } = useNotificationActions();
 
   useEffect(() => {
@@ -35,16 +31,11 @@ export default function Notifications() {
 
   return (
     <div>
-      <PageHeader
-        title="Notifications"
-        subtitle="Real-time issues across clients and machines"
-      />
+      <PageHeader title="Notifications" subtitle="Real-time issues across clients and machines" />
 
       <div className="bg-[#F5F5F5] p-6 mt-4 rounded-xl">
         <h2 className="text-xl font-semibold">Machine Problem Alerts</h2>
-        <p className="text-gray-500 mb-5">
-          Real-time issues across clients and machines
-        </p>
+        <p className="text-gray-500 mb-5">Real-time issues across clients and machines</p>
 
         {/* Search + Toggle + Button */}
         <div className="flex md:flex-row flex-col md:items-center gap-4 mb-5">
@@ -117,17 +108,13 @@ export default function Notifications() {
 
                   {n.client && (
                     <p className="text-gray-600 text-sm mt-1 break-words whitespace-normal min-w-0">
-                      Client:{" "}
-                      <span className="font-medium break-all">
-                        {n.client?.clientName}
-                      </span>
+                      Client: <span className="font-medium break-all">{n.client?.clientName}</span>
                     </p>
                   )}
 
                   {n.miner && (
                     <p className="text-gray-600 text-sm break-words whitespace-normal min-w-0">
-                      Miner:{" "}
-                      <span className="font-medium break-all">{n.miner?.model}</span>
+                      Miner: <span className="font-medium break-all">{n.miner?.model}</span>
                       &nbsp;• Worker ID:{" "}
                       <span className="font-medium break-all">{n.miner?.workerId}</span>
                     </p>
@@ -141,9 +128,7 @@ export default function Notifications() {
                 {/* RIGHT SIDE STATUS + BUTTON */}
                 <div className="flex flex-col items-start sm:items-end gap-2 shrink-0 w-full sm:w-auto">
                   {/* Status icon */}
-                  {isRead && (
-                    <FaCheckCircle className="text-green-600 sm:self-end" size={22} />
-                  )}
+                  {isRead && <FaCheckCircle className="text-green-600 sm:self-end" size={22} />}
 
                   {!isRead && (
                     <button

@@ -26,28 +26,15 @@ export default function Issues() {
 
   // Get issue types
   const { data: issueTypesData } = useIssueTypes();
-  const dropdownOptions = [
-    "All",
-    ...(issueTypesData?.map((t) => t.issueType) || []),
-  ];
-  const statusOptions = [
-    "Default",
-    "Pending",
-    "Warranty",
-    "Repair Center",
-    "Resolved",
-  ];
+  const dropdownOptions = ["All", ...(issueTypesData?.map((t) => t.issueType) || [])];
+  const statusOptions = ["Default", "Pending", "Warranty", "Repair Center", "Resolved"];
 
   // Fetch issues list
-  const { data: issuesData, isLoading } = useIssues(
-    selectedType,
-    searchTerm,
-    page,
-  );
+  const { data: issuesData, isLoading } = useIssues(selectedType, searchTerm, page);
   const issues = issuesData?.issues || [];
 
   // Actions
-  const { updateStatus, sendReminder } = useIssueActions();
+  const { updateStatus, sendReminder, notifyTechnician } = useIssueActions();
   const [showChatModal, setShowChatModal] = useState(null);
 
   // Status update handler
@@ -67,6 +54,14 @@ export default function Issues() {
 
     setShowRemindSuccess(true);
     setTimeout(() => setShowRemindSuccess(false), 2000);
+  };
+
+  const handleNotifyTechnician = async (data) => {
+    await notifyTechnician.mutateAsync({
+      issueId: data.issueId,
+      email: data.email,
+      notes: data.notes,
+    });
   };
 
   return (
@@ -149,6 +144,7 @@ export default function Issues() {
                   serialNumber: issue.miner?.serialNumber,
                 })
               }
+              onNotifyTechnician={handleNotifyTechnician}
             />
           ))}
         {issues.length < 1 && <p>No Issues Found</p>}
@@ -177,10 +173,7 @@ export default function Issues() {
       </div>
       {/* Respond Modal */}
       {showRespondModal && (
-        <RespondIssueModal
-          issue={showRespondModal}
-          onClose={() => setShowRespondModal(null)}
-        />
+        <RespondIssueModal issue={showRespondModal} onClose={() => setShowRespondModal(null)} />
       )}
       {/* Reminder Popup */}
       {showRemindSuccess && (
@@ -191,20 +184,12 @@ export default function Issues() {
         </div>
       )}
 
-      {showAddTypeModal && (
-        <AddIssueModal onClose={() => setShowAddTypeModal(false)} />
-      )}
+      {showAddTypeModal && <AddIssueModal onClose={() => setShowAddTypeModal(false)} />}
       {showEditTypeModal && (
-        <EditIssueTypeModal
-          item={editTypeData}
-          onClose={() => setShowEditTypeModal(false)}
-        />
+        <EditIssueTypeModal item={editTypeData} onClose={() => setShowEditTypeModal(false)} />
       )}
       {showChatModal && (
-        <ChatHistoryModal
-          issueId={showChatModal}
-          onClose={() => setShowChatModal(null)}
-        />
+        <ChatHistoryModal issueId={showChatModal} onClose={() => setShowChatModal(null)} />
       )}
     </div>
   );

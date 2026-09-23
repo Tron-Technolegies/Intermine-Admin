@@ -12,6 +12,7 @@ export default function useIssueActions() {
         status,
         serviceProvider,
         location,
+        notifyTechnician,
       }),
     onSuccess: () => {
       queryClient.invalidateQueries(["issues"]);
@@ -20,9 +21,7 @@ export default function useIssueActions() {
     },
     onError: (error) => {
       toast.error(
-        error.response.data.error ||
-          error.response.data.message ||
-          "something went wrong",
+        error.response.data.error || error.response.data.message || "something went wrong",
       );
     },
   });
@@ -36,9 +35,7 @@ export default function useIssueActions() {
     },
     onError: (error) => {
       toast.error(
-        error.response.data.error ||
-          error.response.data.message ||
-          "something went wrong",
+        error.response.data.error || error.response.data.message || "something went wrong",
       );
     },
   });
@@ -58,9 +55,23 @@ export default function useIssueActions() {
     },
     onError: (error) => {
       toast.error(
-        error.response.data.error ||
-          error.response.data.message ||
-          "something went wrong",
+        error.response.data.error || error.response.data.message || "something went wrong",
+      );
+    },
+  });
+  const notifyTechnician = useMutation({
+    mutationFn: ({ issueId, email, notes }) =>
+      api.post(`/api/v1/admin/issue/${issueId}/notify-technician`, {
+        email,
+        notes,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["issues"] });
+      toast.success("Technician notified successfully");
+    },
+    onError: (error) => {
+      toast.error(
+        error.response?.data?.error || error.response?.data?.message || "Something went wrong",
       );
     },
   });

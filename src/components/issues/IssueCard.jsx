@@ -12,6 +12,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { BiMessageDetail } from "react-icons/bi";
 import { MdHistory } from "react-icons/md";
 import StatusHistoryModal from "./StatusHistoryModal";
+import NotifyTechnicianModal from "./NotifyTechnicianModal";
 import { useGetRepairAndWarrantyFarms } from "../../hooks/adminFarms/useFarms";
 
 export default function IssueCard({
@@ -20,26 +21,21 @@ export default function IssueCard({
   onStatusUpdate,
   onChatOpen,
   onReminder,
+  onNotifyTechnician,
 }) {
   const [status, setStatus] = useState(issue.status);
   const [saving, setSaving] = useState(false);
   const [provider, setProvider] = useState(issue?.serviceProvider || "");
-  const [currentLocation, setCurrentLocation] = useState(
-    issue.currentLocation || null,
-  );
+  const [currentLocation, setCurrentLocation] = useState(issue.currentLocation || null);
   const [open, setOpen] = useState(false);
   const [openStatusHistory, setOpenStatusHistory] = useState(false);
+  const [openNotifyTechnician, setOpenNotifyTechnician] = useState(false);
   const { isLoading, data } = useGetRepairAndWarrantyFarms();
 
   const handleSave = async () => {
     setSaving(true);
     try {
-      await onStatusUpdate(
-        issue._id,
-        status,
-        issue.miner?.serviceProvider,
-        currentLocation,
-      );
+      await onStatusUpdate(issue._id, status, issue.miner?.serviceProvider, currentLocation);
     } catch (error) {
       console.log(error);
     } finally {
@@ -67,13 +63,9 @@ export default function IssueCard({
       <div className="flex md:flex-row flex-col-reverse gap-2 md:gap-0 justify-between items-start min-w-0">
         <div className="flex flex-col gap-2 w-full min-w-0">
           {issue.type === "repair" ? (
-            <h3 className=" font-semibold text-black">
-              {issue.issue?.issueType}
-            </h3>
+            <h3 className=" font-semibold text-black">{issue.issue?.issueType}</h3>
           ) : (
-            <p className="font-semibold text-blue-700">
-              Request for Pool Change
-            </p>
+            <p className="font-semibold text-blue-700">Request for Pool Change</p>
           )}
           {/* Description */}
           <p className="text-gray-600 text-sm -mt-2 break-words whitespace-normal">
@@ -116,9 +108,7 @@ export default function IssueCard({
           <div className="flex items-center gap-3 text-sm text-gray-700">
             <FaUser className="text-gray-500" />
             <span className="font-medium">{issue.user?.clientName}</span>
-            <span className="text-gray-400 text-xs">
-              {issue.user?.clientId}
-            </span>
+            <span className="text-gray-400 text-xs">{issue.user?.clientId}</span>
           </div>
 
           <div className="flex items-center gap-2 text-xs text-gray-500">
@@ -197,36 +187,28 @@ export default function IssueCard({
                 className="px-4 py-1.5 text-sm rounded-lg border border-gray-300 text-gray-700 w-full sm:w-auto"
               >
                 <option value="Pending">Pending</option>
-                {issue.type === "repair" && (
-                  <option value="Warranty">Warranty</option>
-                )}
-                {issue.type === "repair" && (
-                  <option value="Repair Center">Repair Center</option>
-                )}
-                {issue.type === "change" && (
-                  <option value={"Cancelled"}>Cancelled</option>
-                )}
+                {issue.type === "repair" && <option value="Warranty">Warranty</option>}
+                {issue.type === "repair" && <option value="Repair Center">Repair Center</option>}
+                {issue.type === "change" && <option value={"Cancelled"}>Cancelled</option>}
                 <option value="Resolved">Resolved</option>
               </select>
-              {!isLoading &&
-                data &&
-                (status === "Warranty" || status === "Repair Center") && (
-                  <select
-                    value={currentLocation}
-                    onChange={(e) => setCurrentLocation(e.target.value)}
-                    className="px-4 py-1.5 text-sm rounded-lg border border-gray-300 text-gray-700 w-full sm:w-auto"
-                    required
-                  >
-                    <option value={""}>Choose Location</option>
-                    {data
-                      .filter((item) => item.serviceProvider === provider)
-                      .map((item) => (
-                        <option key={item._id} value={item._id}>
-                          {item.farm}
-                        </option>
-                      ))}
-                  </select>
-                )}
+              {!isLoading && data && (status === "Warranty" || status === "Repair Center") && (
+                <select
+                  value={currentLocation}
+                  onChange={(e) => setCurrentLocation(e.target.value)}
+                  className="px-4 py-1.5 text-sm rounded-lg border border-gray-300 text-gray-700 w-full sm:w-auto"
+                  required
+                >
+                  <option value={""}>Choose Location</option>
+                  {data
+                    .filter((item) => item.serviceProvider === provider)
+                    .map((item) => (
+                      <option key={item._id} value={item._id}>
+                        {item.farm}
+                      </option>
+                    ))}
+                </select>
+              )}
               <button
                 onClick={handleSave}
                 className="px-4 py-1.5 text-sm cursor-pointer rounded-lg bg-blue-600 text-white w-full sm:w-auto text-center"
@@ -238,6 +220,13 @@ export default function IssueCard({
 
           {/* Right side buttons */}
           <div className="flex md:flex-row flex-col md:items-center gap-4 w-full md:w-auto">
+            {/* Notify Technician */}
+            <button
+              onClick={() => setOpenNotifyTechnician(true)}
+              className="bg-blue-600 text-white cursor-pointer w-full md:w-fit px-4 py-2 rounded-full flex items-center gap-1 justify-center"
+            >
+              {issue.technicianNotified ? "Notified (Re-send)" : "Notify Technician"}
+            </button>
             {/* Chat History */}
             <button
               onClick={() => onChatOpen(issue._id)}
@@ -282,9 +271,7 @@ export default function IssueCard({
                 Reminded on {new Date(item).toLocaleString()}
               </p>
             ))}
-            {issue?.reminderHistory?.length < 1 && (
-              <p className="p-2">No Reminders sent </p>
-            )}
+            {issue?.reminderHistory?.length < 1 && <p className="p-2">No Reminders sent </p>}
             {issue.miner?.serviceProvider?.toLowerCase() === "dahab" && (
               <button
                 onClick={() => {
@@ -303,6 +290,13 @@ export default function IssueCard({
         open={openStatusHistory}
         handleClose={() => setOpenStatusHistory(false)}
         statusHistory={issue.statusHistory}
+      />
+      <NotifyTechnicianModal
+        open={openNotifyTechnician}
+        onClose={() => setOpenNotifyTechnician(false)}
+        issue={issue}
+        onNotify={onNotifyTechnician}
+        loading={false}
       />
     </div>
   );
